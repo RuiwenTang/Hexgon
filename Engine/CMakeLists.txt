@@ -7,3 +7,9 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
+target_sources(Hexgon 
+    PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Application.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
+)

@@ -21,7 +21,21 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Application.hpp>
+#ifndef ENGINE_INCLUDE_HEXGON_MACRO_HPP_
+#define ENGINE_INCLUDE_HEXGON_MACRO_HPP_
+
+#ifdef HEX_RELEASE
+#if defined(_MSC_VER)
+#define HEX_API __declspec(dllexport)
+#else
+#define HEX_API __attribute__((visibility("default")))
+#endif
+#else
+#if defined(_MSC_VER)
+#define HEX_API __declspec(dllexport)
+#else
+#define HEX_API
+#endif
+#endif
+
+#endif  // ENGINE_INCLUDE_HEXGON_MACRO_HPP_
