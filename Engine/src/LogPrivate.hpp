@@ -21,31 +21,34 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Application.hpp>
+#ifndef ENGINE_SRC_LOG_PRIVATE_HPP_
+#define ENGINE_SRC_LOG_PRIVATE_HPP_
 
-#include "LogPrivate.hpp"
+#include <spdlog/spdlog.h>
 
 namespace hexgon {
 
-Application* Application::g_instance = nullptr;
+class LogPrivate final {
+ public:
+  LogPrivate() = default;
+  ~LogPrivate() = default;
 
-Application* Application::Create() {
-  if (g_instance) {
-    // TODO assert failed
-    HEX_CORE_ERROR("Application already created!!");
-    return g_instance;
-  }
+  static LogPrivate* GetLogger();
 
-  g_instance = new Application;
+  void Init();
 
-  return g_instance;
-}
+  spdlog::logger* Logger() const { return m_logger.get(); }
 
-Application* Application::Get() { return g_instance; }
-
-void Application::Run() {
-  while (true)
-    ;
-}
+ private:
+  std::shared_ptr<spdlog::logger> m_logger = nullptr;
+};
 
 }  // namespace hexgon
+
+#define HEX_CORE_TRACE(...) ::hexgon::LogPrivate::GetLogger()->Logger()->trace(__VA_ARGS__)
+#define HEX_CORE_INFO(...) ::hexgon::LogPrivate::GetLogger()->Logger()->info(__VA_ARGS__)
+#define HEX_CORE_WARN(...) ::hexgon::LogPrivate::GetLogger()->Logger()->warn(__VA_ARGS__)
+#define HEX_CORE_ERROR(...) ::hexgon::LogPrivate::GetLogger()->Logger()->error(__VA_ARGS__)
+#define HEX_CORE_CRITICAL(...) ::hexgon::LogPrivate::GetLogger()->Logger()->critical(__VA_ARGS__)
+
+#endif  // ENGINE_SRC_LOG_PRIVATE_HPP_

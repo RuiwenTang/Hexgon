@@ -21,31 +21,37 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Application.hpp>
+#ifndef ENGINE_INCLUDE_HEXGON_LOG_HPP_
+#define ENGINE_INCLUDE_HEXGON_LOG_HPP_
 
-#include "LogPrivate.hpp"
+#include <spdlog/spdlog.h>
+
+#include <Hexgon/Macro.hpp>
 
 namespace hexgon {
 
-Application* Application::g_instance = nullptr;
+class HEX_API Log final {
+ public:
+  ~Log() = default;
 
-Application* Application::Create() {
-  if (g_instance) {
-    // TODO assert failed
-    HEX_CORE_ERROR("Application already created!!");
-    return g_instance;
-  }
+  static Log* GetLogger();
 
-  g_instance = new Application;
+  spdlog::logger* Logger() const { return m_logger.get(); }
 
-  return g_instance;
-}
+ private:
+  Log() = default;
+  void Init();
 
-Application* Application::Get() { return g_instance; }
-
-void Application::Run() {
-  while (true)
-    ;
-}
+ private:
+  std::shared_ptr<spdlog::logger> m_logger = nullptr;
+};
 
 }  // namespace hexgon
+
+#define HZ_TRACE(...) ::hexgon::Log::GetLogger()->Logger()->trace(__VA_ARGS__)
+#define HZ_INFO(...) ::hexgon::Log::GetLogger()->Logger()->info(__VA_ARGS__)
+#define HZ_WARN(...) ::hexgon::Log::GetLogger()->Logger()->warn(__VA_ARGS__)
+#define HZ_ERROR(...) ::hexgon::Log::GetLogger()->Logger()->error(__VA_ARGS__)
+#define HZ_CRITICAL(...) ::hexgon::Log::GetLogger()->Logger()->critical(__VA_ARGS__)
+
+#endif  // ENGINE_INCLUDE_HEXGON_LOG_HPP_

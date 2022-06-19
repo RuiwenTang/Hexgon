@@ -1,5 +1,5 @@
 
-add_library(Hexgon)
+add_library(Hexgon SHARED)
 
 target_include_directories(
     Hexgon PUBLIC
@@ -7,9 +7,21 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
+target_include_directories(
+    Hexgon PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/src
+)
+
 target_sources(Hexgon 
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Log.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )
+
+target_link_libraries(Hexgon spdlog::spdlog)

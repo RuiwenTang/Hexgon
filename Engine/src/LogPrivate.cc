@@ -21,31 +21,38 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Application.hpp>
-
 #include "LogPrivate.hpp"
+
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include <vector>
 
 namespace hexgon {
 
-Application* Application::g_instance = nullptr;
+LogPrivate* LogPrivate::GetLogger() {
+  static LogPrivate* g_instance = nullptr;
 
-Application* Application::Create() {
-  if (g_instance) {
-    // TODO assert failed
-    HEX_CORE_ERROR("Application already created!!");
-    return g_instance;
+  if (!g_instance) {
+    g_instance = new LogPrivate;
+    g_instance->Init();
   }
-
-  g_instance = new Application;
 
   return g_instance;
 }
 
-Application* Application::Get() { return g_instance; }
+void LogPrivate::Init() {
+  std::vector<spdlog::sink_ptr> log_sinks{};
 
-void Application::Run() {
-  while (true)
-    ;
+  log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+
+  log_sinks[0]->set_pattern("%^[%T] %n: %v%$");
+
+  m_logger = std::make_shared<spdlog::logger>("HEXGON", log_sinks.begin(), log_sinks.end());
+
+  m_logger->set_level(spdlog::level::trace);
+  m_logger->flush_on(spdlog::level::trace);
+
+  spdlog::register_logger(m_logger);
 }
 
 }  // namespace hexgon

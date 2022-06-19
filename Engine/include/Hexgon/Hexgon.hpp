@@ -25,3 +25,5 @@
 #include <Hexgon/Macro.hpp>
 // Application interface
 #include <Hexgon/Application.hpp>
+// Logger
+#include <Hexgon/Log.hpp>
