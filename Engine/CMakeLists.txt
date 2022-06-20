@@ -12,6 +12,23 @@ target_include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/src
 )
 
+if(WIN32)
+    target_compile_options(
+        Hexgon
+        PUBLIC
+        PRIVATE
+        /EHs-c- # disable exceptions
+    )
+else()
+    target_compile_options(
+        Hexgon
+        PUBLIC
+        PRIVATE
+        -fno-exceptions
+        -fvisibility=hidden
+    )
+endif()
+
 target_sources(Hexgon 
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Application.hpp
