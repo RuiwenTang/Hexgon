@@ -48,10 +48,10 @@ class HEX_API Log final {
 
 }  // namespace hexgon
 
-#define HZ_TRACE(...) ::hexgon::Log::GetLogger()->Logger()->trace(__VA_ARGS__)
-#define HZ_INFO(...) ::hexgon::Log::GetLogger()->Logger()->info(__VA_ARGS__)
-#define HZ_WARN(...) ::hexgon::Log::GetLogger()->Logger()->warn(__VA_ARGS__)
-#define HZ_ERROR(...) ::hexgon::Log::GetLogger()->Logger()->error(__VA_ARGS__)
-#define HZ_CRITICAL(...) ::hexgon::Log::GetLogger()->Logger()->critical(__VA_ARGS__)
+#define HEX_TRACE(...) ::hexgon::Log::GetLogger()->Logger()->trace(__VA_ARGS__)
+#define HEX_INFO(...) ::hexgon::Log::GetLogger()->Logger()->info(__VA_ARGS__)
+#define HEX_WARN(...) ::hexgon::Log::GetLogger()->Logger()->warn(__VA_ARGS__)
+#define HEX_ERROR(...) ::hexgon::Log::GetLogger()->Logger()->error(__VA_ARGS__)
+#define HEX_CRITICAL(...) ::hexgon::Log::GetLogger()->Logger()->critical(__VA_ARGS__)
 
 #endif  // ENGINE_INCLUDE_HEXGON_LOG_HPP_

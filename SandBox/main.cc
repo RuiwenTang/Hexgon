@@ -29,6 +29,8 @@ int main(int argc, const char** argv) {
 
   Application* app = Application::Create();
 
+  HEX_INFO("create app instance 0x{:x}", reinterpret_cast<uintptr_t>(app));
+
   app->Run();
 
   return 0;
