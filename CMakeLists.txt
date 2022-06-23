@@ -22,4 +22,4 @@ add_subdirectory(SandBox)
 # source group for Xcode and Visual Studio
 get_target_property(HEXGON_SRC Hexgon SOURCES)
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${HEXGON_SRC})
+source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${HEXGON_SRC})
