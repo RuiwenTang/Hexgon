@@ -27,7 +27,7 @@ using namespace hexgon;
 
 int main(int argc, const char** argv) {
 
-  Application* app = Application::Create();
+  Application* app = Application::Create("Hexgon");
 
   HEX_INFO("create app instance 0x{:x}", reinterpret_cast<uintptr_t>(app));
 

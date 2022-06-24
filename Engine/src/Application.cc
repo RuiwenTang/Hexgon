@@ -29,7 +29,7 @@ namespace hexgon {
 
 Application* Application::g_instance = nullptr;
 
-Application* Application::Create() {
+Application* Application::Create(std::string title, uint32_t width, uint32_t height) {
   if (g_instance) {
     // TODO assert failed
     HEX_CORE_ERROR("Application already created!!");
@@ -38,14 +38,14 @@ Application* Application::Create() {
 
   g_instance = new Application;
 
+  // init window
+  g_instance->m_window = Window::Create(std::move(title), width, height);
+
   return g_instance;
 }
 
 Application* Application::Get() { return g_instance; }
 
-void Application::Run() {
-  while (true)
-    ;
-}
+void Application::Run() { m_window->Show(); }
 
 }  // namespace hexgon

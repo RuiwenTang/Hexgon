@@ -32,7 +32,11 @@ class GLFWWindowImpl : public Window {
  public:
   GLFWWindowImpl(std::string title, uint32_t width, uint32_t height)
       : Window(title, width, height), m_glfw_window(nullptr) {}
-  ~GLFWWindowImpl() override = default;
+  ~GLFWWindowImpl() override {
+    if (m_glfw_window) {
+      glfwDestroyWindow(m_glfw_window);
+    }
+  }
 
   void SetVSync(bool enabled) override {
     if (enabled) {
@@ -42,12 +46,27 @@ class GLFWWindowImpl : public Window {
     }
   }
 
-  void Init() {}
+  void Show() override {
+    while (m_running && !glfwWindowShouldClose(m_glfw_window)) {
+      glfwPollEvents();
+    }
+  }
+
+  void Shutdown() override {}
+
+  void Init() {
+    glfwInit();
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    m_glfw_window = glfwCreateWindow(GetWidth(), GetHeight(), GetTitle().c_str(), nullptr, nullptr);
+  }
 
   void* GetNativeWindow() const override { return m_glfw_window; }
 
  private:
   GLFWwindow* m_glfw_window;
+  bool m_running = true;
 };
 
 std::unique_ptr<Window> Window::Create(std::string title, uint32_t width, uint32_t height) {

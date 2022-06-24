@@ -25,6 +25,8 @@
 #define INCLUDE_HEXGON_APPLICATION_HPP_
 
 #include <Hexgon/Macro.hpp>
+#include <Hexgon/Window.hpp>
+#include <memory>
 
 namespace hexgon {
 
@@ -32,7 +34,7 @@ class HEX_API Application final {
  public:
   ~Application() = default;
 
-  static Application* Create();
+  static Application* Create(std::string title, uint32_t width = 800, uint32_t height = 600);
 
   static Application* Get();
 
@@ -41,6 +43,9 @@ class HEX_API Application final {
  private:
   Application() = default;
   static Application* g_instance;
+
+ private:
+  std::unique_ptr<Window> m_window = {};
 };
 
 }  // namespace hexgon

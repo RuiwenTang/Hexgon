@@ -24,7 +24,6 @@ else()
         Hexgon
         PUBLIC
         PRIVATE
-        -fno-exceptions
         -fvisibility=hidden
     )
 endif()

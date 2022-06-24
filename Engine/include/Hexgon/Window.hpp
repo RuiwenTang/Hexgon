@@ -48,6 +48,10 @@ class HEX_API Window {
 
   virtual void* GetNativeWindow() const = 0;
 
+  virtual void Show() = 0;
+
+  virtual void Shutdown() = 0;
+
  private:
   std::string m_title;
   uint32_t m_width = 0;
