@@ -13,6 +13,9 @@ endif()
 # spdlog
 add_subdirectory(third_party/spdlog)
 
+# glfw
+add_subdirectory(third_party/glfw)
+
 # engine
 add_subdirectory(Engine)
 

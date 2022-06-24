@@ -35,10 +35,13 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Window.cc
 )
 
 target_link_libraries(Hexgon spdlog::spdlog)
+target_link_libraries(Hexgon glfw)
