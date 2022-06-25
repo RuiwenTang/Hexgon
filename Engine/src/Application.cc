@@ -22,6 +22,7 @@
  */
 
 #include <Hexgon/Application.hpp>
+#include <Hexgon/Event.hpp>
 
 #include "LogPrivate.hpp"
 
@@ -41,11 +42,21 @@ Application* Application::Create(std::string title, uint32_t width, uint32_t hei
   // init window
   g_instance->m_window = Window::Create(std::move(title), width, height);
 
+  g_instance->m_window->AddClient(g_instance);
+
   return g_instance;
 }
 
 Application* Application::Get() { return g_instance; }
 
 void Application::Run() { m_window->Show(); }
+
+void Application::OnWindowResize(int32_t width, int32_t height) {
+  HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);
+}
+
+void Application::OnWindowClose() { m_window->Shutdown(); }
+
+void Application::OnKeyEvent(KeyEvent* event) { HEX_CORE_INFO("On Key event : {}", event->GetName()); }
 
 }  // namespace hexgon

@@ -21,12 +21,21 @@
  *   SOFTWARE.
  */
 
+#include <Hexgon/Event.hpp>
 #include <Hexgon/Window.hpp>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include "LogPrivate.hpp"
+
 namespace hexgon {
+
+namespace {
+
+static void GLFWErrorCallback(int32_t err, const char* desc) { HEX_CORE_ERROR("GLFW error ({0}): {1}", err, desc); }
+
+}  // namespace
 
 class GLFWWindowImpl : public Window {
  public:
@@ -52,17 +61,47 @@ class GLFWWindowImpl : public Window {
     }
   }
 
-  void Shutdown() override {}
+  void Shutdown() override { m_running = false; }
 
   void Init() {
     glfwInit();
+
+    // error callback
+    glfwSetErrorCallback(GLFWErrorCallback);
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     m_glfw_window = glfwCreateWindow(GetWidth(), GetHeight(), GetTitle().c_str(), nullptr, nullptr);
+
+    glfwSetWindowUserPointer(m_glfw_window, this);
+
+    glfwSetKeyCallback(m_glfw_window, WindowKeyCallback);
   }
 
   void* GetNativeWindow() const override { return m_glfw_window; }
+
+  static void WindowKeyCallback(GLFWwindow* window, int32_t key, int32_t scan_code, int32_t action, int mods) {
+    auto platform_window = reinterpret_cast<GLFWWindowImpl*>(glfwGetWindowUserPointer(window));
+
+    std::unique_ptr<KeyEvent> event;
+    switch (action) {
+      case GLFW_PRESS:
+        event = std::make_unique<KeyPressEvent>(KeyCode::Code(key));
+        break;
+      case GLFW_RELEASE:
+        event = std::make_unique<KeyReleaseEvent>(KeyCode::Code(key));
+        break;
+    }
+
+    if (!event) {
+      return;
+    }
+
+    for (auto client : platform_window->m_clients) {
+      client->OnKeyEvent(event.get());
+    }
+  }
 
  private:
   GLFWwindow* m_glfw_window;

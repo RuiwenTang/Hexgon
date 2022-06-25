@@ -25,5 +25,9 @@
 #include <Hexgon/Macro.hpp>
 // Application interface
 #include <Hexgon/Application.hpp>
+// Event
+#include <Hexgon/Event.hpp>
+// Window
+#include <Hexgon/Window.hpp>
 // Logger
 #include <Hexgon/Log.hpp>

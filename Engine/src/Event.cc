@@ -21,37 +21,32 @@
  *   SOFTWARE.
  */
 
-#ifndef INCLUDE_HEXGON_APPLICATION_HPP_
-#define INCLUDE_HEXGON_APPLICATION_HPP_
-
-#include <Hexgon/Macro.hpp>
-#include <Hexgon/Window.hpp>
-#include <memory>
+#include <Hexgon/Event.hpp>
 
 namespace hexgon {
 
-class HEX_API Application final : public WindowClient {
- public:
-  ~Application() = default;
+KeyPressEvent::KeyPressEvent(KeyCode::Code code) : KeyEvent(code) {}
 
-  static Application* Create(std::string title, uint32_t width = 800, uint32_t height = 600);
+EventType KeyPressEvent::GetType() const { return EventType::KeyPressed; }
 
-  static Application* Get();
+std::string KeyPressEvent::GetName() const {
+  std::string ret = "KeyPress ";
 
-  void Run();
+  ret += GetKeyCode();
 
-  void OnWindowResize(int32_t width, int32_t height) override;
-  void OnWindowClose() override;
-  void OnKeyEvent(KeyEvent* event) override;
+  return ret;
+}
 
- private:
-  Application() = default;
-  static Application* g_instance;
+KeyReleaseEvent::KeyReleaseEvent(KeyCode::Code code) : KeyEvent(code) {}
 
- private:
-  std::unique_ptr<Window> m_window = {};
-};
+EventType KeyReleaseEvent::GetType() const { return EventType::KeyReleased; }
+
+std::string KeyReleaseEvent::GetName() const {
+  std::string ret = "KeyRelease ";
+
+  ret += GetKeyCode();
+
+  return ret;
+}
 
 }  // namespace hexgon
-
-#endif  // INCLUDE_HEXGON_APPLICATION_HPP_

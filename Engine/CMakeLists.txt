@@ -31,11 +31,13 @@ endif()
 target_sources(Hexgon 
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Application.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Event.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp

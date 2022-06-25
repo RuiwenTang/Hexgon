@@ -27,8 +27,20 @@
 #include <Hexgon/Macro.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace hexgon {
+
+class KeyEvent;
+
+class HEX_API WindowClient {
+ public:
+  virtual ~WindowClient() = default;
+
+  virtual void OnWindowResize(int32_t width, int32_t height) = 0;
+  virtual void OnWindowClose() = 0;
+  virtual void OnKeyEvent(KeyEvent* event) = 0;
+};
 
 class HEX_API Window {
  public:
@@ -52,10 +64,15 @@ class HEX_API Window {
 
   virtual void Shutdown() = 0;
 
+  void AddClient(WindowClient* client) { m_clients.emplace_back(client); }
+
  private:
   std::string m_title;
   uint32_t m_width = 0;
   uint32_t m_height = 0;
+
+ protected:
+  std::vector<WindowClient*> m_clients = {};
 };
 
 }  // namespace hexgon
