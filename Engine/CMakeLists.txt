@@ -1,6 +1,8 @@
 
 add_library(Hexgon SHARED)
 
+find_package(Vulkan REQUIRED)
+
 target_include_directories(
     Hexgon PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -32,6 +34,7 @@ target_sources(Hexgon
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Event.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
@@ -41,8 +44,11 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VulkanGraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VulkanGraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Window.cc
 )
 
 target_link_libraries(Hexgon spdlog::spdlog)
 target_link_libraries(Hexgon glfw)
+target_link_libraries(Hexgon Vulkan::Vulkan)

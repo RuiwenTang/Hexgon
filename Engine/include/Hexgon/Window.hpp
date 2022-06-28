@@ -24,6 +24,7 @@
 #ifndef ENGINE_INCLUDE_HEXGON_WINDOW_HPP_
 #define ENGINE_INCLUDE_HEXGON_WINDOW_HPP_
 
+#include <Hexgon/GraphicsContext.hpp>
 #include <Hexgon/Macro.hpp>
 #include <memory>
 #include <string>
@@ -73,6 +74,7 @@ class HEX_API Window {
 
  protected:
   std::vector<WindowClient*> m_clients = {};
+  std::unique_ptr<GraphicsContext> m_context = {};
 };
 
 }  // namespace hexgon

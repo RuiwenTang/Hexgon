@@ -58,6 +58,8 @@ class GLFWWindowImpl : public Window {
   void Show() override {
     while (m_running && !glfwWindowShouldClose(m_glfw_window)) {
       glfwPollEvents();
+
+      m_context->SwapBuffers();
     }
   }
 
@@ -112,6 +114,9 @@ std::unique_ptr<Window> Window::Create(std::string title, uint32_t width, uint32
   auto window = std::make_unique<GLFWWindowImpl>(std::move(title), width, height);
 
   window->Init();
+
+  window->m_context = GraphicsContext::Create(window->GetNativeWindow(), GraphicsContext::API::Vulkan);
+  window->m_context->Init();
 
   return window;
 }
