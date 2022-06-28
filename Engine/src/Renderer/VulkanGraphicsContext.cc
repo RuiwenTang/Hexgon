@@ -35,7 +35,11 @@ VulkanGraphicsContext::VulkanGraphicsContext(void* window) : GraphicsContext(), 
 
 VulkanGraphicsContext::~VulkanGraphicsContext() {}
 
-void VulkanGraphicsContext::Init() { InitVkInstance(); }
+void VulkanGraphicsContext::Init() {
+  InitVkInstance();
+  InitVkSurface();
+  PickPhysicalDevice();
+}
 
 void VulkanGraphicsContext::SwapBuffers() {}
 
@@ -63,6 +67,71 @@ void VulkanGraphicsContext::InitVkInstance() {
   }
 
   HEX_CORE_INFO("Create VkInstance success");
+}
+
+void VulkanGraphicsContext::InitVkSurface() {
+  if (glfwCreateWindowSurface(m_vk_instance, (GLFWwindow*)m_window, nullptr, &m_vk_surface) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed create window surface!");
+    exit(-1);
+  }
+}
+
+void VulkanGraphicsContext::PickPhysicalDevice() {
+  uint32_t device_count = 0;
+  vkEnumeratePhysicalDevices(m_vk_instance, &device_count, nullptr);
+
+  if (device_count == 0) {
+    HEX_CORE_ERROR("No GPU support vulkan");
+    exit(-1);
+  }
+
+  std::vector<VkPhysicalDevice> available_devices(device_count);
+
+  vkEnumeratePhysicalDevices(m_vk_instance, &device_count, available_devices.data());
+
+  int32_t graphic_queue_family = -1;
+  int32_t present_queue_family = -1;
+
+  for (size_t i = 0; i < available_devices.size(); i++) {
+    uint32_t queue_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(available_devices[i], &queue_count, nullptr);
+
+    std::vector<VkQueueFamilyProperties> properties(queue_count);
+
+    vkGetPhysicalDeviceQueueFamilyProperties(available_devices[i], &queue_count, properties.data());
+
+    for (size_t j = 0; j < properties.size(); j++) {
+      if (properties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        graphic_queue_family = j;
+      }
+
+      VkBool32 present_support = false;
+      vkGetPhysicalDeviceSurfaceSupportKHR(available_devices[i], j, m_vk_surface, &present_support);
+
+      if (present_support) {
+        present_queue_family = j;
+      }
+    }
+
+    if (graphic_queue_family >= 0 && present_queue_family >= 0) {
+      m_phy_device = available_devices[i];
+      m_graphic_queue_index = graphic_queue_family;
+      m_present_queue_index = present_queue_family;
+      break;
+    } else {
+      graphic_queue_family = -1;
+      present_queue_family = -1;
+    }
+  }
+
+  if (m_phy_device == 0) {
+    HEX_CORE_ERROR("Failed to find a physical device");
+    exit(-1);
+  }
+
+  vkGetPhysicalDeviceProperties(m_phy_device, &m_phy_props);
+
+  HEX_CORE_INFO("Picked device name = {}", m_phy_props.deviceName);
 }
 
 }  // namespace hexgon

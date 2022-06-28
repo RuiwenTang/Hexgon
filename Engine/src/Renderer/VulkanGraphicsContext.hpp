@@ -38,10 +38,17 @@ class VulkanGraphicsContext : public GraphicsContext {
 
  private:
   void InitVkInstance();
+  void InitVkSurface();
+  void PickPhysicalDevice();
 
  private:
   void* m_window;
   VkInstance m_vk_instance = VK_NULL_HANDLE;
+  VkSurfaceKHR m_vk_surface = VK_NULL_HANDLE;
+  VkPhysicalDevice m_phy_device = VK_NULL_HANDLE;
+  VkPhysicalDeviceProperties m_phy_props = {};
+  int32_t m_graphic_queue_index = -1;
+  int32_t m_present_queue_index = -1;
 };
 
 }  // namespace hexgon
