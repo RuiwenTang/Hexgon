@@ -25,6 +25,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include <set>
 #include <vector>
 
 #include "LogPrivate.hpp"
@@ -39,6 +40,7 @@ void VulkanGraphicsContext::Init() {
   InitVkInstance();
   InitVkSurface();
   PickPhysicalDevice();
+  CreateVkDevice();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -132,6 +134,65 @@ void VulkanGraphicsContext::PickPhysicalDevice() {
   vkGetPhysicalDeviceProperties(m_phy_device, &m_phy_props);
 
   HEX_CORE_INFO("Picked device name = {}", m_phy_props.deviceName);
+}
+
+void VulkanGraphicsContext::CreateVkDevice() {
+  std::vector<VkDeviceQueueCreateInfo> queue_create_info{};
+
+  std::set<int32_t> queue_families = {
+      m_graphic_queue_index,
+      m_present_queue_index,
+  };
+
+  float queue_priority = 1.f;
+
+  for (auto family : queue_families) {
+    VkDeviceQueueCreateInfo create_info{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
+    create_info.queueFamilyIndex = family;
+    create_info.queueCount = 1;
+    create_info.pQueuePriorities = &queue_priority;
+
+    queue_create_info.emplace_back(create_info);
+  }
+
+  VkPhysicalDeviceFeatures device_features{};
+
+  device_features.samplerAnisotropy = VK_TRUE;
+  device_features.sampleRateShading = VK_TRUE;
+
+  std::vector<const char*> device_extension{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  {
+    uint32_t count;
+    vkEnumerateDeviceExtensionProperties(m_phy_device, nullptr, &count, nullptr);
+
+    std::vector<VkExtensionProperties> properties(count);
+    vkEnumerateDeviceExtensionProperties(m_phy_device, nullptr, &count, properties.data());
+
+    auto it = std::find_if(properties.begin(), properties.end(), [](VkExtensionProperties prop) {
+      return std::strcmp(prop.extensionName, "VK_KHR_portability_subset") == 0;
+    });
+
+    if (it != properties.end()) {
+      // VUID-VkDeviceCreateInfo-pProperties-04451
+      device_extension.emplace_back("VK_KHR_portability_subset");
+    }
+  }
+
+  VkDeviceCreateInfo create_info{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
+  create_info.pQueueCreateInfos = queue_create_info.data();
+  create_info.queueCreateInfoCount = static_cast<uint32_t>(queue_create_info.size());
+  create_info.pEnabledFeatures = &device_features;
+  create_info.enabledExtensionCount = static_cast<uint32_t>(device_extension.size());
+  create_info.ppEnabledExtensionNames = device_extension.data();
+
+  if (vkCreateDevice(m_phy_device, &create_info, nullptr, &m_device) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed create logical device");
+    exit(-1);
+  }
+
+  vkGetDeviceQueue(m_device, m_graphic_queue_index, 0, &m_graphic_queue);
+  vkGetDeviceQueue(m_device, m_present_queue_index, 0, &m_present_queue);
 }
 
 }  // namespace hexgon
