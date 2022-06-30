@@ -41,6 +41,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   void InitVkSurface();
   void PickPhysicalDevice();
   void CreateVkDevice();
+  void CreateVkSwapchain();
 
  private:
   void* m_window;
@@ -53,6 +54,9 @@ class VulkanGraphicsContext : public GraphicsContext {
   VkDevice m_device = VK_NULL_HANDLE;
   VkQueue m_graphic_queue = VK_NULL_HANDLE;
   VkQueue m_present_queue = VK_NULL_HANDLE;
+  VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+  VkFormat m_swapchain_format = {};
+  VkExtent2D m_swapchain_extent = {};
 };
 
 }  // namespace hexgon

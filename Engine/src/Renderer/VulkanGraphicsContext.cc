@@ -32,6 +32,31 @@
 
 namespace hexgon {
 
+static VkFormat choose_swapchain_format(VkPhysicalDevice phy_device, VkSurfaceKHR surface) {
+  uint32_t format_count = 0;
+  vkGetPhysicalDeviceSurfaceFormatsKHR(phy_device, surface, &format_count, nullptr);
+
+  if (format_count == 0) {
+    HEX_CORE_ERROR("failed get vulkan device format info");
+    return VK_FORMAT_UNDEFINED;
+  }
+
+  std::vector<VkSurfaceFormatKHR> formats{format_count};
+  vkGetPhysicalDeviceSurfaceFormatsKHR(phy_device, surface, &format_count, formats.data());
+
+  if (format_count == 1 && formats[0].format == VK_FORMAT_UNDEFINED) {
+    return VK_FORMAT_R8G8B8A8_UNORM;
+  }
+
+  for (auto format : formats) {
+    if (format.format == VK_FORMAT_R8G8B8A8_UNORM && format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
+      return format.format;
+    }
+  }
+
+  return formats[0].format;
+}
+
 VulkanGraphicsContext::VulkanGraphicsContext(void* window) : GraphicsContext(), m_window(window) {}
 
 VulkanGraphicsContext::~VulkanGraphicsContext() {}
@@ -41,6 +66,7 @@ void VulkanGraphicsContext::Init() {
   InitVkSurface();
   PickPhysicalDevice();
   CreateVkDevice();
+  CreateVkSwapchain();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -193,6 +219,45 @@ void VulkanGraphicsContext::CreateVkDevice() {
 
   vkGetDeviceQueue(m_device, m_graphic_queue_index, 0, &m_graphic_queue);
   vkGetDeviceQueue(m_device, m_present_queue_index, 0, &m_present_queue);
+}
+
+void VulkanGraphicsContext::CreateVkSwapchain() {
+  m_swapchain_format = choose_swapchain_format(m_phy_device, m_vk_surface);
+
+  VkSurfaceCapabilitiesKHR surface_caps;
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_phy_device, m_vk_surface, &surface_caps);
+
+  m_swapchain_extent = surface_caps.currentExtent;
+
+  VkCompositeAlphaFlagBitsKHR surface_composite;
+  if (surface_caps.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  } else if (surface_caps.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+  } else if (surface_caps.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+  } else {
+    surface_composite = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+  }
+
+  VkSwapchainCreateInfoKHR create_info{VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR};
+  create_info.surface = m_vk_surface;
+  create_info.minImageCount = std::max(uint32_t(2), surface_caps.minImageCount);
+  create_info.imageFormat = m_swapchain_format;
+  create_info.imageExtent = surface_caps.currentExtent;
+  create_info.imageArrayLayers = 1;
+  create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  create_info.queueFamilyIndexCount = 1;
+  create_info.pQueueFamilyIndices = (uint32_t*)&m_present_queue_index;
+  create_info.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  create_info.compositeAlpha = surface_composite;
+  create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+  create_info.oldSwapchain = nullptr;
+
+  if (vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to create vulkan swap chain");
+    exit(-1);
+  }
 }
 
 }  // namespace hexgon
