@@ -24,10 +24,18 @@
 #include <vulkan/vulkan.h>
 
 #include <Hexgon/GraphicsContext.hpp>
+#include <vector>
 
 namespace hexgon {
 
 class VulkanGraphicsContext : public GraphicsContext {
+  struct ImageWrapper {
+    VkImage image = {};
+    VkImageView image_view = {};
+    VkDeviceMemory memory = {};
+    VkFormat format = {};
+  };
+
  public:
   VulkanGraphicsContext(void* window);
   ~VulkanGraphicsContext() override;
@@ -42,6 +50,9 @@ class VulkanGraphicsContext : public GraphicsContext {
   void PickPhysicalDevice();
   void CreateVkDevice();
   void CreateVkSwapchain();
+  void CreateSwapchainImageViews();
+
+  uint32_t GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties);
 
  private:
   void* m_window;
@@ -57,6 +68,9 @@ class VulkanGraphicsContext : public GraphicsContext {
   VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
   VkFormat m_swapchain_format = {};
   VkExtent2D m_swapchain_extent = {};
+  std::vector<VkImageView> m_swapchain_views = {};
+  std::vector<ImageWrapper> m_sampler_images = {};
+  std::vector<ImageWrapper> m_depth_images = {};
 };
 
 }  // namespace hexgon

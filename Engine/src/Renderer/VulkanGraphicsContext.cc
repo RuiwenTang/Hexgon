@@ -57,6 +57,38 @@ static VkFormat choose_swapchain_format(VkPhysicalDevice phy_device, VkSurfaceKH
   return formats[0].format;
 }
 
+static VkSampleCountFlagBits get_max_usable_sample_count(VkPhysicalDeviceProperties props) {
+  VkSampleCountFlags counts = props.limits.framebufferColorSampleCounts & props.limits.framebufferDepthSampleCounts;
+
+  if (counts & VK_SAMPLE_COUNT_64_BIT) return VK_SAMPLE_COUNT_64_BIT;
+  if (counts & VK_SAMPLE_COUNT_32_BIT) return VK_SAMPLE_COUNT_32_BIT;
+  if (counts & VK_SAMPLE_COUNT_16_BIT) return VK_SAMPLE_COUNT_16_BIT;
+  if (counts & VK_SAMPLE_COUNT_8_BIT) return VK_SAMPLE_COUNT_8_BIT;
+  if (counts & VK_SAMPLE_COUNT_4_BIT) return VK_SAMPLE_COUNT_4_BIT;
+  if (counts & VK_SAMPLE_COUNT_2_BIT) return VK_SAMPLE_COUNT_2_BIT;
+
+  return VK_SAMPLE_COUNT_1_BIT;
+}
+
+static bool get_support_depth_format(VkPhysicalDevice phy_device, VkFormat* out_format) {
+  std::vector<VkFormat> depth_formats{
+      VK_FORMAT_D32_SFLOAT_S8_UINT,
+      VK_FORMAT_D24_UNORM_S8_UINT,
+      VK_FORMAT_D16_UNORM_S8_UINT,
+  };
+
+  for (auto& format : depth_formats) {
+    VkFormatProperties props;
+    vkGetPhysicalDeviceFormatProperties(phy_device, format, &props);
+    if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) {
+      *out_format = format;
+      return true;
+    }
+  }
+
+  return false;
+}
+
 VulkanGraphicsContext::VulkanGraphicsContext(void* window) : GraphicsContext(), m_window(window) {}
 
 VulkanGraphicsContext::~VulkanGraphicsContext() {}
@@ -67,6 +99,7 @@ void VulkanGraphicsContext::Init() {
   PickPhysicalDevice();
   CreateVkDevice();
   CreateVkSwapchain();
+  CreateSwapchainImageViews();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -257,6 +290,166 @@ void VulkanGraphicsContext::CreateVkSwapchain() {
   if (vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to create vulkan swap chain");
     exit(-1);
+  }
+}
+
+void VulkanGraphicsContext::CreateSwapchainImageViews() {
+  uint32_t image_count = 0;
+  vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, nullptr);
+
+  std::vector<VkImage> images{image_count};
+
+  vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, images.data());
+
+  VkSampleCountFlagBits sample_count = get_max_usable_sample_count(m_phy_props);
+
+  m_sampler_images.resize(image_count);
+  for (size_t i = 0; i < m_sampler_images.size(); i++) {
+    VkImageCreateInfo img_create_info{VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO};
+    img_create_info.imageType = VK_IMAGE_TYPE_2D;
+    img_create_info.format = m_swapchain_format;
+    img_create_info.extent = {m_swapchain_extent.width, m_swapchain_extent.height, 1};
+    img_create_info.mipLevels = 1;
+    img_create_info.arrayLayers = 1;
+    img_create_info.tiling = VK_IMAGE_TILING_OPTIMAL;
+    img_create_info.samples = sample_count;
+    img_create_info.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
+    img_create_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    if (vkCreateImage(m_device, &img_create_info, nullptr, &m_sampler_images[i].image) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed create swapchain image with MSAA");
+      exit(-1);
+    }
+
+    VkMemoryRequirements mem_reqs{};
+    vkGetImageMemoryRequirements(m_device, m_sampler_images[i].image, &mem_reqs);
+
+    VkMemoryAllocateInfo mem_alloc{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};
+    mem_alloc.allocationSize = mem_reqs.size;
+    mem_alloc.memoryTypeIndex = GetMemroyType(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    if (vkAllocateMemory(m_device, &mem_alloc, nullptr, &m_sampler_images[i].memory) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed allocate memory for swapchain image with MSAA");
+      exit(-1);
+    }
+
+    if (vkBindImageMemory(m_device, m_sampler_images[i].image, m_sampler_images[i].memory, 0) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Faield bind memory for swapchain image");
+      exit(-1);
+    }
+
+    VkImageViewCreateInfo view_create_info{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+    view_create_info.image = m_sampler_images[i].image;
+    view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    view_create_info.format = m_swapchain_format;
+    view_create_info.components.r = VK_COMPONENT_SWIZZLE_R;
+    view_create_info.components.g = VK_COMPONENT_SWIZZLE_G;
+    view_create_info.components.b = VK_COMPONENT_SWIZZLE_B;
+    view_create_info.components.a = VK_COMPONENT_SWIZZLE_A;
+    view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    view_create_info.subresourceRange.levelCount = 1;
+    view_create_info.subresourceRange.layerCount = 1;
+
+    if (vkCreateImageView(m_device, &view_create_info, nullptr, &m_sampler_images[i].image_view) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed create imageview for swapchain image");
+      exit(-1);
+    }
+
+    m_sampler_images[i].format = m_swapchain_format;
+  }
+
+  m_swapchain_views.resize(image_count);
+  for (size_t i = 0; i < m_swapchain_views.size(); i++) {
+    VkImageViewCreateInfo create_info{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+    create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    create_info.image = images[i];
+    create_info.format = m_swapchain_format;
+    create_info.subresourceRange.baseMipLevel = 0;
+    create_info.subresourceRange.levelCount = 1;
+    create_info.subresourceRange.baseArrayLayer = 0;
+    create_info.subresourceRange.layerCount = 1;
+    create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+    if (vkCreateImageView(m_device, &create_info, nullptr, &m_swapchain_views[i]) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create swap chain image view");
+      exit(-1);
+    }
+  }
+
+  VkFormat depth_stencil_format;
+  if (!get_support_depth_format(m_phy_device, &depth_stencil_format)) {
+    HEX_CORE_ERROR("Failed find format support depth and stencil buffer");
+    exit(-1);
+  }
+
+  m_depth_images.resize(image_count);
+
+  VkImageCreateInfo depth_image_create_info{VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO};
+  depth_image_create_info.imageType = VK_IMAGE_TYPE_2D;
+  depth_image_create_info.format = depth_stencil_format;
+  depth_image_create_info.extent = {m_swapchain_extent.width, m_swapchain_extent.height, 1};
+  depth_image_create_info.mipLevels = 1;
+  depth_image_create_info.arrayLayers = 1;
+  depth_image_create_info.samples = sample_count;
+  depth_image_create_info.tiling = VK_IMAGE_TILING_OPTIMAL;
+  depth_image_create_info.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+  for (size_t i = 0; i < m_depth_images.size(); i++) {
+    if (vkCreateImage(m_device, &depth_image_create_info, nullptr, &m_depth_images[i].image) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed create depth stencil buffer");
+      exit(-1);
+    }
+
+    VkMemoryRequirements mem_reqs{};
+    vkGetImageMemoryRequirements(m_device, m_depth_images[i].image, &mem_reqs);
+
+    VkMemoryAllocateInfo mem_alloc{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};
+    mem_alloc.allocationSize = mem_reqs.size;
+    mem_alloc.memoryTypeIndex = GetMemroyType(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    if (vkAllocateMemory(m_device, &mem_alloc, nullptr, &m_depth_images[i].memory) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to allocate depth stencil buffer memory");
+      exit(-1);
+    }
+
+    if (vkBindImageMemory(m_device, m_depth_images[i].image, m_depth_images[i].memory, 0) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to bind depth stencil buffer memory");
+      exit(-1);
+    }
+
+    VkImageViewCreateInfo image_view_create_info{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+    image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    image_view_create_info.image = m_depth_images[i].image;
+    image_view_create_info.format = depth_stencil_format;
+    image_view_create_info.subresourceRange.baseMipLevel = 0;
+    image_view_create_info.subresourceRange.levelCount = 1;
+    image_view_create_info.subresourceRange.baseArrayLayer = 0;
+    image_view_create_info.subresourceRange.layerCount = 1;
+    image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+
+    if (vkCreateImageView(m_device, &image_view_create_info, nullptr, &m_depth_images[i].image_view) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create image view for depth stencil buffer");
+      exit(-1);
+    }
+
+    m_depth_images[i].format = depth_stencil_format;
+  }
+
+  HEX_CORE_INFO("Finish create all swapchain images for [ {} ] buffers", image_count);
+}
+
+uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties) {
+  VkPhysicalDeviceMemoryProperties memory_props;
+  vkGetPhysicalDeviceMemoryProperties(m_phy_device, &memory_props);
+
+  for (uint32_t i = 0; i < memory_props.memoryTypeCount; i++) {
+    if ((type_bits & 1) == 1) {
+      if ((memory_props.memoryTypes[i].propertyFlags & properties) == properties) {
+        return i;
+      }
+    }
+
+    type_bits >>= 1;
   }
 }
 
