@@ -100,6 +100,8 @@ void VulkanGraphicsContext::Init() {
   CreateVkDevice();
   CreateVkSwapchain();
   CreateSwapchainImageViews();
+  CreateCommandPool();
+  CreateCommandBuffer();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -436,6 +438,32 @@ void VulkanGraphicsContext::CreateSwapchainImageViews() {
   }
 
   HEX_CORE_INFO("Finish create all swapchain images for [ {} ] buffers", image_count);
+}
+
+void VulkanGraphicsContext::CreateCommandPool() {
+  VkCommandPoolCreateInfo create_info{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
+  create_info.queueFamilyIndex = m_graphic_queue_index;
+  create_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+  if (vkCreateCommandPool(m_device, &create_info, nullptr, &m_cmd_pool) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed create command pool");
+    exit(-1);
+  }
+}
+
+void VulkanGraphicsContext::CreateCommandBuffer() {
+  m_cmds.resize(m_swapchain_views.size());
+
+  VkCommandBufferAllocateInfo allocate_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
+  allocate_info.commandPool = m_cmd_pool;
+  allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocate_info.commandBufferCount = static_cast<uint32_t>(m_cmds.size());
+
+  if (vkAllocateCommandBuffers(m_device, &allocate_info, m_cmds.data()) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to allocate command buffers");
+    exit(-1);
+  }
+
+  HEX_CORE_INFO("Creat [ {} ] command buffers", m_cmds.size());
 }
 
 uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties) {
