@@ -56,6 +56,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   void CreateSwapchainImageViews();
   void CreateCommandPool();
   void CreateCommandBuffer();
+  void CreateSyncObjects();
 
   uint32_t GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties);
 
@@ -78,6 +79,9 @@ class VulkanGraphicsContext : public GraphicsContext {
   std::vector<ImageWrapper> m_depth_images = {};
   VkCommandPool m_cmd_pool = {};
   std::vector<VkCommandBuffer> m_cmds = {};
+  std::vector<VkFence> m_cmd_fences = {};
+  std::vector<VkSemaphore> m_present_semaphore = {};
+  std::vector<VkSemaphore> m_render_semaphore = {};
 };
 
 }  // namespace hexgon

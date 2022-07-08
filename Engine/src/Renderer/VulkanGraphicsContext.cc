@@ -102,6 +102,7 @@ void VulkanGraphicsContext::Init() {
   CreateSwapchainImageViews();
   CreateCommandPool();
   CreateCommandBuffer();
+  CreateSyncObjects();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -464,6 +465,38 @@ void VulkanGraphicsContext::CreateCommandBuffer() {
   }
 
   HEX_CORE_INFO("Creat [ {} ] command buffers", m_cmds.size());
+}
+
+void VulkanGraphicsContext::CreateSyncObjects() {
+  VkFenceCreateInfo create_info{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+  create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+  m_cmd_fences.resize(m_cmds.size());
+
+  for (size_t i = 0; i < m_cmd_fences.size(); i++) {
+    if (vkCreateFence(m_device, &create_info, nullptr, &m_cmd_fences[i]) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create fence at index : {}", i);
+      exit(-1);
+    }
+  }
+
+  m_present_semaphore.resize(m_cmds.size());
+  m_render_semaphore.resize(m_cmds.size());
+
+  VkSemaphoreCreateInfo semaphore_create_info{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+
+  for (size_t i = 0; i < m_present_semaphore.size(); i++) {
+    if (vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_present_semaphore[i]) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create present semaphore");
+      exit(-1);
+    }
+  }
+  for (size_t i = 0; i < m_render_semaphore.size(); i++) {
+    if (vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_render_semaphore[i]) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create render semaphore");
+      exit(-1);
+    }
+  }
 }
 
 uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties) {
