@@ -41,6 +41,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Event.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp

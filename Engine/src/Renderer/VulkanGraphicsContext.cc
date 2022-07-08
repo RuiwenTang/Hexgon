@@ -479,6 +479,8 @@ uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryProper
 
     type_bits >>= 1;
   }
+
+  return 0;
 }
 
 }  // namespace hexgon

@@ -21,6 +21,9 @@
  *   SOFTWARE.
  */
 
+#ifndef ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_
+#define ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_
+
 #include <vulkan/vulkan.h>
 
 #include <Hexgon/GraphicsContext.hpp>
@@ -78,3 +81,5 @@ class VulkanGraphicsContext : public GraphicsContext {
 };
 
 }  // namespace hexgon
+
+#endif  // ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_
