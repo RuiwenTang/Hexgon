@@ -89,6 +89,7 @@ class GLFWWindowImpl : public Window {
     std::unique_ptr<KeyEvent> event;
     switch (action) {
       case GLFW_PRESS:
+      case GLFW_REPEAT:
         event = std::make_unique<KeyPressEvent>(KeyCode::Code(key));
         break;
       case GLFW_RELEASE:
