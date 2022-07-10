@@ -45,8 +45,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VulkanGraphicsContext.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VulkanGraphicsContext.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VK/VulkanGraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VK/VulkanGraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Window.cc
 )
 
