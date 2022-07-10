@@ -23,7 +23,7 @@
 
 #include <Hexgon/GraphicsContext.hpp>
 
-#include "Renderer/VulkanGraphicsContext.hpp"
+#include "Renderer/VK/VulkanGraphicsContext.hpp"
 
 namespace hexgon {
 std::unique_ptr<GraphicsContext> GraphicsContext::Create(void* window, API api) {

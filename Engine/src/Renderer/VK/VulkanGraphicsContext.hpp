@@ -65,6 +65,7 @@ class VulkanGraphicsContext : public GraphicsContext {
  private:
   void* m_window;
   VkInstance m_vk_instance = VK_NULL_HANDLE;
+  VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
   VkSurfaceKHR m_vk_surface = VK_NULL_HANDLE;
   VkPhysicalDevice m_phy_device = VK_NULL_HANDLE;
   VkPhysicalDeviceProperties m_phy_props = {};

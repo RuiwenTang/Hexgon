@@ -31,7 +31,98 @@
 
 #include "LogPrivate.hpp"
 
+#define HEX_ENABLE_VK_DEBUG 1
+
+#ifdef HEX_ENABLE_VK_DEBUG
+static bool g_enable_validation = true;
+static const char* g_validation_name = "VK_LAYER_KHRONOS_validation";
+#else
+static bool g_enable_validation = false;
+#endif
+
 namespace hexgon {
+
+#ifdef HEX_ENABLE_VK_DEBUG
+
+static VkResult create_debug_utils_messenger_ext(VkInstance instance,
+                                                 const VkDebugUtilsMessengerCreateInfoEXT* p_create_info,
+                                                 const VkAllocationCallbacks* p_allocator,
+                                                 VkDebugUtilsMessengerEXT* p_debug_messenger) {
+  auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+
+  if (func != nullptr) {
+    return func(instance, p_create_info, p_allocator, p_debug_messenger);
+  } else {
+    return VK_ERROR_EXTENSION_NOT_PRESENT;
+  }
+}
+
+static void destroy_debug_utils_messenger_ext(VkInstance instance, VkDebugUtilsMessengerEXT debug_messenger,
+                                              const VkAllocationCallbacks* p_allocator) {
+  auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+
+  if (func) {
+    func(instance, debug_messenger, p_allocator);
+  }
+}
+
+static bool check_validation_layer_support() {
+  uint32_t layer_count;
+  vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
+
+  std::vector<VkLayerProperties> layers{layer_count};
+  vkEnumerateInstanceLayerProperties(&layer_count, layers.data());
+
+  for (auto const& property : layers) {
+    if (std::strcmp(property.layerName, g_validation_name) == 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                     VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                     void* pUserData) {
+  auto logger = spdlog::default_logger();
+  auto level = spdlog::level::debug;
+
+  if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+    level = spdlog::level::err;
+  } else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+    level = spdlog::level::warn;
+  }
+
+  logger->log(level, "{} Code {} : {}", pCallbackData->pMessageIdName, pCallbackData->messageIdNumber,
+              pCallbackData->pMessage);
+  if (0 < pCallbackData->queueLabelCount) {
+    logger->log(level, "\t Queue Labels:");
+    for (uint32_t i = 0; i < pCallbackData->queueLabelCount; i++) {
+      logger->log(level, "\t\t labelName = [ {} ]", pCallbackData->pQueueLabels[i].pLabelName);
+    }
+  }
+
+  if (0 < pCallbackData->cmdBufLabelCount) {
+    logger->log(level, "\t CMD labels: \n");
+    for (uint32_t i = 0; i < pCallbackData->cmdBufLabelCount; i++) {
+      logger->log(level, "\t\t labelName = [ {} ]", pCallbackData->pCmdBufLabels[i].pLabelName);
+    }
+  }
+
+  if (0 < pCallbackData->objectCount) {
+    for (uint32_t i = 0; i < pCallbackData->objectCount; i++) {
+      logger->log(level, "\t Object [{}]  \t\t objectType <{}> handle [{:X}] name : <{}>", i + 1,
+                  pCallbackData->pObjects[i].objectType, pCallbackData->pObjects[i].objectHandle,
+                  pCallbackData->pObjects[i].pObjectName ? pCallbackData->pObjects[i].pObjectName : "unknown");
+    }
+  }
+
+  return VK_FALSE;
+}
+
+#endif
 
 static VkFormat choose_swapchain_format(VkPhysicalDevice phy_device, VkSurfaceKHR surface) {
   uint32_t format_count = 0;
@@ -201,6 +292,11 @@ void VulkanGraphicsContext::SwapBuffers() {
 }
 
 void VulkanGraphicsContext::InitVkInstance() {
+  if (g_enable_validation && !check_validation_layer_support()) {
+    HEX_CORE_ERROR("validation layers requested but not available!");
+    exit(-1);
+  }
+
   VkApplicationInfo app_info{VK_STRUCTURE_TYPE_APPLICATION_INFO};
   app_info.pApplicationName = "Hexgon Engine";
   app_info.pEngineName = "Hexgon";
@@ -213,14 +309,44 @@ void VulkanGraphicsContext::InitVkInstance() {
   uint32_t glfw_extension_count = 0;
   const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
-  create_info.enabledExtensionCount = glfw_extension_count;
-  create_info.ppEnabledExtensionNames = glfw_extensions;
+  std::vector<const char*> extension_names{glfw_extension_count};
+  for (uint32_t i = 0; i < glfw_extension_count; i++) {
+    extension_names[i] = glfw_extensions[i];
+  }
+
+  if (g_enable_validation) {
+    extension_names.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+    create_info.enabledLayerCount = 1;
+    create_info.ppEnabledLayerNames = &g_validation_name;
+  }
+
+  create_info.enabledExtensionCount = extension_names.size();
+  create_info.ppEnabledExtensionNames = extension_names.data();
 
   VkResult ret = vkCreateInstance(&create_info, nullptr, &m_vk_instance);
 
   if (ret != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed create Vulkan instance");
     exit(-1);
+  }
+
+  if (g_enable_validation) {
+    VkDebugUtilsMessengerCreateInfoEXT debug_create_info{VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT};
+    debug_create_info.messageSeverity =
+        //   VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    debug_create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                    VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                    VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    debug_create_info.pfnUserCallback = debug_callback;
+#ifdef HEX_ENABLE_VK_DEBUG
+    if (create_debug_utils_messenger_ext(m_vk_instance, &debug_create_info, nullptr, &m_debug_messenger) !=
+        VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to set up debug messenger!");
+      exit(-1);
+    }
+#endif
   }
 
   HEX_CORE_INFO("Create VkInstance success");
