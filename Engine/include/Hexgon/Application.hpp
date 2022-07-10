@@ -42,6 +42,7 @@ class HEX_API Application final : public WindowClient {
 
   void OnWindowResize(int32_t width, int32_t height) override;
   void OnWindowClose() override;
+  void OnWindowUpdate() override;
   void OnKeyEvent(KeyEvent* event) override;
 
  private:

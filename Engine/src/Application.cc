@@ -57,6 +57,8 @@ void Application::OnWindowResize(int32_t width, int32_t height) {
 
 void Application::OnWindowClose() { m_window->Shutdown(); }
 
+void Application::OnWindowUpdate() {}
+
 void Application::OnKeyEvent(KeyEvent* event) { HEX_CORE_INFO("On Key event : {}", event->GetName()); }
 
 }  // namespace hexgon

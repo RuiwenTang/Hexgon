@@ -16,6 +16,9 @@ add_subdirectory(third_party/spdlog)
 # glfw
 add_subdirectory(third_party/glfw)
 
+# glm
+add_subdirectory(third_party/glm)
+
 # engine
 add_subdirectory(Engine)
 

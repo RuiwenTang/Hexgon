@@ -108,7 +108,97 @@ void VulkanGraphicsContext::Init() {
   CreateFramebuffer();
 }
 
-void VulkanGraphicsContext::SwapBuffers() {}
+void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
+  VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
+                                          m_present_semaphore[m_frame_index], nullptr, &m_current_frame);
+
+  if (m_frame_index != m_current_frame) {
+    HEX_CORE_ERROR("frame index is < {} > but current frame is < {} >", m_frame_index, m_current_frame);
+  }
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+    HEX_CORE_ERROR("need to handle window resize of recreate swap chain!");
+    exit(-1);
+  }
+
+  VkCommandBuffer current_cmd = m_cmds[m_frame_index];
+
+  vkResetCommandBuffer(current_cmd, 0);
+
+  VkCommandBufferBeginInfo cmd_begin_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  cmd_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  if (vkBeginCommandBuffer(current_cmd, &cmd_begin_info) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to begin cmd buffer at index : {}", m_current_frame);
+    exit(-1);
+  }
+
+  std::vector<VkClearValue> clear_values{3};
+  clear_values[0].color = {clear_color.x, clear_color.y, clear_color.z, clear_color.w};
+  clear_values[1].depthStencil = {0.f, 0};
+  clear_values[2].color = {clear_color.x, clear_color.y, clear_color.z, clear_color.w};
+
+  VkRenderPassBeginInfo render_pass_begin_info{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+  render_pass_begin_info.renderPass = m_render_pass;
+  render_pass_begin_info.framebuffer = m_framebuffers[m_current_frame];
+  render_pass_begin_info.renderArea.offset = {0, 0};
+  render_pass_begin_info.renderArea.extent = m_swapchain_extent;
+  render_pass_begin_info.clearValueCount = clear_values.size();
+  render_pass_begin_info.pClearValues = clear_values.data();
+
+  vkCmdBeginRenderPass(current_cmd, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VulkanGraphicsContext::SwapBuffers() {
+  VkCommandBuffer current_cmd = m_cmds[m_frame_index];
+  vkCmdEndRenderPass(current_cmd);
+
+  if (vkEndCommandBuffer(current_cmd) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to end cmd buffer at index : {}", m_frame_index);
+    exit(-1);
+  }
+
+  VkPipelineStageFlags submit_pipeline_stages =
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+
+  VkSubmitInfo submit_info{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  submit_info.pWaitDstStageMask = &submit_pipeline_stages;
+  submit_info.waitSemaphoreCount = 1;
+  submit_info.pWaitSemaphores = &m_present_semaphore[m_frame_index];
+  submit_info.signalSemaphoreCount = 1;
+  submit_info.pSignalSemaphores = &m_render_semaphore[m_frame_index];
+  submit_info.commandBufferCount = 1;
+  submit_info.pCommandBuffers = &current_cmd;
+
+  vkResetFences(m_device, 1, &m_cmd_fences[m_frame_index]);
+
+  if (vkQueueSubmit(m_present_queue, 1, &submit_info, m_cmd_fences[m_frame_index]) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to submit command buffer!");
+    exit(-1);
+  }
+
+  if (vkWaitForFences(m_device, 1, &m_cmd_fences[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max()) !=
+      VK_SUCCESS) {
+    HEX_CORE_ERROR("Error in wait fences");
+    exit(-1);
+  }
+
+  VkPresentInfoKHR present_info{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
+  present_info.swapchainCount = 1;
+  present_info.pSwapchains = &m_swapchain;
+  present_info.pImageIndices = &m_current_frame;
+  present_info.pWaitSemaphores = &m_render_semaphore[m_current_frame];
+  present_info.waitSemaphoreCount = 1;
+
+  VkResult result = vkQueuePresentKHR(m_present_queue, &present_info);
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+    HEX_CORE_ERROR("need to handle window resize of recreate swap chain!");
+    exit(-1);
+  }
+
+  m_frame_index++;
+  m_frame_index = m_frame_index % m_swapchain_views.size();
+}
 
 void VulkanGraphicsContext::InitVkInstance() {
   VkApplicationInfo app_info{VK_STRUCTURE_TYPE_APPLICATION_INFO};

@@ -24,8 +24,8 @@
 #ifndef ENGINE_INCLUDE_HEXGON_GRAPHICS_CONTEXT_HPP_
 #define ENGINE_INCLUDE_HEXGON_GRAPHICS_CONTEXT_HPP_
 
+#include <glm/glm.hpp>
 #include <memory>
-
 namespace hexgon {
 
 class GraphicsContext {
@@ -35,6 +35,7 @@ class GraphicsContext {
   virtual ~GraphicsContext() = default;
 
   virtual void Init() = 0;
+  virtual void BeginFrame(glm::vec4 const& clear_color) = 0;
   virtual void SwapBuffers() = 0;
 
   static std::unique_ptr<GraphicsContext> Create(void* window, API api);

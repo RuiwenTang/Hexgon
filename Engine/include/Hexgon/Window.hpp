@@ -26,6 +26,7 @@
 
 #include <Hexgon/GraphicsContext.hpp>
 #include <Hexgon/Macro.hpp>
+#include <glm/glm.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,6 +41,7 @@ class HEX_API WindowClient {
 
   virtual void OnWindowResize(int32_t width, int32_t height) = 0;
   virtual void OnWindowClose() = 0;
+  virtual void OnWindowUpdate() = 0;
   virtual void OnKeyEvent(KeyEvent* event) = 0;
 };
 
@@ -67,10 +69,17 @@ class HEX_API Window {
 
   void AddClient(WindowClient* client) { m_clients.emplace_back(client); }
 
+  GraphicsContext* GetContext() const { return m_context.get(); }
+
+  void SetClearColor(glm::vec4 const& color) { m_clear_color = color; }
+
+  glm::vec4 const& GetClearColor() const { return m_clear_color; }
+
  private:
   std::string m_title;
   uint32_t m_width = 0;
   uint32_t m_height = 0;
+  glm::vec4 m_clear_color = {0.f, 0.f, 0.f, 0.f};
 
  protected:
   std::vector<WindowClient*> m_clients = {};

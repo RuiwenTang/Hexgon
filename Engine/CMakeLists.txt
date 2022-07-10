@@ -52,4 +52,5 @@ target_sources(Hexgon
 
 target_link_libraries(Hexgon spdlog::spdlog)
 target_link_libraries(Hexgon glfw)
+target_link_libraries(Hexgon glm::glm)
 target_link_libraries(Hexgon Vulkan::Vulkan)

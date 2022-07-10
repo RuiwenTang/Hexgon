@@ -44,7 +44,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   ~VulkanGraphicsContext() override;
 
   void Init() override;
-
+  void BeginFrame(glm::vec4 const& clear_color) override;
   void SwapBuffers() override;
 
  private:
@@ -87,6 +87,8 @@ class VulkanGraphicsContext : public GraphicsContext {
   std::vector<VkSemaphore> m_render_semaphore = {};
   VkRenderPass m_render_pass = {};
   std::vector<VkFramebuffer> m_framebuffers = {};
+  uint32_t m_current_frame = 0;
+  uint32_t m_frame_index = 0;
 };
 
 }  // namespace hexgon

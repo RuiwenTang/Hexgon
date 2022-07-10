@@ -59,6 +59,12 @@ class GLFWWindowImpl : public Window {
     while (m_running && !glfwWindowShouldClose(m_glfw_window)) {
       glfwPollEvents();
 
+      m_context->BeginFrame(GetClearColor());
+
+      for (auto client : m_clients) {
+        client->OnWindowUpdate();
+      }
+
       m_context->SwapBuffers();
     }
   }
