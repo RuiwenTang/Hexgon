@@ -105,6 +105,7 @@ void VulkanGraphicsContext::Init() {
   CreateCommandBuffer();
   CreateSyncObjects();
   CreateRenderPass();
+  CreateFramebuffer();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -571,6 +572,31 @@ void VulkanGraphicsContext::CreateRenderPass() {
   if (vkCreateRenderPass(m_device, &create_info, nullptr, &m_render_pass) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to create render pass!");
     exit(-1);
+  }
+}
+
+void VulkanGraphicsContext::CreateFramebuffer() {
+  m_framebuffers.resize(m_swapchain_views.size());
+
+  for (size_t i = 0; i < m_framebuffers.size(); i++) {
+    std::array<VkImageView, 3> attachments = {
+        m_sampler_images[i].image_view,
+        m_depth_images[i].image_view,
+        m_swapchain_views[i],
+    };
+
+    VkFramebufferCreateInfo create_info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
+    create_info.renderPass = m_render_pass;
+    create_info.attachmentCount = attachments.size();
+    create_info.pAttachments = attachments.data();
+    create_info.width = m_swapchain_extent.width;
+    create_info.height = m_swapchain_extent.height;
+    create_info.layers = 1;
+
+    if (vkCreateFramebuffer(m_device, &create_info, nullptr, &m_framebuffers[i]) != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create frame buffer");
+      exit(-1);
+    }
   }
 }
 

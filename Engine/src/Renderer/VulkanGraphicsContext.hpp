@@ -58,6 +58,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   void CreateCommandBuffer();
   void CreateSyncObjects();
   void CreateRenderPass();
+  void CreateFramebuffer();
 
   uint32_t GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties);
 
@@ -85,6 +86,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   std::vector<VkSemaphore> m_present_semaphore = {};
   std::vector<VkSemaphore> m_render_semaphore = {};
   VkRenderPass m_render_pass = {};
+  std::vector<VkFramebuffer> m_framebuffers = {};
 };
 
 }  // namespace hexgon
