@@ -57,6 +57,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   void CreateCommandPool();
   void CreateCommandBuffer();
   void CreateSyncObjects();
+  void CreateRenderPass();
 
   uint32_t GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties);
 
@@ -73,6 +74,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   VkQueue m_present_queue = VK_NULL_HANDLE;
   VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
   VkFormat m_swapchain_format = {};
+  VkSampleCountFlagBits m_sample_count = VK_SAMPLE_COUNT_1_BIT;
   VkExtent2D m_swapchain_extent = {};
   std::vector<VkImageView> m_swapchain_views = {};
   std::vector<ImageWrapper> m_sampler_images = {};
@@ -82,6 +84,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   std::vector<VkFence> m_cmd_fences = {};
   std::vector<VkSemaphore> m_present_semaphore = {};
   std::vector<VkSemaphore> m_render_semaphore = {};
+  VkRenderPass m_render_pass = {};
 };
 
 }  // namespace hexgon

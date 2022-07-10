@@ -25,6 +25,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include <array>
 #include <set>
 #include <vector>
 
@@ -103,6 +104,7 @@ void VulkanGraphicsContext::Init() {
   CreateCommandPool();
   CreateCommandBuffer();
   CreateSyncObjects();
+  CreateRenderPass();
 }
 
 void VulkanGraphicsContext::SwapBuffers() {}
@@ -437,7 +439,7 @@ void VulkanGraphicsContext::CreateSwapchainImageViews() {
 
     m_depth_images[i].format = depth_stencil_format;
   }
-
+  m_sample_count = sample_count;
   HEX_CORE_INFO("Finish create all swapchain images for [ {} ] buffers", image_count);
 }
 
@@ -496,6 +498,79 @@ void VulkanGraphicsContext::CreateSyncObjects() {
       HEX_CORE_ERROR("Failed to create render semaphore");
       exit(-1);
     }
+  }
+}
+
+void VulkanGraphicsContext::CreateRenderPass() {
+  std::array<VkAttachmentDescription, 3> attachments = {};
+  // color attachment
+  attachments[0].format = m_swapchain_format;
+  attachments[0].samples = m_sample_count;
+  attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  // depth stencil attachment
+  attachments[1].format = m_depth_images[0].format;
+  attachments[1].samples = m_sample_count;
+  attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  // color resolve attachment
+  attachments[2].format = m_swapchain_format;
+  attachments[2].samples = VK_SAMPLE_COUNT_1_BIT;
+  attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attachments[2].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attachments[2].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attachments[2].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attachments[2].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  attachments[2].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+  VkAttachmentReference color_reference{};
+  color_reference.attachment = 0;
+  color_reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  VkAttachmentReference depth_stencil_reference{};
+  depth_stencil_reference.attachment = 1;
+  depth_stencil_reference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  VkAttachmentReference resolve_reference{};
+  resolve_reference.attachment = 2;
+  resolve_reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  VkSubpassDescription subpass{};
+  subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subpass.colorAttachmentCount = 1;
+  subpass.pColorAttachments = &color_reference;
+  subpass.pDepthStencilAttachment = &depth_stencil_reference;
+  subpass.pResolveAttachments = &resolve_reference;
+
+  VkSubpassDependency subpass_deps{};
+  subpass_deps.srcSubpass = VK_SUBPASS_EXTERNAL;
+  subpass_deps.dstSubpass = 0;
+  subpass_deps.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  subpass_deps.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  subpass_deps.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+  subpass_deps.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  subpass_deps.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+  VkRenderPassCreateInfo create_info{VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO};
+  create_info.attachmentCount = static_cast<uint32_t>(attachments.size());
+  create_info.pAttachments = attachments.data();
+  create_info.subpassCount = 1;
+  create_info.pSubpasses = &subpass;
+  create_info.dependencyCount = 0;
+
+  if (vkCreateRenderPass(m_device, &create_info, nullptr, &m_render_pass) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to create render pass!");
+    exit(-1);
   }
 }
 
