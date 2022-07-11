@@ -67,6 +67,8 @@ class GLFWWindowImpl : public Window {
 
       m_context->SwapBuffers();
     }
+
+    m_context->Destroy();
   }
 
   void Shutdown() override { m_running = false; }

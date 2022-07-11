@@ -35,6 +35,7 @@ class GraphicsContext {
   virtual ~GraphicsContext() = default;
 
   virtual void Init() = 0;
+  virtual void Destroy() = 0;
   virtual void BeginFrame(glm::vec4 const& clear_color) = 0;
   virtual void SwapBuffers() = 0;
 

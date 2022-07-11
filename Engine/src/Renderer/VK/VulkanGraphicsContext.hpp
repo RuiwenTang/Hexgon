@@ -44,6 +44,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   ~VulkanGraphicsContext() override;
 
   void Init() override;
+  void Destroy() override;
   void BeginFrame(glm::vec4 const& clear_color) override;
   void SwapBuffers() override;
 

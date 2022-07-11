@@ -199,6 +199,52 @@ void VulkanGraphicsContext::Init() {
   CreateFramebuffer();
 }
 
+void VulkanGraphicsContext::Destroy() {
+  vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+
+  for (auto fb : m_framebuffers) {
+    vkDestroyFramebuffer(m_device, fb, nullptr);
+  }
+
+  for (auto const& img : m_depth_images) {
+    vkDestroyImageView(m_device, img.image_view, nullptr);
+    vkDestroyImage(m_device, img.image, nullptr);
+    vkFreeMemory(m_device, img.memory, nullptr);
+  }
+
+  for (auto const& img : m_sampler_images) {
+    vkDestroyImageView(m_device, img.image_view, nullptr);
+    vkDestroyImage(m_device, img.image, nullptr);
+    vkFreeMemory(m_device, img.memory, nullptr);
+  }
+
+  for (auto sp : m_present_semaphore) {
+    vkDestroySemaphore(m_device, sp, nullptr);
+  }
+
+  for (auto sp : m_render_semaphore) {
+    vkDestroySemaphore(m_device, sp, nullptr);
+  }
+
+  for (auto fence : m_cmd_fences) {
+    vkDestroyFence(m_device, fence, nullptr);
+  }
+
+  vkResetCommandPool(m_device, m_cmd_pool, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+  vkDestroyCommandPool(m_device, m_cmd_pool, nullptr);
+
+  for (auto image_view : m_swapchain_views) {
+    vkDestroyImageView(m_device, image_view, nullptr);
+  }
+  vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
+  vkDestroyDevice(m_device, nullptr);
+  vkDestroySurfaceKHR(m_vk_instance, m_vk_surface, nullptr);
+#ifdef HEX_ENABLE_VK_DEBUG
+  destroy_debug_utils_messenger_ext(m_vk_instance, m_debug_messenger, nullptr);
+#endif
+  vkDestroyInstance(m_vk_instance, nullptr);
+}
+
 void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
                                           m_present_semaphore[m_frame_index], nullptr, &m_current_frame);
