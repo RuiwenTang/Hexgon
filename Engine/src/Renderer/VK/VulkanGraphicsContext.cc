@@ -440,6 +440,10 @@ void VulkanGraphicsContext::PickPhysicalDevice() {
       if (present_support) {
         present_queue_family = j;
       }
+
+      if (graphic_queue_family >= 0 && present_queue_family >= 0) {
+        break;
+      }
     }
 
     if (graphic_queue_family >= 0 && present_queue_family >= 0) {
