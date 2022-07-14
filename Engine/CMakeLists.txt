@@ -38,6 +38,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Pipeline.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Event.cc
