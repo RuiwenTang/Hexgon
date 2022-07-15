@@ -43,21 +43,22 @@ target_sources(Hexgon
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Event.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Window.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GraphicsContext.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Buffer.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Pipeline.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Pipeline.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VK/VulkanGraphicsContext.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/Renderer/VK/VulkanGraphicsContext.hpp
 )
 
 target_link_libraries(Hexgon spdlog::spdlog)

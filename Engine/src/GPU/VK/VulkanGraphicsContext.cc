@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-#include "Renderer/VK/VulkanGraphicsContext.hpp"
+#include "GPU/VK/VulkanGraphicsContext.hpp"
 
 #include <GLFW/glfw3.h>
 

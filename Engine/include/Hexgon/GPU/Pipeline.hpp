@@ -20,3 +20,23 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
+
+#ifndef ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
+#define ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
+
+#include <memory>
+
+namespace hexgon {
+
+class VertexArray;
+
+class Pipeline {
+ public:
+  virtual ~Pipeline() = default;
+
+  virtual void DrawIndexed(std::unique_ptr<VertexArray> const& vertex, uint32_t index_count) = 0;
+};
+
+}  // namespace hexgon
+
+#endif  // ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_

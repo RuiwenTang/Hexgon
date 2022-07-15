@@ -21,17 +21,9 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/GraphicsContext.hpp>
+#ifndef ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
+#define ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 
-#include "Renderer/VK/VulkanGraphicsContext.hpp"
+namespace hexgon {}
 
-namespace hexgon {
-std::unique_ptr<GraphicsContext> GraphicsContext::Create(void* window, API api) {
-  if (api == API::Vulkan) {
-    return std::make_unique<VulkanGraphicsContext>(window);
-  } else {
-    return std::unique_ptr<GraphicsContext>();
-  }
-}
-
-}  // namespace hexgon
+#endif  // ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_

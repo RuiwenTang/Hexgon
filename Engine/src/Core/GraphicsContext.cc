@@ -21,22 +21,17 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_PIPELINE_HPP_
-#define ENGINE_INCLUDE_HEXGON_PIPELINE_HPP_
+#include <Hexgon/Core/GraphicsContext.hpp>
 
-#include <memory>
+#include "GPU/VK/VulkanGraphicsContext.hpp"
 
 namespace hexgon {
-
-class VertexArray;
-
-class Pipeline {
- public:
-  virtual ~Pipeline() = default;
-
-  virtual void DrawIndexed(std::unique_ptr<VertexArray> const& vertex, uint32_t index_count) = 0;
-};
+std::unique_ptr<GraphicsContext> GraphicsContext::Create(void* window, API api) {
+  if (api == API::Vulkan) {
+    return std::make_unique<VulkanGraphicsContext>(window);
+  } else {
+    return std::unique_ptr<GraphicsContext>();
+  }
+}
 
 }  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_PIPELINE_HPP_

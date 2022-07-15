@@ -21,10 +21,10 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_WINDOW_HPP_
-#define ENGINE_INCLUDE_HEXGON_WINDOW_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_CORE_WINDOW_HPP_
+#define ENGINE_INCLUDE_HEXGON_CORE_WINDOW_HPP_
 
-#include <Hexgon/GraphicsContext.hpp>
+#include <Hexgon/Core/GraphicsContext.hpp>
 #include <Hexgon/Macro.hpp>
 #include <glm/glm.hpp>
 #include <memory>
@@ -88,4 +88,4 @@ class HEX_API Window {
 
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_WINDOW_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_CORE_WINDOW_HPP_

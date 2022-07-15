@@ -21,8 +21,8 @@
  *   SOFTWARE.
  */
 
-#ifndef INCLUDE_HEXGON_APPLICATION_HPP_
-#define INCLUDE_HEXGON_APPLICATION_HPP_
+#ifndef INCLUDE_HEXGON_CORE_APPLICATION_HPP_
+#define INCLUDE_HEXGON_CORE_APPLICATION_HPP_
 
 #include <Hexgon/Core/Window.hpp>
 #include <Hexgon/Macro.hpp>
@@ -55,4 +55,4 @@ class HEX_API Application final : public WindowClient {
 
 }  // namespace hexgon
 
-#endif  // INCLUDE_HEXGON_APPLICATION_HPP_
+#endif  // INCLUDE_HEXGON_CORE_APPLICATION_HPP_

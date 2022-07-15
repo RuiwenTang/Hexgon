@@ -26,7 +26,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include <Hexgon/GraphicsContext.hpp>
+#include <Hexgon/Core/GraphicsContext.hpp>
 #include <vector>
 
 namespace hexgon {

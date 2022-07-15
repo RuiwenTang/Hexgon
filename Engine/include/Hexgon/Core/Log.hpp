@@ -21,8 +21,8 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_LOG_HPP_
-#define ENGINE_INCLUDE_HEXGON_LOG_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_CORE_LOG_HPP_
+#define ENGINE_INCLUDE_HEXGON_CORE_LOG_HPP_
 
 #include <spdlog/spdlog.h>
 
@@ -54,4 +54,4 @@ class HEX_API Log final {
 #define HEX_ERROR(...) ::hexgon::Log::GetLogger()->Logger()->error(__VA_ARGS__)
 #define HEX_CRITICAL(...) ::hexgon::Log::GetLogger()->Logger()->critical(__VA_ARGS__)
 
-#endif  // ENGINE_INCLUDE_HEXGON_LOG_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_CORE_LOG_HPP_

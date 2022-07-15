@@ -21,6 +21,9 @@
  *   SOFTWARE.
  */
 
+#ifndef ENGINE_INCLUDE_HEXGON_CORE_EVENT_HPP_
+#define ENGINE_INCLUDE_HEXGON_CORE_EVENT_HPP_
+
 #include <Hexgon/Macro.hpp>
 #include <string>
 
@@ -224,3 +227,5 @@ class HEX_API KeyReleaseEvent : public KeyEvent {
 };
 
 }  // namespace hexgon
+
+#endif  // ENGINE_INCLUDE_HEXGON_CORE_EVENT_HPP_
