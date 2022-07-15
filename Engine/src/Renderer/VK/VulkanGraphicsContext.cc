@@ -247,7 +247,7 @@ void VulkanGraphicsContext::Destroy() {
 
 void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
-                                          m_present_semaphore[m_frame_index], nullptr, &m_current_frame);
+                                          m_present_semaphore[m_frame_index], VK_NULL_HANDLE, &m_current_frame);
 
   if (m_frame_index != m_current_frame) {
     HEX_CORE_ERROR("frame index is < {} > but current frame is < {} >", m_frame_index, m_current_frame);
@@ -557,7 +557,7 @@ void VulkanGraphicsContext::CreateVkSwapchain() {
   create_info.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
   create_info.compositeAlpha = surface_composite;
   create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR;
-  create_info.oldSwapchain = nullptr;
+  create_info.oldSwapchain = VK_NULL_HANDLE;
 
   if (vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to create vulkan swap chain");
@@ -569,7 +569,7 @@ void VulkanGraphicsContext::CreateSwapchainImageViews() {
   uint32_t image_count = 0;
   vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, nullptr);
 
-  std::vector<VkImage> images{image_count};
+  std::vector<VkImage> images(image_count);
 
   vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, images.data());
 

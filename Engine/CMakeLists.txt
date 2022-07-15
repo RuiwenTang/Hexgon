@@ -15,12 +15,21 @@ target_include_directories(
 )
 
 if(WIN32)
-    target_compile_options(
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options(
+            Hexgon
+            PUBLIC
+            PRIVATE
+            /EHs-c- # disable exceptions
+        )
+    else()
+        target_compile_options(
         Hexgon
         PUBLIC
         PRIVATE
-        /EHs-c- # disable exceptions
-    )
+        -fvisibility=hidden
+        )
+    endif()
 else()
     target_compile_options(
         Hexgon

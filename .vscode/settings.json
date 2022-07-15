@@ -1,6 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.renderWhitespace": "boundary",
+  "editor.formatOnSave": true,
   "C_Cpp.autocomplete": "Disabled",
   "C_Cpp.formatting": "Disabled",
   "C_Cpp.errorSquiggles": "Disabled",
@@ -12,5 +13,6 @@
     "--compile-commands-dir=build",
   ],
   "copyrighter.author": "RuiwenTang",
-  "copyrighter.license": "MIT"
+  "copyrighter.license": "MIT",
+  "cmake.generator": "Ninja"
 }
