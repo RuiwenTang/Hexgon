@@ -21,44 +21,36 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Application.hpp>
-#include <Hexgon/Event.hpp>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
-#include "LogPrivate.hpp"
+#include <Hexgon/Core/Log.hpp>
+#include <vector>
 
 namespace hexgon {
 
-Application* Application::g_instance = nullptr;
+Log* Log::GetLogger() {
+  static Log* g_instance = nullptr;
 
-Application* Application::Create(std::string title, uint32_t width, uint32_t height) {
-  if (g_instance) {
-    // TODO assert failed
-    HEX_CORE_ERROR("Application already created!!");
-    return g_instance;
+  if (!g_instance) {
+    g_instance = new Log;
+    g_instance->Init();
   }
-
-  g_instance = new Application;
-
-  // init window
-  g_instance->m_window = Window::Create(std::move(title), width, height);
-
-  g_instance->m_window->AddClient(g_instance);
 
   return g_instance;
 }
 
-Application* Application::Get() { return g_instance; }
+void Log::Init() {
+  std::vector<spdlog::sink_ptr> log_sinks{};
 
-void Application::Run() { m_window->Show(); }
+  log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 
-void Application::OnWindowResize(int32_t width, int32_t height) {
-  HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);
+  log_sinks[0]->set_pattern("%^[%T] %n: %v%$");
+
+  m_logger = std::make_shared<spdlog::logger>("APP", log_sinks.begin(), log_sinks.end());
+  m_logger->set_level(spdlog::level::trace);
+  m_logger->flush_on(spdlog::level::trace);
+
+  spdlog::register_logger(m_logger);
 }
-
-void Application::OnWindowClose() { m_window->Shutdown(); }
-
-void Application::OnWindowUpdate() {}
-
-void Application::OnKeyEvent(KeyEvent* event) { HEX_CORE_INFO("On Key event : {}", event->GetName()); }
 
 }  // namespace hexgon

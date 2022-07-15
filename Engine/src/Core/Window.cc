@@ -21,8 +21,8 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Event.hpp>
-#include <Hexgon/Window.hpp>
+#include <Hexgon/Core/Event.hpp>
+#include <Hexgon/Core/Window.hpp>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

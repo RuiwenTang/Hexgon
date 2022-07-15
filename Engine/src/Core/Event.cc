@@ -21,13 +21,32 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
 #include <Hexgon/Core/Event.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
+
+namespace hexgon {
+
+KeyPressEvent::KeyPressEvent(KeyCode::Code code) : KeyEvent(code) {}
+
+EventType KeyPressEvent::GetType() const { return EventType::KeyPressed; }
+
+std::string KeyPressEvent::GetName() const {
+  std::string ret = "KeyPress ";
+
+  ret += GetKeyCode();
+
+  return ret;
+}
+
+KeyReleaseEvent::KeyReleaseEvent(KeyCode::Code code) : KeyEvent(code) {}
+
+EventType KeyReleaseEvent::GetType() const { return EventType::KeyReleased; }
+
+std::string KeyReleaseEvent::GetName() const {
+  std::string ret = "KeyRelease ";
+
+  ret += GetKeyCode();
+
+  return ret;
+}
+
+}  // namespace hexgon

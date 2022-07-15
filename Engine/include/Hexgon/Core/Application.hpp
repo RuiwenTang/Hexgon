@@ -24,8 +24,8 @@
 #ifndef INCLUDE_HEXGON_APPLICATION_HPP_
 #define INCLUDE_HEXGON_APPLICATION_HPP_
 
+#include <Hexgon/Core/Window.hpp>
 #include <Hexgon/Macro.hpp>
-#include <Hexgon/Window.hpp>
 #include <memory>
 
 namespace hexgon {

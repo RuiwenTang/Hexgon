@@ -21,32 +21,44 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Event.hpp>
+#include <Hexgon/Core/Application.hpp>
+#include <Hexgon/Core/Event.hpp>
+
+#include "LogPrivate.hpp"
 
 namespace hexgon {
 
-KeyPressEvent::KeyPressEvent(KeyCode::Code code) : KeyEvent(code) {}
+Application* Application::g_instance = nullptr;
 
-EventType KeyPressEvent::GetType() const { return EventType::KeyPressed; }
+Application* Application::Create(std::string title, uint32_t width, uint32_t height) {
+  if (g_instance) {
+    // TODO assert failed
+    HEX_CORE_ERROR("Application already created!!");
+    return g_instance;
+  }
 
-std::string KeyPressEvent::GetName() const {
-  std::string ret = "KeyPress ";
+  g_instance = new Application;
 
-  ret += GetKeyCode();
+  // init window
+  g_instance->m_window = Window::Create(std::move(title), width, height);
 
-  return ret;
+  g_instance->m_window->AddClient(g_instance);
+
+  return g_instance;
 }
 
-KeyReleaseEvent::KeyReleaseEvent(KeyCode::Code code) : KeyEvent(code) {}
+Application* Application::Get() { return g_instance; }
 
-EventType KeyReleaseEvent::GetType() const { return EventType::KeyReleased; }
+void Application::Run() { m_window->Show(); }
 
-std::string KeyReleaseEvent::GetName() const {
-  std::string ret = "KeyRelease ";
-
-  ret += GetKeyCode();
-
-  return ret;
+void Application::OnWindowResize(int32_t width, int32_t height) {
+  HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);
 }
+
+void Application::OnWindowClose() { m_window->Shutdown(); }
+
+void Application::OnWindowUpdate() {}
+
+void Application::OnKeyEvent(KeyEvent* event) { HEX_CORE_INFO("On Key event : {}", event->GetName()); }
 
 }  // namespace hexgon
