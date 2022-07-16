@@ -24,6 +24,85 @@
 #ifndef ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 #define ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 
-namespace hexgon {}
+#include <string>
+#include <vector>
+
+namespace hexgon {
+
+enum class DataType {
+  None = 0,
+  Float,
+  Float2,
+  Float3,
+  Float4,
+  Mat3,
+  Mat4,
+  Int,
+  Int2,
+  Int3,
+  Int4,
+};
+
+class BufferElement final {
+ public:
+  BufferElement(std::string name, DataType type, uint32_t offset);
+
+  ~BufferElement() = default;
+
+  std::string const& Name() const;
+
+  DataType Type() const;
+
+  uint32_t Size() const;
+
+  uint32_t Offset() const;
+
+ private:
+  std::string m_name;
+  DataType m_type;
+  uint32_t m_offset;
+  uint32_t m_size;
+};
+
+class BufferLayout final {
+ public:
+  BufferLayout(std::vector<BufferElement> elements);
+
+  ~BufferLayout() = default;
+
+  std::vector<BufferElement> const& Elements() const;
+
+  uint32_t Stride() const;
+
+ private:
+  uint32_t CalculateStride() const;
+
+ private:
+  std::vector<BufferElement> m_element;
+  uint32_t m_stride;
+};
+
+class VertexBuffer {
+ public:
+  VertexBuffer(BufferLayout const& layout) : m_layout(layout) {}
+  virtual ~VertexBuffer() = default;
+
+  BufferLayout const& Layout() const { return m_layout; }
+
+  virtual void UploadData(void* data, size_t size) = 0;
+
+ private:
+  BufferLayout m_layout;
+};
+
+class IndexBuffer {
+ public:
+  IndexBuffer() = default;
+  virtual ~IndexBuffer() = default;
+
+  virtual void UploadData(void* data, size_t size) = 0;
+};
+
+}  // namespace hexgon
 
 #endif  // ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_

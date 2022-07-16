@@ -55,6 +55,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
