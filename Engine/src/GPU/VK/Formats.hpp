@@ -34,12 +34,14 @@ struct Convertor {
   static G ToGPU(V value);
 };
 
-template <>
-struct Convertor<gpu::SampleCount, VkSampleCountFlagBits> {
-  static VkSampleCountFlagBits ToVulkan(gpu::SampleCount);
+#define CONVERTOR(G, V)    \
+  template <>              \
+  struct Convertor<G, V> { \
+    static V ToVulkan(G);  \
+    static G ToGPU(V);     \
+  }
 
-  static gpu::SampleCount ToGPU(VkSampleCountFlagBits);
-};
+CONVERTOR(gpu::SampleCount, VkSampleCountFlagBits);
 
 }  // namespace vk
 
