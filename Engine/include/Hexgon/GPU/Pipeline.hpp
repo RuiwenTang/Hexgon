@@ -25,9 +25,11 @@
 #define ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
 
 #include <Hexgon/GPU/Formats.hpp>
+#include <Hexgon/GPU/Shader.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace hexgon {
 
@@ -43,6 +45,33 @@ struct VertexAttributeDescriptor {
   uint32_t location = 0;
   DataType type = DataType::None;
   uint32_t offset = 0;
+};
+
+struct BlendInfo {
+  BlendFactor src = BlendFactor::SourceAlpha;
+  BlendFactor dst = BlendFactor::OneMinusBlendAlpha;
+  BlendOperation op = BlendOperation::Add;
+};
+
+struct ColorAttachmentDescriptor {
+  PixelFormat format = PixelFormat::Unknown;
+  bool blending = false;
+  BlendInfo color = {};
+  BlendInfo alpha = {};
+};
+
+struct DepthAttachmentDescriptor {
+  CompareFunction compare = CompareFunction::Always;
+  bool depth_writable = false;
+};
+
+struct PipelineInfo {
+  std::vector<Shader> shaders = {};
+  PrimitiveType primitive = PrimitiveType::Triangles;
+  std::vector<VertexBinding> vertex_binding = {};
+  std::vector<VertexAttributeDescriptor> attr_desc = {};
+
+  std::vector<ColorAttachmentDescriptor> color_attachment = {};
 };
 
 class Pipeline {

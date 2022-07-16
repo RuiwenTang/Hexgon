@@ -50,6 +50,8 @@ class VulkanGraphicsContext : public GraphicsContext {
 
   gpu::SampleCount GetSampleCount() override;
 
+  std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) override;
+
  private:
   void InitVkInstance();
   void InitVkSurface();

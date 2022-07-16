@@ -340,6 +340,10 @@ void VulkanGraphicsContext::SwapBuffers() {
 
 gpu::SampleCount VulkanGraphicsContext::GetSampleCount() { return vk::VulkanToSampleCount(m_sample_count); }
 
+std::unique_ptr<gpu::Pipeline> VulkanGraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
+  return std::unique_ptr<gpu::Pipeline>();
+}
+
 void VulkanGraphicsContext::InitVkInstance() {
   if (g_enable_validation && !check_validation_layer_support()) {
     HEX_CORE_ERROR("validation layers requested but not available!");

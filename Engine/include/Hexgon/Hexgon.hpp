@@ -31,3 +31,11 @@
 #include <Hexgon/Core/Window.hpp>
 // Logger
 #include <Hexgon/Core/Log.hpp>
+// GPU Formats
+#include <Hexgon/GPU/Formats.hpp>
+// GPU Buffer
+#include <Hexgon/GPU/Buffer.hpp>
+// GPU Shader
+#include <Hexgon/GPU/Shader.hpp>
+// GPU Pipeline
+#include <Hexgon/GPU/Pipeline.hpp>

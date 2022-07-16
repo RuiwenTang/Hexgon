@@ -77,6 +77,17 @@ enum class BlendOperation {
   ReverseSubtract,
 };
 
+enum class CompareFunction {
+  Never,
+  Always,
+  Less,
+  Equal,
+  LessEqual,
+  Greater,
+  NotEqual,
+  GreaterEqual,
+};
+
 enum class LoadAction {
   DontCare,
   Load,

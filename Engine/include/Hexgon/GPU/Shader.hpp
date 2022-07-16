@@ -29,25 +29,25 @@ namespace gpu {
 
 class Shader final {
  public:
-  enum class Type {
+  enum class Stage {
     Vertex,
     Fragment,
     Geometry,
     Compute,
   };
 
-  Shader(Type type, const char* source, size_t size) : m_type(type), m_source(source), m_size(size) {}
+  Shader(Stage stage, const char* source, size_t size) : m_stage(stage), m_source(source), m_size(size) {}
 
   ~Shader() = default;
 
-  Type GetType() const { return m_type; }
+  Stage GetShaderStage() const { return m_stage; }
 
   const char* GetSource() const { return m_source; }
 
   size_t GetSize() const { return m_size; }
 
  private:
-  Type m_type;
+  Stage m_stage;
   const char* m_source;
   size_t m_size;
 };
