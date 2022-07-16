@@ -48,6 +48,8 @@ class VulkanGraphicsContext : public GraphicsContext {
   void BeginFrame(glm::vec4 const& clear_color) override;
   void SwapBuffers() override;
 
+  gpu::SampleCount GetSampleCount() override;
+
  private:
   void InitVkInstance();
   void InitVkSurface();

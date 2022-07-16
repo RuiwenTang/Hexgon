@@ -29,6 +29,7 @@
 #include <set>
 #include <vector>
 
+#include "GPU/VK/Formats.hpp"
 #include "LogPrivate.hpp"
 
 #define HEX_ENABLE_VK_DEBUG 1
@@ -336,6 +337,8 @@ void VulkanGraphicsContext::SwapBuffers() {
   m_frame_index++;
   m_frame_index = m_frame_index % m_swapchain_views.size();
 }
+
+gpu::SampleCount VulkanGraphicsContext::GetSampleCount() { return vk::VulkanToSampleCount(m_sample_count); }
 
 void VulkanGraphicsContext::InitVkInstance() {
   if (g_enable_validation && !check_validation_layer_support()) {

@@ -21,31 +21,17 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
-#define ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
+#include <vulkan/vulkan.h>
 
 #include <Hexgon/GPU/Formats.hpp>
-#include <glm/glm.hpp>
-#include <memory>
 
 namespace hexgon {
+namespace vk {
 
-class GraphicsContext {
- public:
-  enum class API { OpenGL, Vulkan };
+VkSampleCountFlagBits SampleCountToVulkan(gpu::SampleCount sample_count);
 
-  virtual ~GraphicsContext() = default;
+gpu::SampleCount VulkanToSampleCount(VkSampleCountFlagBits sample_count);
 
-  virtual void Init() = 0;
-  virtual void Destroy() = 0;
-  virtual void BeginFrame(glm::vec4 const& clear_color) = 0;
-  virtual void SwapBuffers() = 0;
-
-  virtual gpu::SampleCount GetSampleCount() = 0;
-
-  static std::unique_ptr<GraphicsContext> Create(void* window, API api);
-};
+}  // namespace vk
 
 }  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_

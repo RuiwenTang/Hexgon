@@ -24,26 +24,13 @@
 #ifndef ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 #define ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 
+#include <Hexgon/GPU/Formats.hpp>
 #include <string>
 #include <vector>
 
 namespace hexgon {
 
 namespace gpu {
-
-enum class DataType {
-  None = 0,
-  Float,
-  Float2,
-  Float3,
-  Float4,
-  Mat3,
-  Mat4,
-  Int,
-  Int2,
-  Int3,
-  Int4,
-};
 
 class BufferElement final {
  public:

@@ -24,6 +24,7 @@
 #ifndef ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
 #define ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
 
+#include <Hexgon/GPU/Formats.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
@@ -32,7 +33,17 @@ namespace hexgon {
 
 namespace gpu {
 
-class VertexArray;
+struct VertexBinding {
+  uint32_t slot = 0;
+  uint32_t stride = 0;
+};
+
+struct VertexAttributeDescriptor {
+  uint32_t slot = 0;
+  uint32_t location = 0;
+  DataType type = DataType::None;
+  uint32_t offset = 0;
+};
 
 class Pipeline {
  public:
