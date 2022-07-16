@@ -93,6 +93,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   std::vector<VkFramebuffer> m_framebuffers = {};
   uint32_t m_current_frame = 0;
   uint32_t m_frame_index = 0;
+  uint32_t m_inflite_index = 0;
 };
 
 }  // namespace hexgon

@@ -201,6 +201,8 @@ void VulkanGraphicsContext::Init() {
 }
 
 void VulkanGraphicsContext::Destroy() {
+  vkDeviceWaitIdle(m_device);
+
   vkDestroyRenderPass(m_device, m_render_pass, nullptr);
 
   for (auto fb : m_framebuffers) {
@@ -247,12 +249,16 @@ void VulkanGraphicsContext::Destroy() {
 }
 
 void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
+  vkWaitForFences(m_device, 1, &m_cmd_fences[m_inflite_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
+
   VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
                                           m_present_semaphore[m_frame_index], VK_NULL_HANDLE, &m_current_frame);
 
   if (m_frame_index != m_current_frame) {
     HEX_CORE_ERROR("frame index is < {} > but current frame is < {} >", m_frame_index, m_current_frame);
   }
+
+  m_inflite_index = m_frame_index;
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
     HEX_CORE_ERROR("need to handle window resize of recreate swap chain!");
@@ -308,16 +314,10 @@ void VulkanGraphicsContext::SwapBuffers() {
   submit_info.commandBufferCount = 1;
   submit_info.pCommandBuffers = &current_cmd;
 
-  vkResetFences(m_device, 1, &m_cmd_fences[m_frame_index]);
+  vkResetFences(m_device, 1, &m_cmd_fences[m_inflite_index]);
 
   if (vkQueueSubmit(m_present_queue, 1, &submit_info, m_cmd_fences[m_frame_index]) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to submit command buffer!");
-    exit(-1);
-  }
-
-  if (vkWaitForFences(m_device, 1, &m_cmd_fences[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max()) !=
-      VK_SUCCESS) {
-    HEX_CORE_ERROR("Error in wait fences");
     exit(-1);
   }
 
