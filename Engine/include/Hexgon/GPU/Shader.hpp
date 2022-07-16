@@ -24,6 +24,8 @@
 #ifndef ENGINE_INCLUDE_HEXGON_GPU_SHADER_HPP_
 #define ENGINE_INCLUDE_HEXGON_GPU_SHADER_HPP_
 
+#include <string>
+
 namespace hexgon {
 namespace gpu {
 
