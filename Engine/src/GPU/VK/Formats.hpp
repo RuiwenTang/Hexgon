@@ -28,9 +28,11 @@
 namespace hexgon {
 namespace vk {
 
-VkSampleCountFlagBits SampleCountToVulkan(gpu::SampleCount sample_count);
-
-gpu::SampleCount VulkanToSampleCount(VkSampleCountFlagBits sample_count);
+template <typename G, typename V>
+struct Convertor {
+  static V ToVulkan(G value);
+  static G ToGPU(V value);
+};
 
 }  // namespace vk
 

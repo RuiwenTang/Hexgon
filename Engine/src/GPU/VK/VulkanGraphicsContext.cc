@@ -338,7 +338,9 @@ void VulkanGraphicsContext::SwapBuffers() {
   m_frame_index = m_frame_index % m_swapchain_views.size();
 }
 
-gpu::SampleCount VulkanGraphicsContext::GetSampleCount() { return vk::VulkanToSampleCount(m_sample_count); }
+gpu::SampleCount VulkanGraphicsContext::GetSampleCount() {
+  return vk::Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToGPU(m_sample_count);
+}
 
 std::unique_ptr<gpu::Pipeline> VulkanGraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   return std::unique_ptr<gpu::Pipeline>();
