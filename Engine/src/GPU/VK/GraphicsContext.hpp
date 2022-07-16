@@ -30,8 +30,9 @@
 #include <vector>
 
 namespace hexgon {
+namespace vk {
 
-class VulkanGraphicsContext : public GraphicsContext {
+class GraphicsContext : public hexgon::GraphicsContext {
   struct ImageWrapper {
     VkImage image = {};
     VkImageView image_view = {};
@@ -40,8 +41,8 @@ class VulkanGraphicsContext : public GraphicsContext {
   };
 
  public:
-  VulkanGraphicsContext(void* window);
-  ~VulkanGraphicsContext() override;
+  GraphicsContext(void* window);
+  ~GraphicsContext() override;
 
   void Init() override;
   void Destroy() override;
@@ -98,6 +99,7 @@ class VulkanGraphicsContext : public GraphicsContext {
   uint32_t m_inflite_index = 0;
 };
 
+}  // namespace vk
 }  // namespace hexgon
 
 #endif  // ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_

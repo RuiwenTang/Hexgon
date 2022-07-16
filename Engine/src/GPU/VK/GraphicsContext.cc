@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-#include "GPU/VK/VulkanGraphicsContext.hpp"
+#include "GPU/VK/GraphicsContext.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -41,7 +41,7 @@ static const char* g_validation_name = "VK_LAYER_KHRONOS_validation";
 static bool g_enable_validation = false;
 #endif
 
-namespace hexgon {
+namespace hexgon::vk {
 
 #ifdef HEX_ENABLE_VK_DEBUG
 
@@ -182,11 +182,11 @@ static bool get_support_depth_format(VkPhysicalDevice phy_device, VkFormat* out_
   return false;
 }
 
-VulkanGraphicsContext::VulkanGraphicsContext(void* window) : GraphicsContext(), m_window(window) {}
+GraphicsContext::GraphicsContext(void* window) : hexgon::GraphicsContext(), m_window(window) {}
 
-VulkanGraphicsContext::~VulkanGraphicsContext() {}
+GraphicsContext::~GraphicsContext() {}
 
-void VulkanGraphicsContext::Init() {
+void GraphicsContext::Init() {
   InitVkInstance();
   InitVkSurface();
   PickPhysicalDevice();
@@ -200,7 +200,7 @@ void VulkanGraphicsContext::Init() {
   CreateFramebuffer();
 }
 
-void VulkanGraphicsContext::Destroy() {
+void GraphicsContext::Destroy() {
   vkDeviceWaitIdle(m_device);
 
   vkDestroyRenderPass(m_device, m_render_pass, nullptr);
@@ -248,7 +248,7 @@ void VulkanGraphicsContext::Destroy() {
   vkDestroyInstance(m_vk_instance, nullptr);
 }
 
-void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
+void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   vkWaitForFences(m_device, 1, &m_cmd_fences[m_inflite_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
   VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
@@ -293,7 +293,7 @@ void VulkanGraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   vkCmdBeginRenderPass(current_cmd, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-void VulkanGraphicsContext::SwapBuffers() {
+void GraphicsContext::SwapBuffers() {
   VkCommandBuffer current_cmd = m_cmds[m_frame_index];
   vkCmdEndRenderPass(current_cmd);
 
@@ -338,15 +338,15 @@ void VulkanGraphicsContext::SwapBuffers() {
   m_frame_index = m_frame_index % m_swapchain_views.size();
 }
 
-gpu::SampleCount VulkanGraphicsContext::GetSampleCount() {
+gpu::SampleCount GraphicsContext::GetSampleCount() {
   return vk::Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToGPU(m_sample_count);
 }
 
-std::unique_ptr<gpu::Pipeline> VulkanGraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
+std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   return std::unique_ptr<gpu::Pipeline>();
 }
 
-void VulkanGraphicsContext::InitVkInstance() {
+void GraphicsContext::InitVkInstance() {
   if (g_enable_validation && !check_validation_layer_support()) {
     HEX_CORE_ERROR("validation layers requested but not available!");
     exit(-1);
@@ -407,14 +407,14 @@ void VulkanGraphicsContext::InitVkInstance() {
   HEX_CORE_INFO("Create VkInstance success");
 }
 
-void VulkanGraphicsContext::InitVkSurface() {
+void GraphicsContext::InitVkSurface() {
   if (glfwCreateWindowSurface(m_vk_instance, (GLFWwindow*)m_window, nullptr, &m_vk_surface) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed create window surface!");
     exit(-1);
   }
 }
 
-void VulkanGraphicsContext::PickPhysicalDevice() {
+void GraphicsContext::PickPhysicalDevice() {
   uint32_t device_count = 0;
   vkEnumeratePhysicalDevices(m_vk_instance, &device_count, nullptr);
 
@@ -476,7 +476,7 @@ void VulkanGraphicsContext::PickPhysicalDevice() {
   HEX_CORE_INFO("Picked device name = {}", m_phy_props.deviceName);
 }
 
-void VulkanGraphicsContext::CreateVkDevice() {
+void GraphicsContext::CreateVkDevice() {
   std::vector<VkDeviceQueueCreateInfo> queue_create_info{};
 
   std::set<int32_t> queue_families = {
@@ -535,7 +535,7 @@ void VulkanGraphicsContext::CreateVkDevice() {
   vkGetDeviceQueue(m_device, m_present_queue_index, 0, &m_present_queue);
 }
 
-void VulkanGraphicsContext::CreateVkSwapchain() {
+void GraphicsContext::CreateVkSwapchain() {
   m_swapchain_format = choose_swapchain_format(m_phy_device, m_vk_surface);
 
   VkSurfaceCapabilitiesKHR surface_caps;
@@ -574,7 +574,7 @@ void VulkanGraphicsContext::CreateVkSwapchain() {
   }
 }
 
-void VulkanGraphicsContext::CreateSwapchainImageViews() {
+void GraphicsContext::CreateSwapchainImageViews() {
   uint32_t image_count = 0;
   vkGetSwapchainImagesKHR(m_device, m_swapchain, &image_count, nullptr);
 
@@ -719,7 +719,7 @@ void VulkanGraphicsContext::CreateSwapchainImageViews() {
   HEX_CORE_INFO("Finish create all swapchain images for [ {} ] buffers", image_count);
 }
 
-void VulkanGraphicsContext::CreateCommandPool() {
+void GraphicsContext::CreateCommandPool() {
   VkCommandPoolCreateInfo create_info{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
   create_info.queueFamilyIndex = m_graphic_queue_index;
   create_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
@@ -729,7 +729,7 @@ void VulkanGraphicsContext::CreateCommandPool() {
   }
 }
 
-void VulkanGraphicsContext::CreateCommandBuffer() {
+void GraphicsContext::CreateCommandBuffer() {
   m_cmds.resize(m_swapchain_views.size());
 
   VkCommandBufferAllocateInfo allocate_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
@@ -745,7 +745,7 @@ void VulkanGraphicsContext::CreateCommandBuffer() {
   HEX_CORE_INFO("Creat [ {} ] command buffers", m_cmds.size());
 }
 
-void VulkanGraphicsContext::CreateSyncObjects() {
+void GraphicsContext::CreateSyncObjects() {
   VkFenceCreateInfo create_info{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
   create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
@@ -777,7 +777,7 @@ void VulkanGraphicsContext::CreateSyncObjects() {
   }
 }
 
-void VulkanGraphicsContext::CreateRenderPass() {
+void GraphicsContext::CreateRenderPass() {
   std::array<VkAttachmentDescription, 3> attachments = {};
   // color attachment
   attachments[0].format = m_swapchain_format;
@@ -850,7 +850,7 @@ void VulkanGraphicsContext::CreateRenderPass() {
   }
 }
 
-void VulkanGraphicsContext::CreateFramebuffer() {
+void GraphicsContext::CreateFramebuffer() {
   m_framebuffers.resize(m_swapchain_views.size());
 
   for (size_t i = 0; i < m_framebuffers.size(); i++) {
@@ -875,7 +875,7 @@ void VulkanGraphicsContext::CreateFramebuffer() {
   }
 }
 
-uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties) {
+uint32_t GraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties) {
   VkPhysicalDeviceMemoryProperties memory_props;
   vkGetPhysicalDeviceMemoryProperties(m_phy_device, &memory_props);
 
@@ -892,4 +892,4 @@ uint32_t VulkanGraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryProper
   return 0;
 }
 
-}  // namespace hexgon
+}  // namespace hexgon::vk

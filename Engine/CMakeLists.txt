@@ -60,8 +60,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/VulkanGraphicsContext.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )

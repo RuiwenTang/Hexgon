@@ -34,6 +34,13 @@ struct Convertor {
   static G ToGPU(V value);
 };
 
+template <>
+struct Convertor<gpu::SampleCount, VkSampleCountFlagBits> {
+  static VkSampleCountFlagBits ToVulkan(gpu::SampleCount);
+
+  static gpu::SampleCount ToGPU(VkSampleCountFlagBits);
+};
+
 }  // namespace vk
 
 }  // namespace hexgon

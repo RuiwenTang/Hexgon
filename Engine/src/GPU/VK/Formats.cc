@@ -25,45 +25,42 @@
 
 namespace hexgon::vk {
 
-template <>
-struct Convertor<gpu::SampleCount, VkSampleCountFlagBits> {
-  static VkSampleCountFlagBits ToVulkan(gpu::SampleCount value) {
-    switch (value) {
-      case gpu::SampleCount::Count1:
-        return VK_SAMPLE_COUNT_1_BIT;
-      case gpu::SampleCount::Count4:
-        return VK_SAMPLE_COUNT_4_BIT;
-      case gpu::SampleCount::Count8:
-        return VK_SAMPLE_COUNT_8_BIT;
-      case gpu::SampleCount::Count16:
-        return VK_SAMPLE_COUNT_16_BIT;
-      case gpu::SampleCount::Count32:
-        return VK_SAMPLE_COUNT_32_BIT;
-      case gpu::SampleCount::Count64:
-        return VK_SAMPLE_COUNT_64_BIT;
-      default:
-        return VK_SAMPLE_COUNT_1_BIT;
-    }
+VkSampleCountFlagBits Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToVulkan(gpu::SampleCount value) {
+  switch (value) {
+    case gpu::SampleCount::Count1:
+      return VK_SAMPLE_COUNT_1_BIT;
+    case gpu::SampleCount::Count4:
+      return VK_SAMPLE_COUNT_4_BIT;
+    case gpu::SampleCount::Count8:
+      return VK_SAMPLE_COUNT_8_BIT;
+    case gpu::SampleCount::Count16:
+      return VK_SAMPLE_COUNT_16_BIT;
+    case gpu::SampleCount::Count32:
+      return VK_SAMPLE_COUNT_32_BIT;
+    case gpu::SampleCount::Count64:
+      return VK_SAMPLE_COUNT_64_BIT;
+    default:
+      return VK_SAMPLE_COUNT_1_BIT;
   }
+}
 
-  static gpu::SampleCount ToGPU(VkSampleCountFlagBits value) {
-    switch (value) {
-      case VK_SAMPLE_COUNT_1_BIT:
-        return gpu::SampleCount::Count1;
-      case VK_SAMPLE_COUNT_4_BIT:
-        return gpu::SampleCount::Count4;
-      case VK_SAMPLE_COUNT_8_BIT:
-        return gpu::SampleCount::Count8;
-      case VK_SAMPLE_COUNT_16_BIT:
-        return gpu::SampleCount::Count16;
-      case VK_SAMPLE_COUNT_32_BIT:
-        return gpu::SampleCount::Count32;
-      case VK_SAMPLE_COUNT_64_BIT:
-        return gpu::SampleCount::Count64;
-      default:
-        return gpu::SampleCount::Count1;
-    }
+gpu::SampleCount Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToGPU(VkSampleCountFlagBits value) {
+  switch (value) {
+    case VK_SAMPLE_COUNT_1_BIT:
+      return gpu::SampleCount::Count1;
+    case VK_SAMPLE_COUNT_4_BIT:
+      return gpu::SampleCount::Count4;
+    case VK_SAMPLE_COUNT_8_BIT:
+      return gpu::SampleCount::Count8;
+    case VK_SAMPLE_COUNT_16_BIT:
+      return gpu::SampleCount::Count16;
+    case VK_SAMPLE_COUNT_32_BIT:
+      return gpu::SampleCount::Count32;
+    case VK_SAMPLE_COUNT_64_BIT:
+      return gpu::SampleCount::Count64;
+    default:
+      return gpu::SampleCount::Count1;
   }
-};
+}
 
 }  // namespace hexgon::vk
