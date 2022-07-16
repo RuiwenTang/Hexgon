@@ -23,7 +23,7 @@
 
 #include <Hexgon/GPU/Buffer.hpp>
 
-namespace hexgon {
+namespace hexgon::gpu {
 
 static uint32_t get_data_type_size(DataType type) {
   switch (type) {
@@ -77,4 +77,4 @@ uint32_t BufferLayout::CalculateStride() const {
   return stride;
 }
 
-}  // namespace hexgon
+}  // namespace hexgon::gpu

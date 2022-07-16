@@ -21,35 +21,39 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
-#define ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
-
-#include <glm/glm.hpp>
-#include <memory>
-#include <string>
+#ifndef ENGINE_INCLUDE_HEXGON_GPU_SHADER_HPP_
+#define ENGINE_INCLUDE_HEXGON_GPU_SHADER_HPP_
 
 namespace hexgon {
-
 namespace gpu {
 
-class VertexArray;
-
-class Pipeline {
+class Shader final {
  public:
-  virtual ~Pipeline() = default;
+  enum class Type {
+    Vertex,
+    Fragment,
+    Geometry,
+    Compute,
+  };
 
-  virtual void SetInt(std::string const& name, int32_t value) = 0;
+  Shader(Type type, const char* source, size_t size) : m_type(type), m_source(source), m_size(size) {}
 
-  virtual void SetFloat(std::string const& name, float value) = 0;
-  virtual void SetFloat2(std::string const& name, glm::vec2 const& value) = 0;
-  virtual void SetFloat3(std::string const& name, glm::vec3 const& value) = 0;
-  virtual void SetFloat4(std::string const& name, glm::vec4 const& value) = 0;
+  ~Shader() = default;
 
-  virtual void SetMat4(std::string const& name, glm::mat4 const& value) = 0;
+  Type GetType() const { return m_type; }
+
+  const char* GetSource() const { return m_source; }
+
+  size_t GetSize() const { return m_size; }
+
+ private:
+  Type m_type;
+  const char* m_source;
+  size_t m_size;
 };
 
 }  // namespace gpu
 
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_GPU_PIPELINE_HPP_
+#endif  // ENGINE_ICNLUDE_HEXGON_GPU_SHADER_HPP_

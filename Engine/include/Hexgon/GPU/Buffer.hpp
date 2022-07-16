@@ -29,6 +29,8 @@
 
 namespace hexgon {
 
+namespace gpu {
+
 enum class DataType {
   None = 0,
   Float,
@@ -102,6 +104,8 @@ class IndexBuffer {
 
   virtual void UploadData(void* data, size_t size) = 0;
 };
+
+}  // namespace gpu
 
 }  // namespace hexgon
 
