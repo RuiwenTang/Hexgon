@@ -32,6 +32,7 @@ namespace gpu {
 class Shader final {
  public:
   enum class Stage {
+    Unknown,
     Vertex,
     Fragment,
     Geometry,

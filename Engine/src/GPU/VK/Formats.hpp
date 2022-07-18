@@ -24,6 +24,7 @@
 #include <vulkan/vulkan.h>
 
 #include <Hexgon/GPU/Formats.hpp>
+#include <Hexgon/GPU/Shader.hpp>
 
 namespace hexgon {
 namespace vk {
@@ -42,6 +43,7 @@ struct Convertor {
   }
 
 CONVERTOR(gpu::SampleCount, VkSampleCountFlagBits);
+CONVERTOR(gpu::Shader::Stage, VkShaderStageFlagBits);
 
 }  // namespace vk
 

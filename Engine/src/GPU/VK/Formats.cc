@@ -63,4 +63,35 @@ gpu::SampleCount Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToGPU(VkSam
   }
 }
 
+gpu::Shader::Stage Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToGPU(VkShaderStageFlagBits value) {
+  switch (value) {
+    case VK_SHADER_STAGE_VERTEX_BIT:
+      return gpu::Shader::Stage::Vertex;
+    case VK_SHADER_STAGE_FRAGMENT_BIT:
+      return gpu::Shader::Stage::Fragment;
+    case VK_SHADER_STAGE_COMPUTE_BIT:
+      return gpu::Shader::Stage::Compute;
+    case VK_SHADER_STAGE_GEOMETRY_BIT:
+      return gpu::Shader::Stage::Geometry;
+    default:
+      // TODO support other vulkan shader stage
+      return gpu::Shader::Stage::Unknown;
+  }
+}
+
+VkShaderStageFlagBits Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(gpu::Shader::Stage value) {
+  switch (value) {
+    case gpu::Shader::Stage::Vertex:
+      return VK_SHADER_STAGE_VERTEX_BIT;
+    case gpu::Shader::Stage::Fragment:
+      return VK_SHADER_STAGE_FRAGMENT_BIT;
+    case gpu::Shader::Stage::Geometry:
+      return VK_SHADER_STAGE_GEOMETRY_BIT;
+    case gpu::Shader::Stage::Compute:
+      return VK_SHADER_STAGE_COMPUTE_BIT;
+    default:
+      return VK_SHADER_STAGE_ALL_GRAPHICS;
+  }
+}
+
 }  // namespace hexgon::vk
