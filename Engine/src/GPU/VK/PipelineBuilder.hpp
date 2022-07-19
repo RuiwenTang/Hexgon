@@ -30,6 +30,7 @@
 #include <vector>
 
 namespace hexgon {
+namespace gpu {
 namespace vk {
 
 class PipelineBuilder final {
@@ -66,6 +67,7 @@ class PipelineBuilder final {
 };
 
 }  // namespace vk
+}  // namespace gpu
 }  // namespace hexgon
 
 #endif  // ENGINE_SRC_GPU_VK_PIPELINE_BUILDER_HPP_

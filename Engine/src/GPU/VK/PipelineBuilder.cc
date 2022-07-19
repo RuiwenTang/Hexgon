@@ -26,7 +26,7 @@
 #include "GPU/VK/Formats.hpp"
 #include "LogPrivate.hpp"
 
-namespace hexgon::vk {
+namespace hexgon::gpu::vk {
 
 static VkShaderModule create_shader_module(VkDevice device, const char* shader, size_t shader_size) {
   VkShaderModuleCreateInfo create_info{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
@@ -78,4 +78,4 @@ void PipelineBuilder::InitShaderStage() {
   }
 }
 
-}  // namespace hexgon::vk
+}  // namespace hexgon::gpu::vk

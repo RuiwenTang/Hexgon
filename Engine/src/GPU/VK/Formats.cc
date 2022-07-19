@@ -23,7 +23,7 @@
 
 #include "GPU/VK/Formats.hpp"
 
-namespace hexgon::vk {
+namespace hexgon::gpu::vk {
 
 VkSampleCountFlagBits Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToVulkan(gpu::SampleCount value) {
   switch (value) {
@@ -94,4 +94,4 @@ VkShaderStageFlagBits Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVu
   }
 }
 
-}  // namespace hexgon::vk
+}  // namespace hexgon::gpu::vk

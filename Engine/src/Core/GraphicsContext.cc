@@ -28,7 +28,7 @@
 namespace hexgon {
 std::unique_ptr<GraphicsContext> GraphicsContext::Create(void* window, API api) {
   if (api == API::Vulkan) {
-    return std::make_unique<vk::GraphicsContext>(window);
+    return std::make_unique<gpu::vk::GraphicsContext>(window);
   } else {
     return std::unique_ptr<GraphicsContext>();
   }

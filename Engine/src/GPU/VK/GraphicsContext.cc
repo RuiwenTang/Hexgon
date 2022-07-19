@@ -41,7 +41,7 @@ static const char* g_validation_name = "VK_LAYER_KHRONOS_validation";
 static bool g_enable_validation = false;
 #endif
 
-namespace hexgon::vk {
+namespace hexgon::gpu::vk {
 
 #ifdef HEX_ENABLE_VK_DEBUG
 
@@ -892,4 +892,4 @@ uint32_t GraphicsContext::GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlag
   return 0;
 }
 
-}  // namespace hexgon::vk
+}  // namespace hexgon::gpu::vk

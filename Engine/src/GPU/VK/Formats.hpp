@@ -27,6 +27,7 @@
 #include <Hexgon/GPU/Shader.hpp>
 
 namespace hexgon {
+namespace gpu {
 namespace vk {
 
 template <typename G, typename V>
@@ -46,5 +47,5 @@ CONVERTOR(gpu::SampleCount, VkSampleCountFlagBits);
 CONVERTOR(gpu::Shader::Stage, VkShaderStageFlagBits);
 
 }  // namespace vk
-
+}  // namespace gpu
 }  // namespace hexgon

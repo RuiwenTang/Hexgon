@@ -30,6 +30,7 @@
 #include <vector>
 
 namespace hexgon {
+namespace gpu {
 namespace vk {
 
 class GraphicsContext : public hexgon::GraphicsContext {
@@ -100,6 +101,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
 };
 
 }  // namespace vk
+}  // namespace gpu
 }  // namespace hexgon
 
 #endif  // ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_
