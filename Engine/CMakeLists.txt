@@ -44,6 +44,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Event.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/GraphicsContext.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Layer.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/LayerStack.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Buffer.hpp
@@ -55,6 +57,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc

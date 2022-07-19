@@ -51,14 +51,28 @@ Application* Application::Get() { return g_instance; }
 
 void Application::Run() { m_window->Show(); }
 
+void Application::PushLayer(std::shared_ptr<Layer> layer) { m_layer_stack.PushLayer(std::move(layer)); }
+
+void Application::PopLayer(std::shared_ptr<Layer> const& layer) { m_layer_stack.PopLayer(layer); }
+
 void Application::OnWindowResize(int32_t width, int32_t height) {
   HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);
 }
 
 void Application::OnWindowClose() { m_window->Shutdown(); }
 
-void Application::OnWindowUpdate() {}
+void Application::OnWindowUpdate() {
+  for (auto const& it : m_layer_stack) {
+    it->OnUpdate(0.f);
+  }
+}
 
-void Application::OnKeyEvent(KeyEvent* event) { HEX_CORE_INFO("On Key event : {}", event->GetName()); }
+void Application::OnKeyEvent(KeyEvent* event) {
+  HEX_CORE_INFO("On Key event : {}", event->GetName());
+
+  for (auto const& it : m_layer_stack) {
+    it->OnEvent(event);
+  }
+}
 
 }  // namespace hexgon

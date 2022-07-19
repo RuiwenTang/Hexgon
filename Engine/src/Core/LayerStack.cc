@@ -21,43 +21,28 @@
  *   SOFTWARE.
  */
 
-#ifndef INCLUDE_HEXGON_CORE_APPLICATION_HPP_
-#define INCLUDE_HEXGON_CORE_APPLICATION_HPP_
-
 #include <Hexgon/Core/LayerStack.hpp>
-#include <Hexgon/Core/Window.hpp>
-#include <Hexgon/Macro.hpp>
-#include <memory>
 
 namespace hexgon {
 
-class HEX_API Application final : public WindowClient {
- public:
-  ~Application() = default;
+LayerStack::~LayerStack() {
+  for (auto const& layer : m_layers) {
+    layer->OnDetach();
+  }
+}
 
-  static Application* Create(std::string title, uint32_t width = 800, uint32_t height = 600);
+void LayerStack::PushLayer(std::shared_ptr<Layer> layer) {
+  m_layers.emplace_back(layer);
+  layer->OnAttach();
+}
 
-  static Application* Get();
+void LayerStack::PopLayer(const std::shared_ptr<Layer>& layer) {
+  auto it = std::find(m_layers.begin(), m_layers.end(), layer);
 
-  void Run();
-
-  void PushLayer(std::shared_ptr<Layer> layer);
-  void PopLayer(std::shared_ptr<Layer> const& layer);
-
-  void OnWindowResize(int32_t width, int32_t height) override;
-  void OnWindowClose() override;
-  void OnWindowUpdate() override;
-  void OnKeyEvent(KeyEvent* event) override;
-
- private:
-  Application() = default;
-  static Application* g_instance;
-
- private:
-  std::unique_ptr<Window> m_window = {};
-  LayerStack m_layer_stack = {};
-};
+  if (it != m_layers.end()) {
+    layer->OnDetach();
+    m_layers.erase(it);
+  }
+}
 
 }  // namespace hexgon
-
-#endif  // INCLUDE_HEXGON_CORE_APPLICATION_HPP_

@@ -29,6 +29,9 @@
 #include <Hexgon/Core/Event.hpp>
 // Window
 #include <Hexgon/Core/Window.hpp>
+// Layer
+#include <Hexgon/Core/Layer.hpp>
+#include <Hexgon/Core/LayerStack.hpp>
 // Logger
 #include <Hexgon/Core/Log.hpp>
 // GPU Formats

@@ -21,43 +21,38 @@
  *   SOFTWARE.
  */
 
-#ifndef INCLUDE_HEXGON_CORE_APPLICATION_HPP_
-#define INCLUDE_HEXGON_CORE_APPLICATION_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_CORE_LAYER_STACK_HPP_
+#define ENGINE_INCLUDE_HEXGON_CORE_LAYER_STACK_HPP_
 
-#include <Hexgon/Core/LayerStack.hpp>
-#include <Hexgon/Core/Window.hpp>
+#include <Hexgon/Core/Layer.hpp>
 #include <Hexgon/Macro.hpp>
 #include <memory>
+#include <vector>
 
 namespace hexgon {
 
-class HEX_API Application final : public WindowClient {
+class HEX_API LayerStack final {
  public:
-  ~Application() = default;
+  using iterator = std::vector<std::shared_ptr<Layer>>::iterator;
+  using const_iterator = std::vector<std::shared_ptr<Layer>>::const_iterator;
 
-  static Application* Create(std::string title, uint32_t width = 800, uint32_t height = 600);
-
-  static Application* Get();
-
-  void Run();
+  LayerStack() = default;
+  ~LayerStack();
 
   void PushLayer(std::shared_ptr<Layer> layer);
+
   void PopLayer(std::shared_ptr<Layer> const& layer);
 
-  void OnWindowResize(int32_t width, int32_t height) override;
-  void OnWindowClose() override;
-  void OnWindowUpdate() override;
-  void OnKeyEvent(KeyEvent* event) override;
+  iterator begin() { return m_layers.begin(); }
+  iterator end() { return m_layers.end(); }
+
+  const_iterator begin() const { return m_layers.begin(); }
+  const_iterator end() const { return m_layers.end(); }
 
  private:
-  Application() = default;
-  static Application* g_instance;
-
- private:
-  std::unique_ptr<Window> m_window = {};
-  LayerStack m_layer_stack = {};
+  std::vector<std::shared_ptr<Layer>> m_layers = {};
 };
 
 }  // namespace hexgon
 
-#endif  // INCLUDE_HEXGON_CORE_APPLICATION_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_CORE_LAYER_STACK_HPP_
