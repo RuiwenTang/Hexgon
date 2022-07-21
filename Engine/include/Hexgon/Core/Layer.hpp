@@ -41,6 +41,8 @@ class HEX_API Layer {
   virtual void OnUpdate(float tm) = 0;
   virtual void OnEvent(const Event* event) = 0;
 
+  std::string const& GetLayerName() const { return m_name; }
+
  private:
   std::string m_name;
 };
