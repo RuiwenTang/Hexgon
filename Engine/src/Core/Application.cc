@@ -51,7 +51,10 @@ Application* Application::Get() { return g_instance; }
 
 void Application::Run() { m_window->Show(); }
 
-void Application::PushLayer(std::shared_ptr<Layer> layer) { m_layer_stack.PushLayer(std::move(layer)); }
+void Application::PushLayer(std::shared_ptr<Layer> const& layer) {
+  layer->m_context = m_window->GetContext();
+  m_layer_stack.PushLayer(std::move(layer));
+}
 
 void Application::PopLayer(std::shared_ptr<Layer> const& layer) { m_layer_stack.PopLayer(layer); }
 

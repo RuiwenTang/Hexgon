@@ -41,7 +41,7 @@ class HEX_API Application final : public WindowClient {
 
   void Run();
 
-  void PushLayer(std::shared_ptr<Layer> layer);
+  void PushLayer(std::shared_ptr<Layer> const& layer);
   void PopLayer(std::shared_ptr<Layer> const& layer);
 
   void OnWindowResize(int32_t width, int32_t height) override;

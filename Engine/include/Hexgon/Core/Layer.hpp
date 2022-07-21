@@ -30,7 +30,11 @@
 
 namespace hexgon {
 
+class GraphicsContext;
+
 class HEX_API Layer {
+  friend class Application;
+
  public:
   Layer(std::string name) : m_name(std::move(name)) {}
 
@@ -43,8 +47,11 @@ class HEX_API Layer {
 
   std::string const& GetLayerName() const { return m_name; }
 
+  GraphicsContext* GetGraphicsContext() const { return m_context; }
+
  private:
   std::string m_name;
+  GraphicsContext* m_context = nullptr;
 };
 
 }  // namespace hexgon

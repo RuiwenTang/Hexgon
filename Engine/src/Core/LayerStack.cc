@@ -31,7 +31,7 @@ LayerStack::~LayerStack() {
   }
 }
 
-void LayerStack::PushLayer(std::shared_ptr<Layer> layer) {
+void LayerStack::PushLayer(std::shared_ptr<Layer> const& layer) {
   m_layers.emplace_back(layer);
   layer->OnAttach();
 }

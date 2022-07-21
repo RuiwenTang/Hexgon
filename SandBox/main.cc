@@ -31,7 +31,10 @@ class SimpleLayer : public Layer {
 
   ~SimpleLayer() override = default;
 
-  void OnAttach() override { HEX_INFO("{} layer OnAttach", this->GetLayerName()); }
+  void OnAttach() override {
+    HEX_INFO("{} layer OnAttach", this->GetLayerName());
+    HEX_INFO("current GraphicContext: 0x{:x}", reinterpret_cast<uintptr_t>(GetGraphicsContext()));
+  }
 
   void OnDetach() override { HEX_INFO("{} layer OnDetach", this->GetLayerName()); }
 

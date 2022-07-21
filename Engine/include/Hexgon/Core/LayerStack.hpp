@@ -39,7 +39,7 @@ class HEX_API LayerStack final {
   LayerStack() = default;
   ~LayerStack();
 
-  void PushLayer(std::shared_ptr<Layer> layer);
+  void PushLayer(std::shared_ptr<Layer> const& layer);
 
   void PopLayer(std::shared_ptr<Layer> const& layer);
 
