@@ -29,6 +29,8 @@
 #include <Hexgon/Core/Event.hpp>
 // Window
 #include <Hexgon/Core/Window.hpp>
+// GraphicsContext
+#include <Hexgon/Core/GraphicsContext.hpp>
 // Layer
 #include <Hexgon/Core/Layer.hpp>
 #include <Hexgon/Core/LayerStack.hpp>

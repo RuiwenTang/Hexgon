@@ -23,6 +23,8 @@
 
 #include <Hexgon/Hexgon.hpp>
 
+#include "ShaderSource.hpp"
+
 using namespace hexgon;
 
 class SimpleLayer : public Layer {
@@ -45,6 +47,21 @@ class SimpleLayer : public Layer {
   }
 
  private:
+  void InitPipeline() {
+    gpu::PipelineInfo info;
+    std::vector<gpu::Shader> shaders_info;
+    // vertex shader
+    shaders_info.emplace_back(
+        gpu::Shader(gpu::Shader::Stage::Vertex, (const char*)hello_triangle_vert_spv, hello_triangle_vert_spv_size));
+    // fragment shader
+    shaders_info.emplace_back(
+        gpu::Shader(gpu::Shader::Stage::Fragment, (const char*)hello_triangle_frag_spv, hello_triangle_frag_spv_size));
+
+    m_pipeline = GetGraphicsContext()->CreatePipeline(info);
+  }
+
+ private:
+  std::unique_ptr<gpu::Pipeline> m_pipeline;
 };
 
 int main(int argc, const char** argv) {
