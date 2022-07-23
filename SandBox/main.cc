@@ -36,6 +36,8 @@ class SimpleLayer : public Layer {
   void OnAttach() override {
     HEX_INFO("{} layer OnAttach", this->GetLayerName());
     HEX_INFO("current GraphicContext: 0x{:x}", reinterpret_cast<uintptr_t>(GetGraphicsContext()));
+
+    InitPipeline();
   }
 
   void OnDetach() override { HEX_INFO("{} layer OnDetach", this->GetLayerName()); }
@@ -49,12 +51,12 @@ class SimpleLayer : public Layer {
  private:
   void InitPipeline() {
     gpu::PipelineInfo info;
-    std::vector<gpu::Shader> shaders_info;
+
     // vertex shader
-    shaders_info.emplace_back(
+    info.shaders.emplace_back(
         gpu::Shader(gpu::Shader::Stage::Vertex, (const char*)hello_triangle_vert_spv, hello_triangle_vert_spv_size));
     // fragment shader
-    shaders_info.emplace_back(
+    info.shaders.emplace_back(
         gpu::Shader(gpu::Shader::Stage::Fragment, (const char*)hello_triangle_frag_spv, hello_triangle_frag_spv_size));
 
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);

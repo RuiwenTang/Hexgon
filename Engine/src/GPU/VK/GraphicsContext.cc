@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "GPU/VK/Formats.hpp"
+#include "GPU/VK/PipelineBuilder.hpp"
 #include "LogPrivate.hpp"
 
 #define HEX_ENABLE_VK_DEBUG 1
@@ -343,6 +344,9 @@ gpu::SampleCount GraphicsContext::GetSampleCount() {
 }
 
 std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
+  PipelineBuilder builder(m_device, info);
+
+  builder.Build();
   return std::unique_ptr<gpu::Pipeline>();
 }
 
