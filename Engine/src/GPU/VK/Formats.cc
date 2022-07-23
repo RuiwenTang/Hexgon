@@ -140,4 +140,34 @@ VkFormat Convertor<gpu::DataType, VkFormat>::ToVulkan(gpu::DataType value) {
   }
 }
 
+gpu::PrimitiveType Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToGPU(VkPrimitiveTopology value) {
+  switch (value) {
+    case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
+      return gpu::PrimitiveType::Triangles;
+    case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP:
+      return gpu::PrimitiveType::TriangleStrip;
+    case VK_PRIMITIVE_TOPOLOGY_LINE_LIST:
+      return gpu::PrimitiveType::Line;
+    case VK_PRIMITIVE_TOPOLOGY_LINE_STRIP:
+      return gpu::PrimitiveType::LineStrip;
+    default:
+      return gpu::PrimitiveType::Point;
+  }
+}
+
+VkPrimitiveTopology Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToVulkan(gpu::PrimitiveType value) {
+  switch (value) {
+    case gpu::PrimitiveType::Triangles:
+      return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    case gpu::PrimitiveType::TriangleStrip:
+      return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+    case gpu::PrimitiveType::Line:
+      return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+    case gpu::PrimitiveType::LineStrip:
+      return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    case gpu::PrimitiveType::Point:
+      return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+  }
+}
+
 }  // namespace hexgon::gpu::vk

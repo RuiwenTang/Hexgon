@@ -53,6 +53,7 @@ void PipelineBuilder::CleanUp() {
 VkPipeline PipelineBuilder::Build() {
   InitShaderStage();
   InitInputBindingDesc();
+  InitAssemblyState();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
 
@@ -97,6 +98,11 @@ void PipelineBuilder::InitInputBindingDesc() {
 
     m_vertex_attr_desc.emplace_back(vk_attr);
   }
+}
+
+void PipelineBuilder::InitAssemblyState() {
+  m_input_assembly_info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+  m_input_assembly_info.topology = Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToVulkan(m_info.primitive);
 }
 
 }  // namespace hexgon::gpu::vk
