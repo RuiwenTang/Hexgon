@@ -14,5 +14,6 @@
   ],
   "copyrighter.author": "RuiwenTang",
   "copyrighter.license": "MIT",
+  "copyrighter.newFilesOnly": true,
   "cmake.generator": "Ninja"
 }
