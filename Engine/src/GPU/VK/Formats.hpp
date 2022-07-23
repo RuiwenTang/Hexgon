@@ -45,6 +45,7 @@ struct Convertor {
 
 CONVERTOR(gpu::SampleCount, VkSampleCountFlagBits);
 CONVERTOR(gpu::Shader::Stage, VkShaderStageFlagBits);
+CONVERTOR(gpu::DataType, VkFormat);
 
 }  // namespace vk
 }  // namespace gpu

@@ -59,6 +59,14 @@ class SimpleLayer : public Layer {
     info.shaders.emplace_back(
         gpu::Shader(gpu::Shader::Stage::Fragment, (const char*)hello_triangle_frag_spv, hello_triangle_frag_spv_size));
 
+    // one vertex array
+    info.vertex_binding.emplace_back(gpu::VertexBinding{0, 7 * sizeof(float)});
+    // one vertex buffer with two attributes
+    // location 0 pos
+    info.attr_desc.emplace_back(gpu::VertexAttributeDescriptor{0, 0, gpu::DataType::Float3, 0});
+    // location 1 pos
+    info.attr_desc.emplace_back(gpu::VertexAttributeDescriptor{0, 1, gpu::DataType::Float4, 3 * sizeof(float)});
+
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }
 

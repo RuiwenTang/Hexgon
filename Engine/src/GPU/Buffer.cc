@@ -35,10 +35,6 @@ static uint32_t get_data_type_size(DataType type) {
       return 4 * 3;
     case DataType::Float4:
       return 4 * 4;
-    case DataType::Mat3:
-      return 4 * 3 * 3;
-    case DataType::Mat4:
-      return 4 * 4 * 4;
     case DataType::Int:
       return 4;
     case DataType::Int2:

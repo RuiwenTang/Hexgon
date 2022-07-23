@@ -94,4 +94,50 @@ VkShaderStageFlagBits Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVu
   }
 }
 
+gpu::DataType Convertor<gpu::DataType, VkFormat>::ToGPU(VkFormat value) {
+  switch (value) {
+    case VK_FORMAT_R32G32B32A32_SFLOAT:
+      return gpu::DataType::Float4;
+    case VK_FORMAT_R32G32B32_SFLOAT:
+      return gpu::DataType::Float3;
+    case VK_FORMAT_R32G32_SFLOAT:
+      return gpu::DataType::Float2;
+    case VK_FORMAT_R32_SFLOAT:
+      return gpu::DataType::Float;
+    case VK_FORMAT_R32G32B32A32_SINT:
+      return gpu::DataType::Int4;
+    case VK_FORMAT_R32G32B32_SINT:
+      return gpu::DataType::Int3;
+    case VK_FORMAT_R32G32_SINT:
+      return gpu::DataType::Int2;
+    case VK_FORMAT_R32_SINT:
+      return gpu::DataType::Int;
+    default:
+      return gpu::DataType::None;
+  }
+}
+
+VkFormat Convertor<gpu::DataType, VkFormat>::ToVulkan(gpu::DataType value) {
+  switch (value) {
+    case gpu::DataType::Float4:
+      return VK_FORMAT_R32G32B32A32_SFLOAT;
+    case gpu::DataType::Float3:
+      return VK_FORMAT_R32G32B32_SFLOAT;
+    case gpu::DataType::Float2:
+      return VK_FORMAT_R32G32_SFLOAT;
+    case gpu::DataType::Float:
+      return VK_FORMAT_R32_SFLOAT;
+    case gpu::DataType::Int4:
+      return VK_FORMAT_R32G32B32A32_SINT;
+    case gpu::DataType::Int3:
+      return VK_FORMAT_R32G32B32_SINT;
+    case gpu::DataType::Int2:
+      return VK_FORMAT_R32G32_SINT;
+    case gpu::DataType::Int:
+      return VK_FORMAT_R32_SINT;
+    default:
+      return VK_FORMAT_UNDEFINED;
+  }
+}
+
 }  // namespace hexgon::gpu::vk

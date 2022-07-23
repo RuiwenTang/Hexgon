@@ -52,6 +52,7 @@ void PipelineBuilder::CleanUp() {
 
 VkPipeline PipelineBuilder::Build() {
   InitShaderStage();
+  InitInputBindingDesc();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
 
@@ -75,6 +76,26 @@ void PipelineBuilder::InitShaderStage() {
     create_info.pName = "main";
 
     m_shader_stages_info.emplace_back(create_info);
+  }
+}
+
+void PipelineBuilder::InitInputBindingDesc() {
+  for (auto binding : m_info.vertex_binding) {
+    VkVertexInputBindingDescription vk_binding;
+    vk_binding.binding = binding.slot;
+    vk_binding.stride = binding.stride;
+
+    m_vertex_input_binding.emplace_back(vk_binding);
+  }
+
+  for (auto attr : m_info.attr_desc) {
+    VkVertexInputAttributeDescription vk_attr;
+    vk_attr.binding = attr.slot;
+    vk_attr.location = attr.location;
+    vk_attr.format = Convertor<gpu::DataType, VkFormat>::ToVulkan(attr.type);
+    vk_attr.offset = attr.offset;
+
+    m_vertex_attr_desc.emplace_back(vk_attr);
   }
 }
 
