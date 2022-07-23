@@ -51,7 +51,8 @@ class SimpleLayer : public Layer {
  private:
   void InitPipeline() {
     gpu::PipelineInfo info;
-
+    // sample count
+    info.sample_count = GetGraphicsContext()->GetSampleCount();
     // vertex shader
     info.shaders.emplace_back(
         gpu::Shader(gpu::Shader::Stage::Vertex, (const char*)hello_triangle_vert_spv, hello_triangle_vert_spv_size));

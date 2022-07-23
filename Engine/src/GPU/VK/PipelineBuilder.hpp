@@ -45,6 +45,8 @@ class PipelineBuilder final {
   void InitShaderStage();
   void InitInputBindingDesc();
   void InitAssemblyState();
+  void InitMultiSample();
+  void InitDynamicState();
 
  private:
   VkDevice m_device;

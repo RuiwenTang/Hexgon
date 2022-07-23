@@ -68,9 +68,9 @@ struct DepthAttachmentDescriptor {
 struct PipelineInfo {
   std::vector<Shader> shaders = {};
   PrimitiveType primitive = PrimitiveType::Triangles;
+  SampleCount sample_count = SampleCount::Count1;
   std::vector<VertexBinding> vertex_binding = {};
   std::vector<VertexAttributeDescriptor> attr_desc = {};
-
   std::vector<ColorAttachmentDescriptor> color_attachment = {};
 };
 

@@ -54,6 +54,8 @@ VkPipeline PipelineBuilder::Build() {
   InitShaderStage();
   InitInputBindingDesc();
   InitAssemblyState();
+  InitMultiSample();
+  InitDynamicState();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
 
@@ -103,6 +105,28 @@ void PipelineBuilder::InitInputBindingDesc() {
 void PipelineBuilder::InitAssemblyState() {
   m_input_assembly_info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
   m_input_assembly_info.topology = Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToVulkan(m_info.primitive);
+}
+
+void PipelineBuilder::InitMultiSample() {
+  m_multi_sample_info.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+
+  m_multi_sample_info.sampleShadingEnable = VK_FALSE;
+  m_multi_sample_info.alphaToCoverageEnable = VK_FALSE;
+  m_multi_sample_info.alphaToOneEnable = VK_FALSE;
+  m_multi_sample_info.minSampleShading = 1.f;
+
+  m_multi_sample_info.rasterizationSamples =
+      Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToVulkan(m_info.sample_count);
+}
+
+void PipelineBuilder::InitDynamicState() {
+  m_dynamic_state.emplace_back(VK_DYNAMIC_STATE_VIEWPORT);
+  m_dynamic_state.emplace_back(VK_DYNAMIC_STATE_SCISSOR);
+
+  m_dynamic_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+
+  m_dynamic_info.dynamicStateCount = static_cast<uint32_t>(m_dynamic_state.size());
+  m_dynamic_info.pDynamicStates = m_dynamic_state.data();
 }
 
 }  // namespace hexgon::gpu::vk
