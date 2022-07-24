@@ -19,6 +19,12 @@ add_subdirectory(third_party/glfw)
 # glm
 add_subdirectory(third_party/glm)
 
+# SPRIV-Reflect
+set(SPIRV_REFLECT_EXECUTABLE OFF CACHE INTERNAL "" FORCE)
+set(SPIRV_REFLECT_EXAMPLES OFF CACHE INTERNAL "" FORCE)
+set(SPIRV_REFLECT_STATIC_LIB ON CACHE INTERNAL "" FORCE)
+add_subdirectory(third_party/SPIRV-Reflect)
+
 # engine
 add_subdirectory(Engine)
 

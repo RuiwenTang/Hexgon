@@ -26,6 +26,7 @@
 #include "GPU/VK/Formats.hpp"
 #include "GPU/VK/RenderPass.hpp"
 #include "LogPrivate.hpp"
+#include "spirv_reflect.h"
 
 namespace hexgon::gpu::vk {
 
