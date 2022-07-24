@@ -56,6 +56,7 @@ VkPipeline PipelineBuilder::Build() {
   InitAssemblyState();
   InitMultiSample();
   InitDynamicState();
+  InitColorAttachments();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
 
@@ -127,6 +128,32 @@ void PipelineBuilder::InitDynamicState() {
 
   m_dynamic_info.dynamicStateCount = static_cast<uint32_t>(m_dynamic_state.size());
   m_dynamic_info.pDynamicStates = m_dynamic_state.data();
+}
+
+void PipelineBuilder::InitColorAttachments() {
+  for (auto desc : m_info.color_attachment) {
+    VkPipelineColorBlendAttachmentState vk_desc;
+
+    vk_desc.blendEnable = desc.blending;
+
+    vk_desc.colorBlendOp = Convertor<gpu::BlendOperation, VkBlendOp>::ToVulkan(desc.color.op);
+    vk_desc.srcColorBlendFactor = Convertor<gpu::BlendFactor, VkBlendFactor>::ToVulkan(desc.color.src);
+    vk_desc.dstColorBlendFactor = Convertor<gpu::BlendFactor, VkBlendFactor>::ToVulkan(desc.color.dst);
+
+    vk_desc.alphaBlendOp = Convertor<gpu::BlendOperation, VkBlendOp>::ToVulkan(desc.alpha.op);
+    vk_desc.srcAlphaBlendFactor = Convertor<gpu::BlendFactor, VkBlendFactor>::ToVulkan(desc.alpha.src);
+    vk_desc.dstAlphaBlendFactor = Convertor<gpu::BlendFactor, VkBlendFactor>::ToVulkan(desc.alpha.dst);
+
+    vk_desc.colorWriteMask =
+        VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+    m_color_blend_attachment.emplace_back(vk_desc);
+  }
+
+  m_color_blend_info.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+
+  m_color_blend_info.attachmentCount = static_cast<uint32_t>(m_color_blend_attachment.size());
+  m_color_blend_info.pAttachments = m_color_blend_attachment.data();
 }
 
 }  // namespace hexgon::gpu::vk

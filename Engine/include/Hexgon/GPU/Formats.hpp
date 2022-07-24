@@ -62,11 +62,6 @@ enum class BlendFactor {
   OneMinusDestinationColor,
   DestinationAlpha,
   OneMinusDestinationAlpha,
-  SourceAlphaSaturated,
-  BlendColor,
-  OneMinusBlendColor,
-  BlendAlpha,
-  OneMinusBlendAlpha,
 };
 
 enum class BlendOperation {

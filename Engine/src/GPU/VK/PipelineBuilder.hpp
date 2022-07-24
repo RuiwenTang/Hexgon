@@ -47,6 +47,7 @@ class PipelineBuilder final {
   void InitAssemblyState();
   void InitMultiSample();
   void InitDynamicState();
+  void InitColorAttachments();
 
  private:
   VkDevice m_device;

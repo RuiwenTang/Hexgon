@@ -49,7 +49,7 @@ struct VertexAttributeDescriptor {
 
 struct BlendInfo {
   BlendFactor src = BlendFactor::SourceAlpha;
-  BlendFactor dst = BlendFactor::OneMinusBlendAlpha;
+  BlendFactor dst = BlendFactor::OneMinusSourceAlpha;
   BlendOperation op = BlendOperation::Add;
 };
 

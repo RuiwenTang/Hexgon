@@ -170,4 +170,116 @@ VkPrimitiveTopology Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToVulkan
   }
 }
 
+gpu::PixelFormat Convertor<gpu::PixelFormat, VkFormat>::ToGPU(VkFormat value) {
+  switch (value) {
+    case VK_FORMAT_R8G8B8A8_UNORM:
+      return gpu::PixelFormat::R8G8B8A8UNormInt;
+    case VK_FORMAT_R8G8B8A8_SRGB:
+      return gpu::PixelFormat::B8G8R8A8UNormIntSRGB;
+    case VK_FORMAT_R8_UNORM:
+      return gpu::PixelFormat::A8UNormInt;
+    case VK_FORMAT_B8G8R8A8_UNORM:
+      return gpu::PixelFormat::B8G8R8A8UNormInt;
+    case VK_FORMAT_B8G8R8A8_SRGB:
+      return gpu::PixelFormat::B8G8R8A8UNormIntSRGB;
+    case VK_FORMAT_R8_SINT:
+      return gpu::PixelFormat::S8Uint;
+    default:
+      return gpu::PixelFormat::Unknown;
+  }
+}
+
+VkFormat Convertor<gpu::PixelFormat, VkFormat>::ToVulkan(gpu::PixelFormat value) {
+  switch (value) {
+    case gpu::PixelFormat::R8G8B8A8UNormIntSRGB:
+      return VK_FORMAT_R8G8B8A8_SRGB;
+    case gpu::PixelFormat::R8G8B8A8UNormInt:
+      return VK_FORMAT_R8G8B8A8_UNORM;
+    case gpu::PixelFormat::B8G8R8A8UNormIntSRGB:
+      return VK_FORMAT_B8G8R8A8_SRGB;
+    case gpu::PixelFormat::B8G8R8A8UNormInt:
+      return VK_FORMAT_B8G8R8A8_UNORM;
+    case gpu::PixelFormat::A8UNormInt:
+      return VK_FORMAT_R8_UNORM;
+    case gpu::PixelFormat::S8Uint:
+      return VK_FORMAT_R8_SRGB;
+    default:
+      return VK_FORMAT_UNDEFINED;
+  }
+}
+
+gpu::BlendFactor Convertor<gpu::BlendFactor, VkBlendFactor>::ToGPU(VkBlendFactor value) {
+  switch (value) {
+    case VK_BLEND_FACTOR_ZERO:
+      return gpu::BlendFactor::Zero;
+    case VK_BLEND_FACTOR_ONE:
+      return gpu::BlendFactor::One;
+    case VK_BLEND_FACTOR_SRC_COLOR:
+      return gpu::BlendFactor::SourceColor;
+    case VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR:
+      return gpu::BlendFactor::OneMinusSourceColor;
+    case VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
+      return gpu::BlendFactor::OneMinusSourceAlpha;
+    case VK_BLEND_FACTOR_DST_COLOR:
+      return gpu::BlendFactor::DestinationColor;
+    case VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR:
+      return gpu::BlendFactor::OneMinusDestinationColor;
+    case VK_BLEND_FACTOR_DST_ALPHA:
+      return gpu::BlendFactor::DestinationAlpha;
+    case VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
+      return gpu::BlendFactor::OneMinusDestinationAlpha;
+    default:
+      return gpu::BlendFactor::Zero;
+  }
+}
+
+VkBlendFactor Convertor<gpu::BlendFactor, VkBlendFactor>::ToVulkan(gpu::BlendFactor value) {
+  switch (value) {
+    case gpu::BlendFactor::Zero:
+      return VK_BLEND_FACTOR_ZERO;
+    case gpu::BlendFactor::One:
+      return VK_BLEND_FACTOR_ONE;
+    case gpu::BlendFactor::SourceColor:
+      return VK_BLEND_FACTOR_SRC_COLOR;
+    case gpu::BlendFactor::OneMinusSourceColor:
+      return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+    case gpu::BlendFactor::SourceAlpha:
+      return VK_BLEND_FACTOR_SRC_ALPHA;
+    case gpu::BlendFactor::OneMinusSourceAlpha:
+      return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    case gpu::BlendFactor::DestinationColor:
+      return VK_BLEND_FACTOR_DST_COLOR;
+    case gpu::BlendFactor::OneMinusDestinationColor:
+      return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+    case gpu::BlendFactor::DestinationAlpha:
+      return VK_BLEND_FACTOR_DST_ALPHA;
+    case gpu::BlendFactor::OneMinusDestinationAlpha:
+      return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+  }
+}
+
+gpu::BlendOperation Convertor<gpu::BlendOperation, VkBlendOp>::ToGPU(VkBlendOp value) {
+  switch (value) {
+    case VK_BLEND_OP_ADD:
+      return gpu::BlendOperation::Add;
+    case VK_BLEND_OP_SUBTRACT:
+      return gpu::BlendOperation::Subtract;
+    case VK_BLEND_OP_REVERSE_SUBTRACT:
+      return gpu::BlendOperation::ReverseSubtract;
+    default:
+      return gpu::BlendOperation::Add;
+  }
+}
+
+VkBlendOp Convertor<gpu::BlendOperation, VkBlendOp>::ToVulkan(gpu::BlendOperation value) {
+  switch (value) {
+    case gpu::BlendOperation::Add:
+      return VK_BLEND_OP_ADD;
+    case gpu::BlendOperation::Subtract:
+      return VK_BLEND_OP_SUBTRACT;
+    case gpu::BlendOperation::ReverseSubtract:
+      return VK_BLEND_OP_REVERSE_SUBTRACT;
+  }
+}
+
 }  // namespace hexgon::gpu::vk

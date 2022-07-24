@@ -48,6 +48,8 @@ CONVERTOR(gpu::Shader::Stage, VkShaderStageFlagBits);
 CONVERTOR(gpu::DataType, VkFormat);
 CONVERTOR(gpu::PrimitiveType, VkPrimitiveTopology);
 CONVERTOR(gpu::PixelFormat, VkFormat);
+CONVERTOR(gpu::BlendFactor, VkBlendFactor);
+CONVERTOR(gpu::BlendOperation, VkBlendOp);
 
 }  // namespace vk
 }  // namespace gpu
