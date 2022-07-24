@@ -57,6 +57,7 @@ VkPipeline PipelineBuilder::Build() {
   InitMultiSample();
   InitDynamicState();
   InitColorAttachments();
+  InitRasterizationInfo();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
 
@@ -154,6 +155,19 @@ void PipelineBuilder::InitColorAttachments() {
 
   m_color_blend_info.attachmentCount = static_cast<uint32_t>(m_color_blend_attachment.size());
   m_color_blend_info.pAttachments = m_color_blend_attachment.data();
+}
+
+void PipelineBuilder::InitRasterizationInfo() {
+  m_rasterization_info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+  m_rasterization_info.depthClampEnable = VK_FALSE;
+  m_rasterization_info.rasterizerDiscardEnable = VK_FALSE;
+  m_rasterization_info.lineWidth = 1.f;
+
+  m_rasterization_info.polygonMode = VK_POLYGON_MODE_FILL;
+  m_rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
+  m_rasterization_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
+  m_rasterization_info.depthBiasEnable = VK_FALSE;
 }
 
 }  // namespace hexgon::gpu::vk
