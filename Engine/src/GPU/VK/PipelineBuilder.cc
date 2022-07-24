@@ -85,6 +85,11 @@ VkPipeline PipelineBuilder::Build() {
   // dynamic state
   m_create_info.pDynamicState = &m_dynamic_info;
 
+  if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &m_create_info, nullptr, &pipeline) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed create vulkan backend pipeline");
+    exit(-1);
+  }
+
   return pipeline;
 }
 
@@ -106,6 +111,9 @@ void PipelineBuilder::InitShaderStage() {
 
     m_shader_stages_info.emplace_back(create_info);
   }
+
+  m_create_info.stageCount = static_cast<uint32_t>(m_shader_stages_info.size());
+  m_create_info.pStages = m_shader_stages_info.data();
 }
 
 void PipelineBuilder::InitInputBindingDesc() {
@@ -113,6 +121,7 @@ void PipelineBuilder::InitInputBindingDesc() {
     VkVertexInputBindingDescription vk_binding;
     vk_binding.binding = binding.slot;
     vk_binding.stride = binding.stride;
+    vk_binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
     m_vertex_input_binding.emplace_back(vk_binding);
   }
@@ -126,6 +135,14 @@ void PipelineBuilder::InitInputBindingDesc() {
 
     m_vertex_attr_desc.emplace_back(vk_attr);
   }
+
+  m_vertex_input_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+  m_vertex_input_info.vertexBindingDescriptionCount = static_cast<uint32_t>(m_vertex_input_binding.size());
+  m_vertex_input_info.pVertexBindingDescriptions = m_vertex_input_binding.data();
+
+  m_vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(m_vertex_attr_desc.size());
+  m_vertex_input_info.pVertexAttributeDescriptions = m_vertex_attr_desc.data();
 }
 
 void PipelineBuilder::InitAssemblyState() {
