@@ -47,6 +47,7 @@ CONVERTOR(gpu::SampleCount, VkSampleCountFlagBits);
 CONVERTOR(gpu::Shader::Stage, VkShaderStageFlagBits);
 CONVERTOR(gpu::DataType, VkFormat);
 CONVERTOR(gpu::PrimitiveType, VkPrimitiveTopology);
+CONVERTOR(gpu::PixelFormat, VkFormat);
 
 }  // namespace vk
 }  // namespace gpu

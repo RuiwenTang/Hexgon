@@ -54,7 +54,6 @@ struct BlendInfo {
 };
 
 struct ColorAttachmentDescriptor {
-  PixelFormat format = PixelFormat::Unknown;
   bool blending = false;
   BlendInfo color = {};
   BlendInfo alpha = {};
@@ -72,6 +71,7 @@ struct PipelineInfo {
   std::vector<VertexBinding> vertex_binding = {};
   std::vector<VertexAttributeDescriptor> attr_desc = {};
   std::vector<ColorAttachmentDescriptor> color_attachment = {};
+  std::vector<DepthAttachmentDescriptor> depth_attachment = {};
 };
 
 class Pipeline {

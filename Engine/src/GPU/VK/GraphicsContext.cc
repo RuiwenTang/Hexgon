@@ -343,6 +343,39 @@ gpu::SampleCount GraphicsContext::GetSampleCount() {
   return vk::Convertor<gpu::SampleCount, VkSampleCountFlagBits>::ToGPU(m_sample_count);
 }
 
+std::vector<gpu::ColorAttachmentDescriptor> GraphicsContext::ScreenColorAttachment() {
+  std::vector<gpu::ColorAttachmentDescriptor> ret;
+
+  gpu::ColorAttachmentDescriptor desc;
+
+  desc.blending = true;
+
+  desc.color.src = BlendFactor::SourceAlpha;
+  desc.color.dst = BlendFactor::OneMinusSourceAlpha;
+  desc.color.op = BlendOperation::Add;
+
+  desc.alpha.src = BlendFactor::One;
+  desc.alpha.dst = BlendFactor::Zero;
+  desc.alpha.op = BlendOperation::Add;
+
+  ret.emplace_back(desc);
+
+  return ret;
+}
+
+std::vector<gpu::DepthAttachmentDescriptor> GraphicsContext::ScreenDepthAttachment() {
+  std::vector<gpu::DepthAttachmentDescriptor> ret;
+
+  gpu::DepthAttachmentDescriptor desc;
+
+  desc.depth_writable = true;
+  desc.compare = CompareFunction::Less;
+
+  ret.emplace_back(desc);
+
+  return ret;
+}
+
 std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   PipelineBuilder builder(m_device, info);
 

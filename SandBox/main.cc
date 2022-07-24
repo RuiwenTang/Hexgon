@@ -68,6 +68,10 @@ class SimpleLayer : public Layer {
     // location 1 pos
     info.attr_desc.emplace_back(gpu::VertexAttributeDescriptor{0, 1, gpu::DataType::Float4, 3 * sizeof(float)});
 
+    // attachments
+    info.color_attachment = GetGraphicsContext()->ScreenColorAttachment();
+    info.depth_attachment = GetGraphicsContext()->ScreenDepthAttachment();
+
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }
 

@@ -52,6 +52,10 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   gpu::SampleCount GetSampleCount() override;
 
+  std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() override;
+
+  std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() override;
+
   std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) override;
 
  private:

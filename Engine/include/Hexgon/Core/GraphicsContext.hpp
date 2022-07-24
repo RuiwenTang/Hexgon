@@ -28,6 +28,7 @@
 #include <Hexgon/GPU/Pipeline.hpp>
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
 
 namespace hexgon {
 
@@ -45,6 +46,10 @@ class GraphicsContext {
   virtual gpu::SampleCount GetSampleCount() = 0;
 
   virtual std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) = 0;
+
+  virtual std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() = 0;
+
+  virtual std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() = 0;
 
   static std::unique_ptr<GraphicsContext> Create(void* window, API api);
 };
