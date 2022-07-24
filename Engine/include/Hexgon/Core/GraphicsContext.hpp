@@ -51,6 +51,8 @@ class GraphicsContext {
 
   virtual std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() = 0;
 
+  virtual gpu::RenderPass* ScreenRenderPass() = 0;
+
   static std::unique_ptr<GraphicsContext> Create(void* window, API api);
 };
 

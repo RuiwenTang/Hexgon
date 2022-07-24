@@ -72,6 +72,9 @@ class SimpleLayer : public Layer {
     info.color_attachment = GetGraphicsContext()->ScreenColorAttachment();
     info.depth_attachment = GetGraphicsContext()->ScreenDepthAttachment();
 
+    // render pass
+    info.render_pass = GetGraphicsContext()->ScreenRenderPass();
+
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }
 

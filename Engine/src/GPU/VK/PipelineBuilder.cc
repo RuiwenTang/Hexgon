@@ -24,6 +24,7 @@
 #include "GPU/VK/PipelineBuilder.hpp"
 
 #include "GPU/VK/Formats.hpp"
+#include "GPU/VK/RenderPass.hpp"
 #include "LogPrivate.hpp"
 
 namespace hexgon::gpu::vk {
@@ -57,9 +58,32 @@ VkPipeline PipelineBuilder::Build() {
   InitMultiSample();
   InitDynamicState();
   InitColorAttachments();
+  InitDepthStencilInfo();
   InitRasterizationInfo();
 
   VkPipeline pipeline = VK_NULL_HANDLE;
+
+  m_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+
+  // render pass
+  m_create_info.renderPass = dynamic_cast<vk::RenderPass*>(m_info.render_pass)->NativeRenderPass();
+  m_create_info.subpass = 0;
+  // view port
+  m_create_info.pViewportState = &m_view_port_info;
+  // color blend info
+  m_create_info.pColorBlendState = &m_color_blend_info;
+  // vertex input
+  m_create_info.pVertexInputState = &m_vertex_input_info;
+  // input assemble
+  m_create_info.pInputAssemblyState = &m_input_assembly_info;
+  // rasterization
+  m_create_info.pRasterizationState = &m_rasterization_info;
+  // multisample
+  m_create_info.pMultisampleState = &m_multi_sample_info;
+  // depth stencil
+  m_create_info.pDepthStencilState = &m_depth_stencil_info;
+  // dynamic state
+  m_create_info.pDynamicState = &m_dynamic_info;
 
   return pipeline;
 }
@@ -155,6 +179,33 @@ void PipelineBuilder::InitColorAttachments() {
 
   m_color_blend_info.attachmentCount = static_cast<uint32_t>(m_color_blend_attachment.size());
   m_color_blend_info.pAttachments = m_color_blend_attachment.data();
+
+  m_view_port_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+  m_view_port_info.viewportCount = m_color_blend_info.attachmentCount;
+  m_view_port_info.scissorCount = m_color_blend_info.attachmentCount;
+  m_view_port_info.flags = 0;
+}
+
+void PipelineBuilder::InitDepthStencilInfo() {
+  m_depth_stencil_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+
+  m_depth_stencil_info.minDepthBounds = 0.f;
+  m_depth_stencil_info.maxDepthBounds = 1.f;
+
+  // TODO: support stencil test
+  m_depth_stencil_info.stencilTestEnable = VK_FALSE;
+  m_depth_stencil_info.depthBoundsTestEnable = VK_FALSE;
+
+  if (m_info.depth_attachment.empty()) {
+    m_depth_stencil_info.depthTestEnable = VK_FALSE;
+    m_depth_stencil_info.depthWriteEnable = VK_FALSE;
+    m_depth_stencil_info.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+  } else {
+    m_depth_stencil_info.depthTestEnable = VK_TRUE;
+    m_depth_stencil_info.depthWriteEnable = m_info.depth_attachment[0].depth_writable;
+    m_depth_stencil_info.depthCompareOp =
+        Convertor<gpu::CompareFunction, VkCompareOp>::ToVulkan(m_info.depth_attachment[0].compare);
+  }
 }
 
 void PipelineBuilder::InitRasterizationInfo() {

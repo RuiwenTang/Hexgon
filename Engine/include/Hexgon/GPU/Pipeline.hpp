@@ -35,6 +35,8 @@ namespace hexgon {
 
 namespace gpu {
 
+class RenderPass;
+
 struct VertexBinding {
   uint32_t slot = 0;
   uint32_t stride = 0;
@@ -72,6 +74,7 @@ struct PipelineInfo {
   std::vector<VertexAttributeDescriptor> attr_desc = {};
   std::vector<ColorAttachmentDescriptor> color_attachment = {};
   std::vector<DepthAttachmentDescriptor> depth_attachment = {};
+  RenderPass* render_pass = nullptr;
 };
 
 class Pipeline {

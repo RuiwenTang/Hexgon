@@ -282,4 +282,46 @@ VkBlendOp Convertor<gpu::BlendOperation, VkBlendOp>::ToVulkan(gpu::BlendOperatio
   }
 }
 
+gpu::CompareFunction Convertor<gpu::CompareFunction, VkCompareOp>::ToGPU(VkCompareOp value) {
+  switch (value) {
+    case VK_COMPARE_OP_NEVER:
+      return gpu::CompareFunction::Never;
+    case VK_COMPARE_OP_ALWAYS:
+      return gpu::CompareFunction::Always;
+    case VK_COMPARE_OP_EQUAL:
+      return gpu::CompareFunction::Equal;
+    case VK_COMPARE_OP_LESS_OR_EQUAL:
+      return gpu::CompareFunction::LessEqual;
+    case VK_COMPARE_OP_GREATER:
+      return gpu::CompareFunction::Greater;
+    case VK_COMPARE_OP_NOT_EQUAL:
+      return gpu::CompareFunction::NotEqual;
+    case VK_COMPARE_OP_GREATER_OR_EQUAL:
+      return gpu::CompareFunction::GreaterEqual;
+    default:
+      return gpu::CompareFunction::Always;
+  }
+}
+
+VkCompareOp Convertor<gpu::CompareFunction, VkCompareOp>::ToVulkan(gpu::CompareFunction value) {
+  switch (value) {
+    case gpu::CompareFunction::Never:
+      return VK_COMPARE_OP_NEVER;
+    case gpu::CompareFunction::Always:
+      return VK_COMPARE_OP_ALWAYS;
+    case gpu::CompareFunction::Less:
+      return VK_COMPARE_OP_LESS;
+    case gpu::CompareFunction::Equal:
+      return VK_COMPARE_OP_EQUAL;
+    case gpu::CompareFunction::LessEqual:
+      return VK_COMPARE_OP_LESS_OR_EQUAL;
+    case gpu::CompareFunction::Greater:
+      return VK_COMPARE_OP_GREATER;
+    case gpu::CompareFunction::NotEqual:
+      return VK_COMPARE_OP_NOT_EQUAL;
+    case gpu::CompareFunction::GreaterEqual:
+      return VK_COMPARE_OP_GREATER_OR_EQUAL;
+  }
+}
+
 }  // namespace hexgon::gpu::vk

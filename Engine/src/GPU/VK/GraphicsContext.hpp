@@ -29,6 +29,8 @@
 #include <Hexgon/Core/GraphicsContext.hpp>
 #include <vector>
 
+#include "GPU/VK/RenderPass.hpp"
+
 namespace hexgon {
 namespace gpu {
 namespace vk {
@@ -55,6 +57,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() override;
 
   std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() override;
+
+  gpu::RenderPass* ScreenRenderPass() override;
 
   std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) override;
 
@@ -97,7 +101,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<VkFence> m_cmd_fences = {};
   std::vector<VkSemaphore> m_present_semaphore = {};
   std::vector<VkSemaphore> m_render_semaphore = {};
-  VkRenderPass m_render_pass = {};
+  std::unique_ptr<RenderPass> m_render_pass = {};
   std::vector<VkFramebuffer> m_framebuffers = {};
   uint32_t m_current_frame = 0;
   uint32_t m_frame_index = 0;

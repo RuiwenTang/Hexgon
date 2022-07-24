@@ -51,6 +51,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Buffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Formats.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Pipeline.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Shader.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
@@ -67,6 +68,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )

@@ -21,28 +21,12 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
-#include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
+#include "GPU/VK/RenderPass.hpp"
+
+namespace hexgon::gpu::vk {
+
+RenderPass::RenderPass(VkRenderPass render_pass) : m_render_pass(render_pass) {}
+
+VkRenderPass RenderPass::NativeRenderPass() const { return m_render_pass; }
+
+}  // namespace hexgon::gpu::vk

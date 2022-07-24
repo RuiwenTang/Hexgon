@@ -50,6 +50,7 @@ CONVERTOR(gpu::PrimitiveType, VkPrimitiveTopology);
 CONVERTOR(gpu::PixelFormat, VkFormat);
 CONVERTOR(gpu::BlendFactor, VkBlendFactor);
 CONVERTOR(gpu::BlendOperation, VkBlendOp);
+CONVERTOR(gpu::CompareFunction, VkCompareOp);
 
 }  // namespace vk
 }  // namespace gpu

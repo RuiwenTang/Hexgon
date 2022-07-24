@@ -204,7 +204,7 @@ void GraphicsContext::Init() {
 void GraphicsContext::Destroy() {
   vkDeviceWaitIdle(m_device);
 
-  vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+  vkDestroyRenderPass(m_device, m_render_pass->NativeRenderPass(), nullptr);
 
   for (auto fb : m_framebuffers) {
     vkDestroyFramebuffer(m_device, fb, nullptr);
@@ -284,7 +284,7 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   clear_values[2].color = {clear_color.x, clear_color.y, clear_color.z, clear_color.w};
 
   VkRenderPassBeginInfo render_pass_begin_info{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
-  render_pass_begin_info.renderPass = m_render_pass;
+  render_pass_begin_info.renderPass = m_render_pass->NativeRenderPass();
   render_pass_begin_info.framebuffer = m_framebuffers[m_current_frame];
   render_pass_begin_info.renderArea.offset = {0, 0};
   render_pass_begin_info.renderArea.extent = m_swapchain_extent;
@@ -369,12 +369,14 @@ std::vector<gpu::DepthAttachmentDescriptor> GraphicsContext::ScreenDepthAttachme
   gpu::DepthAttachmentDescriptor desc;
 
   desc.depth_writable = true;
-  desc.compare = CompareFunction::Less;
+  desc.compare = CompareFunction::LessEqual;
 
   ret.emplace_back(desc);
 
   return ret;
 }
+
+gpu::RenderPass* GraphicsContext::ScreenRenderPass() { return m_render_pass.get(); }
 
 std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   PipelineBuilder builder(m_device, info);
@@ -881,10 +883,14 @@ void GraphicsContext::CreateRenderPass() {
   create_info.pSubpasses = &subpass;
   create_info.dependencyCount = 0;
 
-  if (vkCreateRenderPass(m_device, &create_info, nullptr, &m_render_pass) != VK_SUCCESS) {
+  VkRenderPass render_pass;
+
+  if (vkCreateRenderPass(m_device, &create_info, nullptr, &render_pass) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to create render pass!");
     exit(-1);
   }
+
+  m_render_pass = std::make_unique<RenderPass>(render_pass);
 }
 
 void GraphicsContext::CreateFramebuffer() {
@@ -898,7 +904,7 @@ void GraphicsContext::CreateFramebuffer() {
     };
 
     VkFramebufferCreateInfo create_info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
-    create_info.renderPass = m_render_pass;
+    create_info.renderPass = m_render_pass->NativeRenderPass();
     create_info.attachmentCount = attachments.size();
     create_info.pAttachments = attachments.data();
     create_info.width = m_swapchain_extent.width;
