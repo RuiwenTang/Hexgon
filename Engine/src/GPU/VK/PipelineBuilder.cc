@@ -56,6 +56,11 @@ void PipelineBuilder::CleanUp() {
   for (auto module : m_shaders) {
     vkDestroyShaderModule(m_device, module, nullptr);
   }
+
+  vkDestroyPipelineLayout(m_device, m_layout, nullptr);
+  for (auto desc : m_descriptor_set_layout) {
+    vkDestroyDescriptorSetLayout(m_device, desc, nullptr);
+  }
 }
 
 VkPipeline PipelineBuilder::Build() {
