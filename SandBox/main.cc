@@ -40,7 +40,11 @@ class SimpleLayer : public Layer {
     InitPipeline();
   }
 
-  void OnDetach() override { HEX_INFO("{} layer OnDetach", this->GetLayerName()); }
+  void OnDetach() override {
+    HEX_INFO("{} layer OnDetach", this->GetLayerName());
+
+    m_pipeline.reset();
+  }
 
   void OnUpdate(float tm) override {}
 

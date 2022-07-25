@@ -66,6 +66,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Pipeline.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Pipeline.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.cc

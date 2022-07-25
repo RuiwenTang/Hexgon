@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "GPU/VK/Formats.hpp"
+#include "GPU/VK/Pipeline.hpp"
 #include "GPU/VK/PipelineBuilder.hpp"
 #include "LogPrivate.hpp"
 
@@ -381,8 +382,7 @@ gpu::RenderPass* GraphicsContext::ScreenRenderPass() { return m_render_pass.get(
 std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   PipelineBuilder builder(m_device, info);
 
-  builder.Build();
-  return std::unique_ptr<gpu::Pipeline>();
+  return std::make_unique<vk::Pipeline>(m_device, builder.Build());
 }
 
 void GraphicsContext::InitVkInstance() {

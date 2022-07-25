@@ -68,6 +68,10 @@ class GLFWWindowImpl : public Window {
       m_context->SwapBuffers();
     }
 
+    for (auto client : m_clients) {
+      client->OnWindowClose();
+    }
+
     m_context->Destroy();
   }
 

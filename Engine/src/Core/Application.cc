@@ -62,7 +62,11 @@ void Application::OnWindowResize(int32_t width, int32_t height) {
   HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);
 }
 
-void Application::OnWindowClose() { m_window->Shutdown(); }
+void Application::OnWindowClose() {
+  for (auto const& it : m_layer_stack) {
+    it->OnDetach();
+  }
+}
 
 void Application::OnWindowUpdate() {
   for (auto const& it : m_layer_stack) {
