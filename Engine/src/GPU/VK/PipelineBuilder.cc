@@ -30,6 +30,12 @@
 
 namespace hexgon::gpu::vk {
 
+struct DescriptorSetLayoutData {
+  uint32_t set_number;
+  VkDescriptorSetLayoutCreateInfo create_info;
+  std::vector<VkDescriptorSetLayoutBinding> bindings;
+};
+
 static VkShaderModule create_shader_module(VkDevice device, const char* shader, size_t shader_size) {
   VkShaderModuleCreateInfo create_info{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
   create_info.codeSize = shader_size;
@@ -54,6 +60,7 @@ void PipelineBuilder::CleanUp() {
 
 VkPipeline PipelineBuilder::Build() {
   InitShaderStage();
+  InitPipelineLayout();
   InitInputBindingDesc();
   InitAssemblyState();
   InitMultiSample();
@@ -115,6 +122,87 @@ void PipelineBuilder::InitShaderStage() {
 
   m_create_info.stageCount = static_cast<uint32_t>(m_shader_stages_info.size());
   m_create_info.pStages = m_shader_stages_info.data();
+}
+
+void PipelineBuilder::InitPipelineLayout() {
+  VkPipelineLayoutCreateInfo create_info{};
+  create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+
+  std::vector<DescriptorSetLayoutData> layout_data;
+  for (auto shader : m_info.shaders) {
+    SpvReflectShaderModule module = {};
+    SpvReflectResult result = spvReflectCreateShaderModule(shader.GetSize(), shader.GetSource(), &module);
+
+    if (result != SPV_REFLECT_RESULT_SUCCESS) {
+      HEX_CORE_ERROR("Failed reflect shader !!");
+      continue;
+    }
+
+    uint32_t count = 0;
+    result = spvReflectEnumerateDescriptorSets(&module, &count, nullptr);
+
+    if (result != SPV_REFLECT_RESULT_SUCCESS) {
+      HEX_CORE_ERROR("Failed refelct shader descriptors");
+      continue;
+    } else {
+      HEX_CORE_INFO("reflect {} stage with {} sets",
+                    shader.GetShaderStage() == Shader::Stage::Vertex ? "vertex" : "fragment", count);
+    }
+
+    std::vector<SpvReflectDescriptorSet*> descs(count);
+
+    spvReflectEnumerateDescriptorSets(&module, &count, descs.data());
+
+    for (size_t i_set = 0; i_set < descs.size(); i_set++) {
+      layout_data.emplace_back(DescriptorSetLayoutData{});
+
+      SpvReflectDescriptorSet* refl_set = descs[i_set];
+      for (uint32_t i_binding = 0; i_binding < refl_set->binding_count; i_binding++) {
+        SpvReflectDescriptorBinding* refl_binding = refl_set->bindings[i_binding];
+
+        VkDescriptorSetLayoutBinding vk_binding;
+        vk_binding.binding = refl_binding->binding;
+        vk_binding.descriptorType = static_cast<VkDescriptorType>(refl_binding->descriptor_type);
+        vk_binding.descriptorCount = 1;
+        for (uint32_t i_dim = 0; i_dim < refl_binding->array.dims_count; i_dim++) {
+          vk_binding.descriptorCount *= refl_binding->array.dims[i_dim];
+        }
+
+        vk_binding.stageFlags = static_cast<VkShaderStageFlagBits>(module.shader_stage);
+
+        layout_data[i_set].bindings.emplace_back(vk_binding);
+      }
+
+      layout_data[i_set].create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      layout_data[i_set].create_info.bindingCount = refl_set->binding_count;
+      layout_data[i_set].create_info.pBindings = layout_data[i_set].bindings.data();
+
+      layout_data[i_set].set_number = refl_set->set;
+    }
+  }
+
+  // TODO: merge bindings
+
+  m_descriptor_set_layout.resize(layout_data.size());
+
+  for (size_t i = 0; i < m_descriptor_set_layout.size(); i++) {
+    if (vkCreateDescriptorSetLayout(m_device, &layout_data[i].create_info, nullptr, &m_descriptor_set_layout[i]) !=
+        VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to create descriptor set layout at {}", i);
+      exit(-1);
+    }
+  }
+
+  create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  create_info.setLayoutCount = static_cast<uint32_t>(m_descriptor_set_layout.size());
+  create_info.pSetLayouts = m_descriptor_set_layout.data();
+
+  if (vkCreatePipelineLayout(m_device, &create_info, nullptr, &m_layout) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to create pipeline layout!");
+    exit(-1);
+  }
+
+  m_create_info.layout = m_layout;
 }
 
 void PipelineBuilder::InitInputBindingDesc() {

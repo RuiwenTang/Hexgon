@@ -35,7 +35,8 @@ namespace vk {
 
 class PipelineBuilder final {
  public:
-  PipelineBuilder(VkDevice device, gpu::PipelineInfo const& info) : m_device(device), m_info(info) {}
+  PipelineBuilder(VkDevice device, gpu::PipelineInfo const& info)
+      : m_device(device), m_layout(VK_NULL_HANDLE), m_info(info) {}
   ~PipelineBuilder();
 
   VkPipeline Build();
@@ -43,6 +44,7 @@ class PipelineBuilder final {
  private:
   void CleanUp();
   void InitShaderStage();
+  void InitPipelineLayout();
   void InitInputBindingDesc();
   void InitAssemblyState();
   void InitMultiSample();
@@ -53,12 +55,14 @@ class PipelineBuilder final {
 
  private:
   VkDevice m_device;
+  VkPipelineLayout m_layout;
   gpu::PipelineInfo m_info;
   std::vector<VkVertexInputBindingDescription> m_vertex_input_binding = {};
   std::vector<VkVertexInputAttributeDescription> m_vertex_attr_desc = {};
   std::vector<VkPipelineColorBlendAttachmentState> m_color_blend_attachment = {};
   std::vector<VkDynamicState> m_dynamic_state = {};
   std::vector<VkPipelineShaderStageCreateInfo> m_shader_stages_info = {};
+  std::vector<VkDescriptorSetLayout> m_descriptor_set_layout = {};
   VkPipelineVertexInputStateCreateInfo m_vertex_input_info = {};
   VkPipelineInputAssemblyStateCreateInfo m_input_assembly_info = {};
   VkPipelineColorBlendStateCreateInfo m_color_blend_info = {};
