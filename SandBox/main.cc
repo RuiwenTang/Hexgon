@@ -91,6 +91,8 @@ int main(int argc, const char** argv) {
 
   HEX_INFO("create app instance 0x{:x}", reinterpret_cast<uintptr_t>(app));
 
+  app->GetWindow()->SetClearColor(glm::vec4{1.f, 1.f, 1.f, 1.f});
+
   app->PushLayer(std::make_shared<SimpleLayer>());
 
   app->Run();

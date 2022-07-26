@@ -39,6 +39,8 @@ class HEX_API Application final : public WindowClient {
 
   static Application* Get();
 
+  Window* GetWindow() const { return m_window.get(); }
+
   void Run();
 
   void PushLayer(std::shared_ptr<Layer> const& layer);
