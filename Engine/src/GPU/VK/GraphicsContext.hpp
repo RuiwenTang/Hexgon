@@ -25,6 +25,8 @@
 #define ENGINE_SRC_RENDERER_VULKAN_GRAPHICS_CONTEXT_HPP_
 
 #include <vulkan/vulkan.h>
+// vma
+#include <vk_mem_alloc.h>
 
 #include <Hexgon/Core/GraphicsContext.hpp>
 #include <vector>
@@ -75,6 +77,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
   void CreateRenderPass();
   void CreateFramebuffer();
 
+  void InitVMA();
+
   uint32_t GetMemroyType(uint32_t type_bits, VkMemoryPropertyFlags properties);
 
  private:
@@ -106,6 +110,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   uint32_t m_current_frame = 0;
   uint32_t m_frame_index = 0;
   uint32_t m_inflite_index = 0;
+  VmaAllocator m_vma_allocator = {};
 };
 
 }  // namespace vk

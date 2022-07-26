@@ -200,6 +200,8 @@ void GraphicsContext::Init() {
   CreateSyncObjects();
   CreateRenderPass();
   CreateFramebuffer();
+
+  InitVMA();
 }
 
 void GraphicsContext::Destroy() {
@@ -915,6 +917,21 @@ void GraphicsContext::CreateFramebuffer() {
       HEX_CORE_ERROR("Failed to create frame buffer");
       exit(-1);
     }
+  }
+}
+
+void GraphicsContext::InitVMA() {
+  VmaAllocatorCreateInfo create_info;
+
+  create_info.instance = m_vk_instance;
+  create_info.physicalDevice = m_phy_device;
+  create_info.device = m_device;
+  create_info.vulkanApiVersion = VK_API_VERSION_1_2;
+
+  VK_API_VERSION_1_1;
+  if (vmaCreateAllocator(&create_info, &m_vma_allocator) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed create vma allocator");
+    exit(-1);
   }
 }
 
