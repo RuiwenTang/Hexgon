@@ -209,6 +209,8 @@ void GraphicsContext::Init() {
 
 void GraphicsContext::Destroy() {
   vkDeviceWaitIdle(m_device);
+  // clean up allocator
+  vmaDestroyAllocator(m_vma_allocator);
 
   vkDestroyRenderPass(m_device, m_render_pass->NativeRenderPass(), nullptr);
 
