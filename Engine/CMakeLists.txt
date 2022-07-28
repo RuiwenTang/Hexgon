@@ -12,6 +12,7 @@ target_include_directories(
 target_include_directories(
     Hexgon PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src
+    ${PROJECT_SOURCE_DIR}/third_party/VulkanMemoryAllocator/include
 )
 
 if(WIN32)
@@ -81,4 +82,3 @@ target_link_libraries(Hexgon glfw)
 target_link_libraries(Hexgon glm::glm)
 target_link_libraries(Hexgon Vulkan::Vulkan)
 target_link_libraries(Hexgon spirv-reflect-static)
-target_link_libraries(Hexgon VulkanMemoryAllocator)

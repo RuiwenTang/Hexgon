@@ -22,6 +22,9 @@
  */
 
 #include "GPU/VK/GraphicsContext.hpp"
+// VMA
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
 
 #include <GLFW/glfw3.h>
 
@@ -921,7 +924,7 @@ void GraphicsContext::CreateFramebuffer() {
 }
 
 void GraphicsContext::InitVMA() {
-  VmaAllocatorCreateInfo create_info;
+  VmaAllocatorCreateInfo create_info{};
 
   create_info.instance = m_vk_instance;
   create_info.physicalDevice = m_phy_device;
