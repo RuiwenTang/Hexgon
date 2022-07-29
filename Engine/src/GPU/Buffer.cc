@@ -63,6 +63,10 @@ BufferLayout::BufferLayout(std::vector<BufferElement> elements) : m_element(std:
   m_stride = CalculateStride();
 }
 
+std::vector<BufferElement> const& BufferLayout::Elements() const { return m_element; }
+
+uint32_t BufferLayout::Stride() const { return m_stride; }
+
 uint32_t BufferLayout::CalculateStride() const {
   uint32_t stride = 0;
 

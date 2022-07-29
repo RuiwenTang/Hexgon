@@ -26,6 +26,7 @@
 
 #include <Hexgon/GPU/Formats.hpp>
 #include <Hexgon/GPU/Shader.hpp>
+#include <Hexgon/Macro.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>

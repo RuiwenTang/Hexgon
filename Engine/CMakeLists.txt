@@ -63,6 +63,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc

@@ -25,6 +25,7 @@
 #define ENGINE_INCLUDE_HEXGON_GPU_BUFFER_HPP_
 
 #include <Hexgon/GPU/Formats.hpp>
+#include <Hexgon/Macro.hpp>
 #include <string>
 #include <vector>
 
@@ -32,7 +33,7 @@ namespace hexgon {
 
 namespace gpu {
 
-class BufferElement final {
+class HEX_API BufferElement final {
  public:
   BufferElement(std::string name, DataType type, uint32_t offset);
 
@@ -53,7 +54,7 @@ class BufferElement final {
   uint32_t m_size;
 };
 
-class BufferLayout final {
+class HEX_API BufferLayout final {
  public:
   BufferLayout(std::vector<BufferElement> elements);
 
@@ -71,7 +72,7 @@ class BufferLayout final {
   uint32_t m_stride;
 };
 
-class VertexBuffer {
+class HEX_API VertexBuffer {
  public:
   VertexBuffer(BufferLayout const& layout) : m_layout(layout) {}
   virtual ~VertexBuffer() = default;
@@ -84,7 +85,7 @@ class VertexBuffer {
   BufferLayout m_layout;
 };
 
-class IndexBuffer {
+class HEX_API IndexBuffer {
  public:
   IndexBuffer() = default;
   virtual ~IndexBuffer() = default;
