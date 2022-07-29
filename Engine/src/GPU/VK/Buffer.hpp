@@ -34,9 +34,8 @@ namespace vk {
 
 class VertexBuffer : public gpu::VertexBuffer {
  public:
-  VertexBuffer(BufferLayout layout, VkDevice device, VmaAllocator allocator)
+  VertexBuffer(BufferLayout layout, VmaAllocator allocator)
       : gpu::VertexBuffer(layout),
-        m_vk_device(device),
         m_vma_allocator(allocator),
         m_buffer_size(0),
         m_vk_buffer(VK_NULL_HANDLE),

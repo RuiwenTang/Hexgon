@@ -43,6 +43,7 @@ class SimpleLayer : public Layer {
   void OnDetach() override {
     HEX_INFO("{} layer OnDetach", this->GetLayerName());
 
+    m_vertex_buffer.reset();
     m_pipeline.reset();
   }
 
@@ -82,8 +83,27 @@ class SimpleLayer : public Layer {
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }
 
+  void InitBuffers() {
+    gpu::BufferLayout layout({
+        gpu::BufferElement("pos", gpu::DataType::Float3, 0),
+        gpu::BufferElement("color", gpu::DataType::Float4, 3 * sizeof(float)),
+    });
+
+    m_vertex_buffer = GetGraphicsContext()->CreateVertexBuffer(layout);
+
+    std::vector<float> vertex_data{
+        // x   y      z     r    g    b   a
+        0.f,   0.5f,  0.f, 1.f, 0.f, 0.f, 1.f,  // point 1
+        -0.5f, -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f,  // point 2
+        0.5f,  0.5f,  0.f, 0.f, 0.f, 1.f, 1.f,  // point 2
+    };
+
+    m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float));
+  }
+
  private:
   std::unique_ptr<gpu::Pipeline> m_pipeline;
+  std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
 };
 
 int main(int argc, const char** argv) {

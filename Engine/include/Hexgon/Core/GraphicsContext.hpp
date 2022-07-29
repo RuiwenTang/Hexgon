@@ -24,6 +24,7 @@
 #ifndef ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
 #define ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
 
+#include <Hexgon/GPU/Buffer.hpp>
 #include <Hexgon/GPU/Formats.hpp>
 #include <Hexgon/GPU/Pipeline.hpp>
 #include <glm/glm.hpp>
@@ -46,6 +47,8 @@ class GraphicsContext {
   virtual gpu::SampleCount GetSampleCount() = 0;
 
   virtual std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) = 0;
+
+  virtual std::unique_ptr<gpu::VertexBuffer> CreateVertexBuffer(gpu::BufferLayout const& layout) = 0;
 
   virtual std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() = 0;
 

@@ -64,6 +64,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) override;
 
+  std::unique_ptr<gpu::VertexBuffer> CreateVertexBuffer(BufferLayout const& layout) override;
+
  private:
   void InitVkInstance();
   void InitVkSurface();

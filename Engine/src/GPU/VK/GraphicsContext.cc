@@ -25,13 +25,14 @@
 // VMA
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
-
+// glfw
 #include <GLFW/glfw3.h>
 
 #include <array>
 #include <set>
 #include <vector>
 
+#include "GPU/VK/Buffer.hpp"
 #include "GPU/VK/Formats.hpp"
 #include "GPU/VK/Pipeline.hpp"
 #include "GPU/VK/PipelineBuilder.hpp"
@@ -390,6 +391,10 @@ std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo
   PipelineBuilder builder(m_device, info);
 
   return std::make_unique<vk::Pipeline>(m_device, builder.Build());
+}
+
+std::unique_ptr<gpu::VertexBuffer> GraphicsContext::CreateVertexBuffer(BufferLayout const& layout) {
+  return std::make_unique<VertexBuffer>(layout, m_vma_allocator);
 }
 
 void GraphicsContext::InitVkInstance() {
