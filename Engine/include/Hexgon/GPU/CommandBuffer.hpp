@@ -21,49 +21,36 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_SRC_GPU_VK_BUFFER_HPP_
-#define ENGINE_SRC_GPU_VK_BUFFER_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_GPU_COMMAND_BUFFER_HPP_
+#define ENGINE_INCLUDE_HEXGON_GPU_COMMAND_BUFFER_HPP_
 
-#include <vk_mem_alloc.h>
-
-#include <Hexgon/GPU/Buffer.hpp>
+#include <Hexgon/Macro.hpp>
+#include <cstdint>
 
 namespace hexgon {
 namespace gpu {
-namespace vk {
 
-class VertexBuffer : public gpu::VertexBuffer {
+class Pipeline;
+class VertexBuffer;
+class IndexBuffer;
+
+class HEX_API CommandBuffer {
  public:
-  VertexBuffer(BufferLayout layout, VmaAllocator allocator)
-      : gpu::VertexBuffer(layout),
-        m_vma_allocator(allocator),
-        m_buffer_size(0),
-        m_vk_buffer(VK_NULL_HANDLE),
-        m_vma_allocation(nullptr),
-        m_vma_info() {}
+  virtual ~CommandBuffer() = default;
 
-  ~VertexBuffer() override { CleanUp(); }
+  virtual void BindPipeline(Pipeline* pipeline) = 0;
 
-  void UploadData(void* data, size_t size) override;
+  virtual void BindVertexBuffer(VertexBuffer* buffer, uint32_t slot) = 0;
 
-  VkBuffer NativeBuffer() const { return m_vk_buffer; }
+  virtual void BindIndexBuffer(IndexBuffer* buffer) = 0;
 
- private:
-  void CleanUp();
-  void InitBuffer();
-  void UploadDataInternal(void* data, size_t size);
+  virtual void Draw(uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) = 0;
 
- private:
-  VkDevice m_vk_device;
-  VmaAllocator m_vma_allocator;
-  size_t m_buffer_size;
-  VkBuffer m_vk_buffer;
-  VmaAllocation m_vma_allocation;
-  VmaAllocationInfo m_vma_info;
+  virtual void DrawIndexed(uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                           uint32_t first_instance) = 0;
 };
 
-}  // namespace vk
 }  // namespace gpu
 }  // namespace hexgon
 
-#endif  // ENGINE_SRC_GPU_VK_BUFFER_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_GPU_COMMAND_BUFFER_HPP_

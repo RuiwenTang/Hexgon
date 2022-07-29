@@ -38,6 +38,7 @@ class SimpleLayer : public Layer {
     HEX_INFO("current GraphicContext: 0x{:x}", reinterpret_cast<uintptr_t>(GetGraphicsContext()));
 
     InitPipeline();
+    InitBuffers();
   }
 
   void OnDetach() override {
@@ -47,7 +48,15 @@ class SimpleLayer : public Layer {
     m_pipeline.reset();
   }
 
-  void OnUpdate(float tm) override {}
+  void OnUpdate(float tm) override {
+    auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
+
+    cmd->BindPipeline(m_pipeline.get());
+
+    cmd->BindVertexBuffer(m_vertex_buffer.get(), 0);
+
+    cmd->Draw(3, 0, 0, 0);
+  }
 
   void OnEvent(const Event* event) override {
     HEX_INFO("{} layer OnEvent event: {}", this->GetLayerName(), event->GetName());

@@ -16,7 +16,7 @@ target_include_directories(
 )
 
 if(WIN32)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         target_compile_options(
             Hexgon
             PUBLIC
@@ -25,10 +25,10 @@ if(WIN32)
         )
     else()
         target_compile_options(
-        Hexgon
-        PUBLIC
-        PRIVATE
-        -fvisibility=hidden
+            Hexgon
+            PUBLIC
+            PRIVATE
+            -fvisibility=hidden
         )
     endif()
 else()
@@ -40,7 +40,7 @@ else()
     )
 endif()
 
-target_sources(Hexgon 
+target_sources(Hexgon
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Event.hpp
@@ -65,6 +65,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc

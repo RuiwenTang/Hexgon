@@ -31,6 +31,7 @@
 #include <Hexgon/Core/GraphicsContext.hpp>
 #include <vector>
 
+#include "GPU/VK/CommandBuffer.hpp"
 #include "GPU/VK/RenderPass.hpp"
 
 namespace hexgon {
@@ -61,6 +62,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() override;
 
   gpu::RenderPass* ScreenRenderPass() override;
+
+  gpu::CommandBuffer* CurrentCommandBuffer() override;
 
   std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) override;
 
@@ -113,6 +116,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   uint32_t m_frame_index = 0;
   uint32_t m_inflite_index = 0;
   VmaAllocator m_vma_allocator = {};
+  vk::CommandBuffer m_cmd_wrapper = {};
 };
 
 }  // namespace vk

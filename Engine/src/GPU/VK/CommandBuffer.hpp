@@ -21,47 +21,43 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
-#define ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
+#ifndef ENGINE_SRC_GPU_VK_COMMAND_BUFFER_HPP_
+#define ENGINE_SRC_GPU_VK_COMMAND_BUFFER_HPP_
 
-#include <Hexgon/GPU/Buffer.hpp>
+#include <vulkan/vulkan.h>
+
 #include <Hexgon/GPU/CommandBuffer.hpp>
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/GPU/Pipeline.hpp>
-#include <glm/glm.hpp>
-#include <memory>
-#include <vector>
 
 namespace hexgon {
+namespace gpu {
+namespace vk {
 
-class GraphicsContext {
+class CommandBuffer : public gpu::CommandBuffer {
  public:
-  enum class API { OpenGL, Vulkan };
+  CommandBuffer() = default;
+  ~CommandBuffer() override = default;
 
-  virtual ~GraphicsContext() = default;
+  VkCommandBuffer GetCMD() const;
 
-  virtual void Init() = 0;
-  virtual void Destroy() = 0;
-  virtual void BeginFrame(glm::vec4 const& clear_color) = 0;
-  virtual void SwapBuffers() = 0;
+  void SetCMD(VkCommandBuffer cmd);
 
-  virtual gpu::SampleCount GetSampleCount() = 0;
+  void BindPipeline(gpu::Pipeline* pipeline) override;
 
-  virtual std::unique_ptr<gpu::Pipeline> CreatePipeline(gpu::PipelineInfo const& info) = 0;
+  void BindVertexBuffer(gpu::VertexBuffer* buffer, uint32_t slot) override;
 
-  virtual std::unique_ptr<gpu::VertexBuffer> CreateVertexBuffer(gpu::BufferLayout const& layout) = 0;
+  void BindIndexBuffer(gpu::IndexBuffer* buffer) override;
 
-  virtual std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() = 0;
+  void Draw(uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance) override;
 
-  virtual std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() = 0;
+  void DrawIndexed(uint32_t index_count, uint32_t instance_count, uint32_t first_index,
+                   uint32_t first_instance) override;
 
-  virtual gpu::RenderPass* ScreenRenderPass() = 0;
-
-  virtual gpu::CommandBuffer* CurrentCommandBuffer() = 0;
-
-  static std::unique_ptr<GraphicsContext> Create(void* window, API api);
+ private:
+  VkCommandBuffer m_vk_cmd = VK_NULL_HANDLE;
 };
 
+}  // namespace vk
+}  // namespace gpu
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_CORE_GRAPHICS_CONTEXT_HPP_
+#endif  // ENGINE_SRC_GPU_VK_COMMAND_BUFFER_HPP_

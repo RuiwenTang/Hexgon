@@ -301,6 +301,15 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
   render_pass_begin_info.pClearValues = clear_values.data();
 
   vkCmdBeginRenderPass(current_cmd, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+
+  // view port
+  VkViewport view_port{
+      0, 0, static_cast<float>(m_swapchain_extent.width), static_cast<float>(m_swapchain_extent.height), 0.f, 1.f};
+
+  vkCmdSetViewport(current_cmd, 0, 1, &view_port);
+  // scissor
+  VkRect2D scissor{{0, 0}, m_swapchain_extent};
+  vkCmdSetScissor(current_cmd, 0, 1, &scissor);
 }
 
 void GraphicsContext::SwapBuffers() {
@@ -324,7 +333,7 @@ void GraphicsContext::SwapBuffers() {
   submit_info.commandBufferCount = 1;
   submit_info.pCommandBuffers = &current_cmd;
 
-  vkResetFences(m_device, 1, &m_cmd_fences[m_inflite_index]);
+  vkResetFences(m_device, 1, &m_cmd_fences[m_frame_index]);
 
   if (vkQueueSubmit(m_present_queue, 1, &submit_info, m_cmd_fences[m_frame_index]) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to submit command buffer!");
@@ -386,6 +395,14 @@ std::vector<gpu::DepthAttachmentDescriptor> GraphicsContext::ScreenDepthAttachme
 }
 
 gpu::RenderPass* GraphicsContext::ScreenRenderPass() { return m_render_pass.get(); }
+
+gpu::CommandBuffer* GraphicsContext::CurrentCommandBuffer() {
+  if (m_cmd_wrapper.GetCMD() != m_cmds[m_current_frame]) {
+    m_cmd_wrapper.SetCMD(m_cmds[m_current_frame]);
+  }
+
+  return &m_cmd_wrapper;
+}
 
 std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo const& info) {
   PipelineBuilder builder(m_device, info);
