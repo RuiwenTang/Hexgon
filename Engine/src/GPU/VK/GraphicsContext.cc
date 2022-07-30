@@ -259,24 +259,15 @@ void GraphicsContext::Destroy() {
 }
 
 void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
-  vkWaitForFences(m_device, 1, &m_cmd_fences[m_inflite_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
-
   VkResult result = vkAcquireNextImageKHR(m_device, m_swapchain, std::numeric_limits<uint64_t>::max(),
-                                          m_present_semaphore[m_frame_index], VK_NULL_HANDLE, &m_current_frame);
-
-  if (m_frame_index != m_current_frame) {
-    HEX_CORE_ERROR("frame index is < {} > but current frame is < {} >", m_frame_index, m_current_frame);
-  }
-
-  m_inflite_index = m_frame_index;
+                                          m_present_semaphore[m_frame_index], nullptr, &m_current_frame);
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-    HEX_CORE_ERROR("need to handle window resize of recreate swap chain!");
-    exit(-1);
+    HEX_CORE_ERROR("Need to handle window resize");
+      exit(-1);
   }
 
   VkCommandBuffer current_cmd = m_cmds[m_frame_index];
-
   vkResetCommandBuffer(current_cmd, 0);
 
   VkCommandBufferBeginInfo cmd_begin_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
@@ -302,10 +293,11 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
 
   vkCmdBeginRenderPass(current_cmd, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-  // view port
-  VkViewport view_port{
-      0, 0, static_cast<float>(m_swapchain_extent.width), static_cast<float>(m_swapchain_extent.height), 0.f, 1.f};
 
+    // view port
+  VkViewport view_port{
+      0, 0, static_cast<float>(m_swapchain_extent.width), static_cast<float>(m_swapchain_extent.height),
+      0.f, 1.f};
   vkCmdSetViewport(current_cmd, 0, 1, &view_port);
   // scissor
   VkRect2D scissor{{0, 0}, m_swapchain_extent};
@@ -335,9 +327,16 @@ void GraphicsContext::SwapBuffers() {
 
   vkResetFences(m_device, 1, &m_cmd_fences[m_frame_index]);
 
-  if (vkQueueSubmit(m_present_queue, 1, &submit_info, m_cmd_fences[m_frame_index]) != VK_SUCCESS) {
+  if (vkQueueSubmit(m_graphic_queue, 1, &submit_info, m_cmd_fences[m_frame_index]) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to submit command buffer!");
     exit(-1);
+  }
+
+  
+   if (vkWaitForFences(m_device, 1, &m_cmd_fences[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max()) !=
+      VK_SUCCESS) {
+    spdlog::error("Error in wait fences");
+     exit(-1);
   }
 
   VkPresentInfoKHR present_info{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
@@ -622,6 +621,8 @@ void GraphicsContext::CreateVkSwapchain() {
     surface_composite = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
   }
 
+  uint32_t queue_family_indices[] = {m_graphic_queue_index, m_present_queue_index};
+
   VkSwapchainCreateInfoKHR create_info{VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR};
   create_info.surface = m_vk_surface;
   create_info.minImageCount = std::max(uint32_t(2), surface_caps.minImageCount);
@@ -629,8 +630,18 @@ void GraphicsContext::CreateVkSwapchain() {
   create_info.imageExtent = surface_caps.currentExtent;
   create_info.imageArrayLayers = 1;
   create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
   create_info.queueFamilyIndexCount = 1;
   create_info.pQueueFamilyIndices = (uint32_t*)&m_present_queue_index;
+
+  if (m_graphic_queue_index != m_present_queue_index) {
+    create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+    create_info.queueFamilyIndexCount = 2;
+    create_info.pQueueFamilyIndices = queue_family_indices;
+  } else {
+    create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  }
+
   create_info.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
   create_info.compositeAlpha = surface_composite;
   create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR;

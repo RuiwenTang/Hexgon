@@ -114,7 +114,6 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<VkFramebuffer> m_framebuffers = {};
   uint32_t m_current_frame = 0;
   uint32_t m_frame_index = 0;
-  uint32_t m_inflite_index = 0;
   VmaAllocator m_vma_allocator = {};
   vk::CommandBuffer m_cmd_wrapper = {};
 };

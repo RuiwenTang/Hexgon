@@ -55,7 +55,7 @@ class SimpleLayer : public Layer {
 
     cmd->BindVertexBuffer(m_vertex_buffer.get(), 0);
 
-    cmd->Draw(3, 0, 0, 0);
+    cmd->Draw(3, 1, 0, 0);
   }
 
   void OnEvent(const Event* event) override {
@@ -102,9 +102,9 @@ class SimpleLayer : public Layer {
 
     std::vector<float> vertex_data{
         // x   y      z     r    g    b   a
-        0.f,   0.5f,  0.f, 1.f, 0.f, 0.f, 1.f,  // point 1
-        -0.5f, -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f,  // point 2
-        0.5f,  0.5f,  0.f, 0.f, 0.f, 1.f, 1.f,  // point 2
+        0.f,   -0.5f,  0.f, 1.f, 0.f, 0.f, 1.f,  // point 1
+        0.5f, 0.5f, 0.f, 0.f, 1.f, 0.f, 1.f,  // point 2
+        -0.5f,  0.5f,  0.f, 0.f, 0.f, 1.f, 1.f,  // point 2
     };
 
     m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float));

@@ -326,7 +326,7 @@ void PipelineBuilder::InitRasterizationInfo() {
   m_rasterization_info.lineWidth = 1.f;
 
   m_rasterization_info.polygonMode = VK_POLYGON_MODE_FILL;
-  m_rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
+  m_rasterization_info.cullMode = VK_CULL_MODE_NONE;
   m_rasterization_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   m_rasterization_info.depthBiasEnable = VK_FALSE;
