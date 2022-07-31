@@ -264,7 +264,7 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
     HEX_CORE_ERROR("Need to handle window resize");
-      exit(-1);
+    exit(-1);
   }
 
   VkCommandBuffer current_cmd = m_cmds[m_frame_index];
@@ -293,11 +293,9 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
 
   vkCmdBeginRenderPass(current_cmd, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-
-    // view port
+  // view port
   VkViewport view_port{
-      0, 0, static_cast<float>(m_swapchain_extent.width), static_cast<float>(m_swapchain_extent.height),
-      0.f, 1.f};
+      0, 0, static_cast<float>(m_swapchain_extent.width), static_cast<float>(m_swapchain_extent.height), 0.f, 1.f};
   vkCmdSetViewport(current_cmd, 0, 1, &view_port);
   // scissor
   VkRect2D scissor{{0, 0}, m_swapchain_extent};
@@ -332,11 +330,10 @@ void GraphicsContext::SwapBuffers() {
     exit(-1);
   }
 
-  
-   if (vkWaitForFences(m_device, 1, &m_cmd_fences[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max()) !=
+  if (vkWaitForFences(m_device, 1, &m_cmd_fences[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max()) !=
       VK_SUCCESS) {
     spdlog::error("Error in wait fences");
-     exit(-1);
+    exit(-1);
   }
 
   VkPresentInfoKHR present_info{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
@@ -435,6 +432,13 @@ void GraphicsContext::InitVkInstance() {
   for (uint32_t i = 0; i < glfw_extension_count; i++) {
     extension_names[i] = glfw_extensions[i];
   }
+
+#ifdef VK_KHR_portability_enumeration
+  // Required for macOS ( MoltenVK ) compatibility
+  create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+
+  extension_names.emplace_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+#endif
 
   if (g_enable_validation) {
     extension_names.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -621,7 +625,7 @@ void GraphicsContext::CreateVkSwapchain() {
     surface_composite = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
   }
 
-  uint32_t queue_family_indices[] = {m_graphic_queue_index, m_present_queue_index};
+  uint32_t queue_family_indices[] = {(uint32_t)m_graphic_queue_index, (uint32_t)m_present_queue_index};
 
   VkSwapchainCreateInfoKHR create_info{VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR};
   create_info.surface = m_vk_surface;
