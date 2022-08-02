@@ -27,45 +27,16 @@
 
 namespace hexgon::gpu::vk {
 
-void VertexBuffer::UploadData(void* data, size_t size) {
-  if (size > m_buffer_size) {
-    CleanUp();
-
-    m_buffer_size = size;
-
-    InitBuffer();
-  }
-
-  UploadDataInternal(data, size);
-}
-
-void VertexBuffer::CleanUp() {
-  if (m_vk_buffer == VK_NULL_HANDLE) {
-    return;
-  }
-
-  vmaDestroyBuffer(m_vma_allocator, m_vk_buffer, m_vma_allocation);
-
-  m_vk_buffer = VK_NULL_HANDLE;
-  m_vma_allocation = nullptr;
-}
-
-void VertexBuffer::InitBuffer() {
-  VkBufferCreateInfo buffer_info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
-  buffer_info.size = m_buffer_size;
-  buffer_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-
-  VmaAllocationCreateInfo vma_info{};
-  vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-  vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-
+void VMABuffer::InitVMABuffer(VkBufferCreateInfo const& buffer_info, VmaAllocationCreateInfo const& vma_info) {
   if (vmaCreateBuffer(m_vma_allocator, &buffer_info, &vma_info, &m_vk_buffer, &m_vma_allocation, &m_vma_info) !=
       VK_SUCCESS) {
     HEX_CORE_ERROR("Failed allocate vertex buffer with size: {}", m_buffer_size);
   }
+
+  m_buffer_size = buffer_info.size;
 }
 
-void VertexBuffer::UploadDataInternal(void* data, size_t size) {
+void VMABuffer::UploadDataToBuffer(void* data, size_t size) {
   if (m_vma_info.pMappedData) {
     std::memcpy(m_vma_info.pMappedData, data, size);
     return;
@@ -80,6 +51,57 @@ void VertexBuffer::UploadDataInternal(void* data, size_t size) {
   std::memcpy(vma_buffer_pointer, data, size);
 
   vmaUnmapMemory(m_vma_allocator, m_vma_allocation);
+}
+
+void VMABuffer::CleanUp() {
+  if (m_vk_buffer == VK_NULL_HANDLE) {
+    return;
+  }
+
+  vmaDestroyBuffer(m_vma_allocator, m_vk_buffer, m_vma_allocation);
+
+  m_vk_buffer = VK_NULL_HANDLE;
+  m_vma_allocation = nullptr;
+}
+
+void VertexBuffer::UploadData(void* data, size_t size) {
+  if (size != BufferSize()) {
+    CleanUp();
+    InitBuffer(size);
+  }
+  UploadDataToBuffer(data, size);
+}
+
+void VertexBuffer::InitBuffer(size_t size) {
+  VkBufferCreateInfo buffer_info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  buffer_info.size = size;
+  buffer_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+  VmaAllocationCreateInfo vma_info{};
+  vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+  InitVMABuffer(buffer_info, vma_info);
+}
+
+void IndexBuffer::UploadData(void* data, size_t size) {
+  if (size != BufferSize()) {
+    CleanUp();
+    InitBuffer(size);
+  }
+  UploadDataToBuffer(data, size);
+}
+
+void IndexBuffer::InitBuffer(size_t size) {
+  VkBufferCreateInfo buffer_info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  buffer_info.size = size;
+  buffer_info.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+
+  VmaAllocationCreateInfo vma_info{};
+  vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+  InitVMABuffer(buffer_info, vma_info);
 }
 
 }  // namespace hexgon::gpu::vk

@@ -32,34 +32,54 @@ namespace hexgon {
 namespace gpu {
 namespace vk {
 
-class VertexBuffer : public gpu::VertexBuffer {
+class VMABuffer {
  public:
-  VertexBuffer(BufferLayout layout, VmaAllocator allocator)
-      : gpu::VertexBuffer(layout),
-        m_vma_allocator(allocator),
-        m_buffer_size(0),
-        m_vk_buffer(VK_NULL_HANDLE),
-        m_vma_allocation(nullptr),
-        m_vma_info() {}
+  VMABuffer(VmaAllocator allocator)
+      : m_vma_allocator(allocator), m_vma_info(), m_vma_allocation(), m_buffer_size(0), m_vk_buffer(VK_NULL_HANDLE) {}
 
-  ~VertexBuffer() override { CleanUp(); }
-
-  void UploadData(void* data, size_t size) override;
+  virtual ~VMABuffer() { CleanUp(); }
 
   VkBuffer NativeBuffer() const { return m_vk_buffer; }
 
- private:
+  size_t BufferSize() const { return m_buffer_size; }
+
+ protected:
+  void InitVMABuffer(VkBufferCreateInfo const& buffer_info, VmaAllocationCreateInfo const& vma_info);
+
+  void UploadDataToBuffer(void* data, size_t size);
+
   void CleanUp();
-  void InitBuffer();
-  void UploadDataInternal(void* data, size_t size);
 
  private:
-  VkDevice m_vk_device;
   VmaAllocator m_vma_allocator;
+  VmaAllocationInfo m_vma_info;
+  VmaAllocation m_vma_allocation;
   size_t m_buffer_size;
   VkBuffer m_vk_buffer;
-  VmaAllocation m_vma_allocation;
-  VmaAllocationInfo m_vma_info;
+};
+
+class VertexBuffer : public gpu::VertexBuffer, public VMABuffer {
+ public:
+  VertexBuffer(BufferLayout layout, VmaAllocator allocator) : gpu::VertexBuffer(layout), VMABuffer(allocator) {}
+
+  ~VertexBuffer() override = default;
+
+  void UploadData(void* data, size_t size) override;
+
+ private:
+  void InitBuffer(size_t size);
+};
+
+class IndexBuffer : public gpu::IndexBuffer, public VMABuffer {
+ public:
+  IndexBuffer(VmaAllocator allocator) : gpu::IndexBuffer(), VMABuffer(allocator) {}
+  
+  ~IndexBuffer() override = default;
+
+  void UploadData(void* data, size_t size) override;
+
+  private:
+  void InitBuffer(size_t size);
 };
 
 }  // namespace vk
