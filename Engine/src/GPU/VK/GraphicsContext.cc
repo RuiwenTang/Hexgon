@@ -433,11 +433,24 @@ void GraphicsContext::InitVkInstance() {
     extension_names[i] = glfw_extensions[i];
   }
 
+  uint32_t ext_count = 0;
+  vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, nullptr);
+
+  std::vector<VkExtensionProperties> ext_props(ext_count);
+
+  vkEnumerateInstanceExtensionProperties(nullptr, &ext_count, ext_props.data());
+
 #ifdef VK_KHR_portability_enumeration
   // Required for macOS ( MoltenVK ) compatibility
-  create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+  auto it = std::find_if(ext_props.begin(), ext_props.end(), [](VkExtensionProperties const& prop) -> bool {
+    return std::strcmp(prop.extensionName, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME) == 0;
+  });
 
-  extension_names.emplace_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+  if (it != ext_props.end()) {
+    create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+
+    extension_names.emplace_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+  }
 #endif
 
   if (g_enable_validation) {
