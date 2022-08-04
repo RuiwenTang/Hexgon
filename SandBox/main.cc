@@ -47,6 +47,7 @@ class SimpleLayer : public Layer {
     m_index_buffer.reset();
     m_vertex_buffer.reset();
     m_pipeline.reset();
+    m_ubo_pipeline.reset();
   }
 
   void OnUpdate(float tm) override {
@@ -95,6 +96,11 @@ class SimpleLayer : public Layer {
     info.render_pass = GetGraphicsContext()->ScreenRenderPass();
 
     m_pipeline = GetGraphicsContext()->CreatePipeline(info);
+
+    info.shaders[0] = gpu::Shader(gpu::Shader::Stage::Vertex, (const char*)hello_ubo_triangle_vert_spv,
+                                  hello_ubo_triangle_vert_spv_size);
+
+    m_ubo_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }
 
   void InitBuffers() {
@@ -126,6 +132,7 @@ class SimpleLayer : public Layer {
 
  private:
   std::unique_ptr<gpu::Pipeline> m_pipeline;
+  std::unique_ptr<gpu::Pipeline> m_ubo_pipeline;
   std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
   std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
 };

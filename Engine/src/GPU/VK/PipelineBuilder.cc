@@ -23,6 +23,8 @@
 
 #include "GPU/VK/PipelineBuilder.hpp"
 
+#include <string>
+
 #include "GPU/VK/Formats.hpp"
 #include "GPU/VK/RenderPass.hpp"
 #include "LogPrivate.hpp"
@@ -34,6 +36,7 @@ struct DescriptorSetLayoutData {
   uint32_t set_number;
   VkDescriptorSetLayoutCreateInfo create_info;
   std::vector<VkDescriptorSetLayoutBinding> bindings;
+  std::vector<std::string> binding_names;
 };
 
 static VkShaderModule create_shader_module(VkDevice device, const char* shader, size_t shader_size) {
@@ -134,7 +137,7 @@ void PipelineBuilder::InitPipelineLayout() {
   create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
   std::vector<DescriptorSetLayoutData> layout_data;
-  for (auto shader : m_info.shaders) {
+  for (auto const& shader : m_info.shaders) {
     SpvReflectShaderModule module = {};
     SpvReflectResult result = spvReflectCreateShaderModule(shader.GetSize(), shader.GetSource(), &module);
 
@@ -176,6 +179,7 @@ void PipelineBuilder::InitPipelineLayout() {
         vk_binding.stageFlags = static_cast<VkShaderStageFlagBits>(module.shader_stage);
 
         layout_data[i_set].bindings.emplace_back(vk_binding);
+        layout_data[i_set].binding_names.emplace_back(refl_binding->name);
       }
 
       layout_data[i_set].create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
