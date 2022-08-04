@@ -57,7 +57,16 @@ void CommandBuffer::BindVertexBuffer(gpu::VertexBuffer *buffer, uint32_t slot) {
   vkCmdBindVertexBuffers(m_vk_cmd, slot, 1, &native_buffer, &offset);
 }
 
-void CommandBuffer::BindIndexBuffer(gpu::IndexBuffer *buffer) {}
+void CommandBuffer::BindIndexBuffer(gpu::IndexBuffer *buffer) {
+  auto vk_buffer = dynamic_cast<vk::IndexBuffer *>(buffer);
+
+  if (vk_buffer == nullptr) {
+    HEX_CORE_ERROR("buffer 0x{:x} is not a vulkan index buffer", reinterpret_cast<intptr_t>(buffer));
+    return;
+  }
+
+  vkCmdBindIndexBuffer(m_vk_cmd, vk_buffer->NativeBuffer(), 0, VK_INDEX_TYPE_UINT32);
+}
 
 void CommandBuffer::Draw(uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex,
                          uint32_t first_instance) {
@@ -65,6 +74,8 @@ void CommandBuffer::Draw(uint32_t vertex_count, uint32_t instance_count, uint32_
 }
 
 void CommandBuffer::DrawIndexed(uint32_t index_count, uint32_t instance_count, uint32_t first_index,
-                                uint32_t first_instance) {}
+                                uint32_t first_instance) {
+  vkCmdDrawIndexed(m_vk_cmd, index_count, instance_count, first_index, 0, first_instance);
+}
 
 }  // namespace hexgon::gpu::vk

@@ -410,6 +410,10 @@ std::unique_ptr<gpu::VertexBuffer> GraphicsContext::CreateVertexBuffer(BufferLay
   return std::make_unique<VertexBuffer>(layout, m_vma_allocator);
 }
 
+std::unique_ptr<gpu::IndexBuffer> GraphicsContext::CreateIndexBuffer() {
+  return std::make_unique<IndexBuffer>(m_vma_allocator);
+}
+
 void GraphicsContext::InitVkInstance() {
   if (g_enable_validation && !check_validation_layer_support()) {
     HEX_CORE_ERROR("validation layers requested but not available!");

@@ -51,6 +51,8 @@ class GraphicsContext {
 
   virtual std::unique_ptr<gpu::VertexBuffer> CreateVertexBuffer(gpu::BufferLayout const& layout) = 0;
 
+  virtual std::unique_ptr<gpu::IndexBuffer> CreateIndexBuffer() = 0;
+
   virtual std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() = 0;
 
   virtual std::vector<gpu::DepthAttachmentDescriptor> ScreenDepthAttachment() = 0;

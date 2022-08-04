@@ -44,6 +44,7 @@ class SimpleLayer : public Layer {
   void OnDetach() override {
     HEX_INFO("{} layer OnDetach", this->GetLayerName());
 
+    m_index_buffer.reset();
     m_vertex_buffer.reset();
     m_pipeline.reset();
   }
@@ -55,7 +56,11 @@ class SimpleLayer : public Layer {
 
     cmd->BindVertexBuffer(m_vertex_buffer.get(), 0);
 
-    cmd->Draw(3, 1, 0, 0);
+    // cmd->Draw(3, 1, 0, 0);
+
+    cmd->BindIndexBuffer(m_index_buffer.get());
+
+    cmd->DrawIndexed(6, 1, 0, 0);
   }
 
   void OnEvent(const Event* event) override {
@@ -102,17 +107,27 @@ class SimpleLayer : public Layer {
 
     std::vector<float> vertex_data{
         // x   y      z     r    g    b   a
-        0.f,   -0.5f,  0.f, 1.f, 0.f, 0.f, 1.f,  // point 1
-        0.5f, 0.5f, 0.f, 0.f, 1.f, 0.f, 1.f,  // point 2
-        -0.5f,  0.5f,  0.f, 0.f, 0.f, 1.f, 1.f,  // point 2
+        -0.5f, -0.5f, 0.f, 1.f, 0.f, 0.f, 1.f,  // point 1
+        0.5f,  -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f,  // point 2
+        -0.5f, 0.5f,  0.f, 0.f, 0.f, 1.f, 1.f,  // point 2
+        0.5f,  0.5f,  0.f, 1.f, 1.f, 0.f, 1.f,  // point 3
     };
 
     m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float));
+
+    std::vector<uint32_t> index_data{
+        0, 1, 2, 1, 2, 3,
+    };
+
+    m_index_buffer = GetGraphicsContext()->CreateIndexBuffer();
+
+    m_index_buffer->UploadData(index_data.data(), index_data.size() * sizeof(uint32_t));
   }
 
  private:
   std::unique_ptr<gpu::Pipeline> m_pipeline;
   std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
+  std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
 };
 
 int main(int argc, const char** argv) {
