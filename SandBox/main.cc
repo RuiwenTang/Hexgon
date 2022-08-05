@@ -99,6 +99,8 @@ class SimpleLayer : public Layer {
 
     info.shaders[0] = gpu::Shader(gpu::Shader::Stage::Vertex, (const char*)hello_ubo_triangle_vert_spv,
                                   hello_ubo_triangle_vert_spv_size);
+    info.shaders[1] = gpu::Shader(gpu::Shader::Stage::Fragment, (const char*)hello_ubo_triangle_frag_spv,
+                                  hello_ubo_triangle_frag_spv_size);
 
     m_ubo_pipeline = GetGraphicsContext()->CreatePipeline(info);
   }

@@ -37,6 +37,7 @@ struct DescriptorSetLayoutData {
   VkDescriptorSetLayoutCreateInfo create_info;
   std::vector<VkDescriptorSetLayoutBinding> bindings;
   std::vector<std::string> binding_names;
+  VkShaderStageFlags stage;
 };
 
 static VkShaderModule create_shader_module(VkDevice device, const char* shader, size_t shader_size) {
@@ -162,7 +163,16 @@ void PipelineBuilder::InitPipelineLayout() {
     spvReflectEnumerateDescriptorSets(&module, &count, descs.data());
 
     for (size_t i_set = 0; i_set < descs.size(); i_set++) {
+      auto it = std::find_if(layout_data.begin(), layout_data.end(),
+                             [i_set](DescriptorSetLayoutData const& d) { return d.set_number == i_set; });
+
+      if (it != layout_data.end()) {
+        it->stage |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        continue;
+      }
+
       layout_data.emplace_back(DescriptorSetLayoutData{});
+      DescriptorSetLayoutData& set_data = layout_data.back();
 
       SpvReflectDescriptorSet* refl_set = descs[i_set];
       for (uint32_t i_binding = 0; i_binding < refl_set->binding_count; i_binding++) {
@@ -178,15 +188,18 @@ void PipelineBuilder::InitPipelineLayout() {
 
         vk_binding.stageFlags = static_cast<VkShaderStageFlagBits>(module.shader_stage);
 
-        layout_data[i_set].bindings.emplace_back(vk_binding);
-        layout_data[i_set].binding_names.emplace_back(refl_binding->name);
+        set_data.bindings.emplace_back(vk_binding);
+        set_data.binding_names.emplace_back(refl_binding->name);
       }
 
-      layout_data[i_set].create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      layout_data[i_set].create_info.bindingCount = refl_set->binding_count;
-      layout_data[i_set].create_info.pBindings = layout_data[i_set].bindings.data();
+      set_data.create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      set_data.create_info.bindingCount = refl_set->binding_count;
+      set_data.create_info.pBindings = set_data.bindings.data();
 
-      layout_data[i_set].set_number = refl_set->set;
+      set_data.set_number = refl_set->set;
+      set_data.stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
+
+      layout_data.emplace_back(set_data);
     }
   }
 

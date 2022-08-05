@@ -3,6 +3,7 @@ set(SHADERS
   ${CMAKE_CURRENT_LIST_DIR}/hello_triangle.vert
   ${CMAKE_CURRENT_LIST_DIR}/hello_triangle.frag
   ${CMAKE_CURRENT_LIST_DIR}/hello_ubo_triangle.vert
+  ${CMAKE_CURRENT_LIST_DIR}/hello_ubo_triangle.frag
 )
 
 set(SPV_SHADERS "")
