@@ -39,14 +39,7 @@ class Pipeline : public gpu::Pipeline {
            std::vector<VkDescriptorSetLayout> set_layout);
   ~Pipeline() override;
 
-  void SetInt(std::string const& name, int32_t value) override;
-
-  void SetFloat(std::string const& name, float value) override;
-  void SetFloat2(std::string const& name, glm::vec2 const& value) override;
-  void SetFloat3(std::string const& name, glm::vec3 const& value) override;
-  void SetFloat4(std::string const& name, glm::vec4 const& value) override;
-
-  void SetMat4(std::string const& name, glm::mat4 const& value) override;
+  void UpdateDescriptorSet(std::string const& name, void* data, size_t data_size) override;
 
   VkPipeline NativePipeline() const { return m_pipeline; }
 

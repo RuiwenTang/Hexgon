@@ -82,14 +82,7 @@ class Pipeline {
  public:
   virtual ~Pipeline() = default;
 
-  virtual void SetInt(std::string const& name, int32_t value) = 0;
-
-  virtual void SetFloat(std::string const& name, float value) = 0;
-  virtual void SetFloat2(std::string const& name, glm::vec2 const& value) = 0;
-  virtual void SetFloat3(std::string const& name, glm::vec3 const& value) = 0;
-  virtual void SetFloat4(std::string const& name, glm::vec4 const& value) = 0;
-
-  virtual void SetMat4(std::string const& name, glm::mat4 const& value) = 0;
+  virtual void UpdateDescriptorSet(std::string const& name, void* data, size_t data_size) = 0;
 };
 
 }  // namespace gpu

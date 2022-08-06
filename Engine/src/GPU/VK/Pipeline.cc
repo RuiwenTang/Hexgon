@@ -31,15 +31,7 @@ Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout
 
 Pipeline::~Pipeline() { CleanUp(); }
 
-void Pipeline::SetInt(std::string const& name, int32_t value) {}
-
-void Pipeline::SetFloat(std::string const& name, float value) {}
-
-void Pipeline::SetFloat2(std::string const& name, glm::vec2 const& value) {}
-void Pipeline::SetFloat3(std::string const& name, glm::vec3 const& value) {}
-void Pipeline::SetFloat4(std::string const& name, glm::vec4 const& value) {}
-
-void Pipeline::SetMat4(std::string const& name, glm::mat4 const& value) {}
+void Pipeline::UpdateDescriptorSet(const std::string &name, void *data, size_t data_size) {}
 
 void Pipeline::CleanUp() {
   vkDestroyPipelineLayout(m_device, m_layout, nullptr);
