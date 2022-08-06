@@ -60,11 +60,6 @@ void PipelineBuilder::CleanUp() {
   for (auto module : m_shaders) {
     vkDestroyShaderModule(m_device, module, nullptr);
   }
-
-  vkDestroyPipelineLayout(m_device, m_layout, nullptr);
-  for (auto desc : m_descriptor_set_layout) {
-    vkDestroyDescriptorSetLayout(m_device, desc, nullptr);
-  }
 }
 
 VkPipeline PipelineBuilder::Build() {
@@ -108,6 +103,12 @@ VkPipeline PipelineBuilder::Build() {
   }
 
   return pipeline;
+}
+
+VkPipelineLayout PipelineBuilder::GetLayout() const { return m_layout; }
+
+std::vector<VkDescriptorSetLayout> const& PipelineBuilder::GetDescriptorSetLayout() const {
+  return m_descriptor_set_layout;
 }
 
 void PipelineBuilder::InitShaderStage() {

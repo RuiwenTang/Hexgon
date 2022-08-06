@@ -25,7 +25,9 @@
 
 namespace hexgon::gpu::vk {
 
-Pipeline::Pipeline(VkDevice device, VkPipeline pipeline) : m_device(device), m_pipeline(pipeline) {}
+Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
+                   std::vector<VkDescriptorSetLayout> set_layout)
+    : m_device(device), m_pipeline(pipeline), m_layout(layout), m_set_layout(std::move(set_layout)) {}
 
 Pipeline::~Pipeline() { CleanUp(); }
 
@@ -39,6 +41,14 @@ void Pipeline::SetFloat4(std::string const& name, glm::vec4 const& value) {}
 
 void Pipeline::SetMat4(std::string const& name, glm::mat4 const& value) {}
 
-void Pipeline::CleanUp() { vkDestroyPipeline(m_device, m_pipeline, nullptr); }
+void Pipeline::CleanUp() {
+  vkDestroyPipelineLayout(m_device, m_layout, nullptr);
+
+  for (auto desc : m_set_layout) {
+    vkDestroyDescriptorSetLayout(m_device, desc, nullptr);
+  }
+
+  vkDestroyPipeline(m_device, m_pipeline, nullptr);
+}
 
 }  // namespace hexgon::gpu::vk

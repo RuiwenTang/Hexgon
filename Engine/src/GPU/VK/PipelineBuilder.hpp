@@ -41,6 +41,10 @@ class PipelineBuilder final {
 
   VkPipeline Build();
 
+  VkPipelineLayout GetLayout() const;
+
+  std::vector<VkDescriptorSetLayout> const& GetDescriptorSetLayout() const;
+
  private:
   void CleanUp();
   void InitShaderStage();

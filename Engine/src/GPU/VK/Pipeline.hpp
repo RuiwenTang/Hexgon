@@ -27,6 +27,7 @@
 #include <vulkan/vulkan.h>
 
 #include <Hexgon/GPU/Pipeline.hpp>
+#include <vector>
 
 namespace hexgon {
 namespace gpu {
@@ -34,7 +35,8 @@ namespace vk {
 
 class Pipeline : public gpu::Pipeline {
  public:
-  Pipeline(VkDevice device, VkPipeline pipeline);
+  Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
+           std::vector<VkDescriptorSetLayout> set_layout);
   ~Pipeline() override;
 
   void SetInt(std::string const& name, int32_t value) override;
@@ -54,6 +56,8 @@ class Pipeline : public gpu::Pipeline {
  private:
   VkDevice m_device;
   VkPipeline m_pipeline;
+  VkPipelineLayout m_layout;
+  std::vector<VkDescriptorSetLayout> m_set_layout;
 };
 
 }  // namespace vk
