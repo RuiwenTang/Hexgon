@@ -69,6 +69,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/FrameData.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/FrameData.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Pipeline.cc
@@ -81,8 +83,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )
 
-target_link_libraries(Hexgon spdlog::spdlog)
+target_link_libraries(Hexgon Vulkan::Vulkan)
 target_link_libraries(Hexgon glfw)
 target_link_libraries(Hexgon glm::glm)
-target_link_libraries(Hexgon Vulkan::Vulkan)
+target_link_libraries(Hexgon spdlog::spdlog)
 target_link_libraries(Hexgon spirv-reflect-static)

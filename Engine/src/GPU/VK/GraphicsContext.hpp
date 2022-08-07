@@ -32,6 +32,7 @@
 #include <vector>
 
 #include "GPU/VK/CommandBuffer.hpp"
+#include "GPU/VK/FrameData.hpp"
 #include "GPU/VK/RenderPass.hpp"
 
 namespace hexgon {
@@ -118,6 +119,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   uint32_t m_frame_index = 0;
   VmaAllocator m_vma_allocator = {};
   vk::CommandBuffer m_cmd_wrapper = {};
+  FrameData m_frame_data = {};
 };
 
 }  // namespace vk

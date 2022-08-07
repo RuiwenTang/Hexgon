@@ -206,10 +206,14 @@ void GraphicsContext::Init() {
   CreateFramebuffer();
 
   InitVMA();
+
+  m_frame_data.Init(m_device, m_framebuffers.size());
 }
 
 void GraphicsContext::Destroy() {
   vkDeviceWaitIdle(m_device);
+  // clean up allocated descriptor set and allocated buffer
+  m_frame_data.CleanUp();
   // clean up allocator
   vmaDestroyAllocator(m_vma_allocator);
 
@@ -269,6 +273,9 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
 
   VkCommandBuffer current_cmd = m_cmds[m_frame_index];
   vkResetCommandBuffer(current_cmd, 0);
+
+  m_frame_data.NextFrame(m_frame_index);
+  m_frame_data.ResetCurrentFrame();
 
   VkCommandBufferBeginInfo cmd_begin_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   cmd_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
