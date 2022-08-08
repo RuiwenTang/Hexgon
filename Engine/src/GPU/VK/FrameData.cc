@@ -1,3 +1,4 @@
+#include "FrameData.hpp"
 /*
  *   Copyright (c) 2022 RuiwenTang
  *   All rights reserved.
@@ -21,10 +22,9 @@
  *   SOFTWARE.
  */
 
-#include "GPU/VK/FrameData.hpp"
-
 #include <array>
 
+#include "GPU/VK/FrameData.hpp"
 #include "LogPrivate.hpp"
 
 namespace hexgon::gpu::vk {
@@ -50,6 +50,33 @@ void Frame::BeginFrame() {
   }
 
   m_pool_index = static_cast<int32_t>(m_pool_list.size()) - 1;
+}
+
+VkDescriptorSet Frame::ObtainUniformBufferSet(VkDescriptorSetLayout layout) { 
+    VkDescriptorSetAllocateInfo allocate_info{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
+
+    allocate_info.descriptorPool = m_pool_list[m_pool_index];
+    allocate_info.pSetLayouts = &layout;
+    allocate_info.descriptorSetCount = 1;
+
+    VkDescriptorSet vk_set = VK_NULL_HANDLE;
+
+    auto result = vkAllocateDescriptorSets(m_device, &allocate_info, &vk_set);
+
+    if (result == VK_ERROR_OUT_OF_POOL_MEMORY || result == VK_ERROR_INITIALIZATION_FAILED) {
+      AppendNewPoll();
+      m_pool_index++;
+
+      allocate_info.descriptorPool = m_pool_list[m_pool_index];
+
+      result = vkAllocateDescriptorSets(m_device, &allocate_info, &vk_set);
+    }
+
+    if (result != VK_SUCCESS) {
+      HEX_CORE_ERROR("Failed to allocate descriptor set for uniform buffer object");
+    }
+
+    return vk_set; 
 }
 
 void Frame::AppendNewPoll() {
@@ -99,5 +126,9 @@ void FrameData::CleanUp() {
 void FrameData::NextFrame(uint32_t frame_index) { m_current_frame = frame_index; }
 
 void FrameData::ResetCurrentFrame() { m_frames[m_current_frame]->BeginFrame(); }
+
+VkDescriptorSet FrameData::ObtainUniformBufferSet(VkDescriptorSetLayout layout) { 
+    return m_frames[m_current_frame]->ObtainUniformBufferSet(layout);
+}
 
 }  // namespace hexgon::gpu::vk

@@ -48,6 +48,8 @@ class Frame final {
 
   void BeginFrame();
 
+  VkDescriptorSet ObtainUniformBufferSet(VkDescriptorSetLayout layout);
+
  private:
   void AppendNewPoll();
 
@@ -69,6 +71,8 @@ class FrameData final {
 
   void NextFrame(uint32_t frame_index);
   void ResetCurrentFrame();
+
+  VkDescriptorSet ObtainUniformBufferSet(VkDescriptorSetLayout layout);
 
  private:
   uint32_t m_total_frame = 0;
