@@ -39,7 +39,7 @@ class Pipeline : public gpu::Pipeline {
            std::vector<VkDescriptorSetLayout> set_layout);
   ~Pipeline() override;
 
-  void UpdateDescriptorSet(std::string const& name, void* data, size_t data_size) override;
+  void UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) override;
 
   VkPipeline NativePipeline() const { return m_pipeline; }
 

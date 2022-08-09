@@ -78,11 +78,16 @@ struct PipelineInfo {
   RenderPass* render_pass = nullptr;
 };
 
+struct DescriptorBinding {
+  void* data = nullptr;
+  size_t data_size = 0;
+};
+
 class Pipeline {
  public:
   virtual ~Pipeline() = default;
 
-  virtual void UpdateDescriptorSet(std::string const& name, void* data, size_t data_size) = 0;
+  virtual void UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) = 0;
 };
 
 }  // namespace gpu

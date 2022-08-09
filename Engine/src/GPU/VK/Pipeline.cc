@@ -31,7 +31,7 @@ Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout
 
 Pipeline::~Pipeline() { CleanUp(); }
 
-void Pipeline::UpdateDescriptorSet(const std::string &name, void *data, size_t data_size) {}
+void Pipeline::UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) {}
 
 void Pipeline::CleanUp() {
   vkDestroyPipelineLayout(m_device, m_layout, nullptr);
