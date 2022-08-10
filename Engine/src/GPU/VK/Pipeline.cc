@@ -26,8 +26,12 @@
 namespace hexgon::gpu::vk {
 
 Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
-                   std::vector<VkDescriptorSetLayout> set_layout)
-    : m_device(device), m_pipeline(pipeline), m_layout(layout), m_set_layout(std::move(set_layout)) {}
+                   std::vector<VkDescriptorSetLayout> set_layout, std::vector<DescriptorSetLayoutData> set_info)
+    : m_device(device),
+      m_pipeline(pipeline),
+      m_layout(layout),
+      m_set_layout(std::move(set_layout)),
+      m_set_info(std::move(set_info)) {}
 
 Pipeline::~Pipeline() { CleanUp(); }
 

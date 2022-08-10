@@ -411,7 +411,8 @@ std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo
   PipelineBuilder builder(m_device, info);
 
   VkPipeline vk_pipeline = builder.Build();
-  return std::make_unique<vk::Pipeline>(m_device, vk_pipeline, builder.GetLayout(), builder.GetDescriptorSetLayout());
+  return std::make_unique<vk::Pipeline>(m_device, vk_pipeline, builder.GetLayout(), builder.GetDescriptorSetLayout(),
+                                        builder.GetDescriptorSetInfo());
 }
 
 std::unique_ptr<gpu::VertexBuffer> GraphicsContext::CreateVertexBuffer(BufferLayout const& layout) {

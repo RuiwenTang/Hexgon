@@ -33,10 +33,18 @@ namespace hexgon {
 namespace gpu {
 namespace vk {
 
+struct DescriptorSetLayoutData {
+  uint32_t set_number;
+  VkDescriptorSetLayoutCreateInfo create_info;
+  std::vector<VkDescriptorSetLayoutBinding> bindings;
+  std::vector<std::string> binding_names;
+  VkShaderStageFlags stage;
+};
+
 class Pipeline : public gpu::Pipeline {
  public:
-  Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
-           std::vector<VkDescriptorSetLayout> set_layout);
+  Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout, std::vector<VkDescriptorSetLayout> set_layout,
+           std::vector<DescriptorSetLayoutData> set_info);
   ~Pipeline() override;
 
   void UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) override;
@@ -51,6 +59,7 @@ class Pipeline : public gpu::Pipeline {
   VkPipeline m_pipeline;
   VkPipelineLayout m_layout;
   std::vector<VkDescriptorSetLayout> m_set_layout;
+  std::vector<DescriptorSetLayoutData> m_set_info;
 };
 
 }  // namespace vk

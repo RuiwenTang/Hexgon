@@ -32,14 +32,6 @@
 
 namespace hexgon::gpu::vk {
 
-struct DescriptorSetLayoutData {
-  uint32_t set_number;
-  VkDescriptorSetLayoutCreateInfo create_info;
-  std::vector<VkDescriptorSetLayoutBinding> bindings;
-  std::vector<std::string> binding_names;
-  VkShaderStageFlags stage;
-};
-
 static VkShaderModule create_shader_module(VkDevice device, const char* shader, size_t shader_size) {
   VkShaderModuleCreateInfo create_info{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
   create_info.codeSize = shader_size;
@@ -111,6 +103,8 @@ std::vector<VkDescriptorSetLayout> const& PipelineBuilder::GetDescriptorSetLayou
   return m_descriptor_set_layout;
 }
 
+std::vector<DescriptorSetLayoutData> const& PipelineBuilder::GetDescriptorSetInfo() const { return m_set_info; }
+
 void PipelineBuilder::InitShaderStage() {
   for (auto const& shader : m_info.shaders) {
     VkShaderModule shader_module = create_shader_module(m_device, shader.GetSource(), shader.GetSize());
@@ -138,7 +132,6 @@ void PipelineBuilder::InitPipelineLayout() {
   VkPipelineLayoutCreateInfo create_info{};
   create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
-  std::vector<DescriptorSetLayoutData> layout_data;
   for (auto const& shader : m_info.shaders) {
     SpvReflectShaderModule module = {};
     SpvReflectResult result = spvReflectCreateShaderModule(shader.GetSize(), shader.GetSource(), &module);
@@ -164,16 +157,16 @@ void PipelineBuilder::InitPipelineLayout() {
     spvReflectEnumerateDescriptorSets(&module, &count, descs.data());
 
     for (size_t i_set = 0; i_set < descs.size(); i_set++) {
-      auto it = std::find_if(layout_data.begin(), layout_data.end(),
+      auto it = std::find_if(m_set_info.begin(), m_set_info.end(),
                              [i_set](DescriptorSetLayoutData const& d) { return d.set_number == i_set; });
 
-      if (it != layout_data.end()) {
+      if (it != m_set_info.end()) {
         it->stage |= VK_SHADER_STAGE_FRAGMENT_BIT;
         continue;
       }
 
-      layout_data.emplace_back(DescriptorSetLayoutData{});
-      DescriptorSetLayoutData& set_data = layout_data.back();
+      m_set_info.emplace_back(DescriptorSetLayoutData{});
+      DescriptorSetLayoutData& set_data = m_set_info.back();
 
       SpvReflectDescriptorSet* refl_set = descs[i_set];
       for (uint32_t i_binding = 0; i_binding < refl_set->binding_count; i_binding++) {
@@ -201,17 +194,15 @@ void PipelineBuilder::InitPipelineLayout() {
 
       set_data.set_number = refl_set->set;
       set_data.stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
-
-      layout_data.emplace_back(set_data);
     }
   }
 
   // TODO: merge bindings
 
-  m_descriptor_set_layout.resize(layout_data.size());
+  m_descriptor_set_layout.resize(m_set_info.size());
 
   for (size_t i = 0; i < m_descriptor_set_layout.size(); i++) {
-    if (vkCreateDescriptorSetLayout(m_device, &layout_data[i].create_info, nullptr, &m_descriptor_set_layout[i]) !=
+    if (vkCreateDescriptorSetLayout(m_device, &m_set_info[i].create_info, nullptr, &m_descriptor_set_layout[i]) !=
         VK_SUCCESS) {
       HEX_CORE_ERROR("Failed to create descriptor set layout at {}", i);
       exit(-1);

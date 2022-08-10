@@ -29,6 +29,8 @@
 #include <Hexgon/GPU/Pipeline.hpp>
 #include <vector>
 
+#include "GPU/VK/Pipeline.hpp"
+
 namespace hexgon {
 namespace gpu {
 namespace vk {
@@ -44,6 +46,7 @@ class PipelineBuilder final {
   VkPipelineLayout GetLayout() const;
 
   std::vector<VkDescriptorSetLayout> const& GetDescriptorSetLayout() const;
+  std::vector<DescriptorSetLayoutData> const& GetDescriptorSetInfo() const;
 
  private:
   void CleanUp();
@@ -79,6 +82,7 @@ class PipelineBuilder final {
 
   // temp properties
   std::vector<VkShaderModule> m_shaders;
+  std::vector<DescriptorSetLayoutData> m_set_info;
 };
 
 }  // namespace vk
