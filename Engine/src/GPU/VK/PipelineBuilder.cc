@@ -160,19 +160,32 @@ void PipelineBuilder::InitPipelineLayout() {
       auto it = std::find_if(m_set_info.begin(), m_set_info.end(),
                              [i_set](DescriptorSetLayoutData const& d) { return d.set_number == i_set; });
 
+      DescriptorSetLayoutData* set_data = nullptr;
       if (it != m_set_info.end()) {
-        it->stage |= VK_SHADER_STAGE_FRAGMENT_BIT;
-        continue;
+        set_data = &m_set_info[std::distance(it, m_set_info.begin())];
+      } else {
+        m_set_info.emplace_back(DescriptorSetLayoutData{});
+        set_data = &m_set_info.back();
       }
 
-      m_set_info.emplace_back(DescriptorSetLayoutData{});
-      DescriptorSetLayoutData& set_data = m_set_info.back();
-
       SpvReflectDescriptorSet* refl_set = descs[i_set];
-      for (uint32_t i_binding = 0; i_binding < refl_set->binding_count; i_binding++) {
-        SpvReflectDescriptorBinding* refl_binding = refl_set->bindings[i_binding];
+      for (uint32_t i_index = 0; i_index < refl_set->binding_count; i_index++) {
+        SpvReflectDescriptorBinding* refl_binding = refl_set->bindings[i_index];
 
-        VkDescriptorSetLayoutBinding vk_binding;
+        uint32_t i_binding = refl_binding->binding;
+
+        auto it_binding =
+            std::find_if(set_data->bindings.begin(), set_data->bindings.end(),
+                         [i_binding](VkDescriptorSetLayoutBinding const& vk_b) { return vk_b.binding == i_binding; });
+
+        if (it_binding != set_data->bindings.end()) {
+          it_binding->stageFlags |=
+              Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
+
+          continue;
+        }
+
+        VkDescriptorSetLayoutBinding vk_binding{};
         vk_binding.binding = refl_binding->binding;
         vk_binding.descriptorType = static_cast<VkDescriptorType>(refl_binding->descriptor_type);
         vk_binding.descriptorCount = 1;
@@ -182,18 +195,18 @@ void PipelineBuilder::InitPipelineLayout() {
 
         vk_binding.stageFlags = static_cast<VkShaderStageFlagBits>(module.shader_stage);
 
-        set_data.bindings.emplace_back(vk_binding);
-        set_data.binding_names.emplace_back(refl_binding->name);
+        set_data->bindings.emplace_back(vk_binding);
+        set_data->binding_names.emplace_back(refl_binding->name);
 
         HEX_CORE_INFO("Reflect set [{}] binding [{}] with name [{}]", i_set, refl_binding->binding, refl_binding->name);
       }
 
-      set_data.create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      set_data.create_info.bindingCount = refl_set->binding_count;
-      set_data.create_info.pBindings = set_data.bindings.data();
+      set_data->create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      set_data->create_info.bindingCount = refl_set->binding_count;
+      set_data->create_info.pBindings = set_data->bindings.data();
 
-      set_data.set_number = refl_set->set;
-      set_data.stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
+      set_data->set_number = refl_set->set;
+      set_data->stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
     }
   }
 
@@ -278,7 +291,7 @@ void PipelineBuilder::InitDynamicState() {
 }
 
 void PipelineBuilder::InitColorAttachments() {
-  for (auto desc : m_info.color_attachment) {
+  for (auto const& desc : m_info.color_attachment) {
     VkPipelineColorBlendAttachmentState vk_desc;
 
     vk_desc.blendEnable = desc.blending;
