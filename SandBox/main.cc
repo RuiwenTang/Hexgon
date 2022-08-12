@@ -44,6 +44,7 @@ class SimpleLayer : public Layer {
   void OnDetach() override {
     HEX_INFO("{} layer OnDetach", this->GetLayerName());
 
+    m_matrix_buffer.reset();
     m_index_buffer.reset();
     m_vertex_buffer.reset();
     m_pipeline.reset();
@@ -51,6 +52,12 @@ class SimpleLayer : public Layer {
   }
 
   void OnUpdate(float tm) override {
+    m_rotate_degree += 1.f;
+
+    auto matrix = glm::rotate(glm::identity<glm::mat4>(), glm::radians(m_rotate_degree), glm::vec3{0.f, 0.f, 1.f});
+
+    m_matrix_buffer->UploadData(&matrix, sizeof(matrix), 0);
+
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
 
     cmd->BindPipeline(m_pipeline.get());
@@ -103,6 +110,8 @@ class SimpleLayer : public Layer {
                                   hello_ubo_triangle_frag_spv_size);
 
     m_ubo_pipeline = GetGraphicsContext()->CreatePipeline(info);
+
+    m_matrix_buffer = GetGraphicsContext()->CreateUniformBuffer(sizeof(glm::mat4));
   }
 
   void InitBuffers() {
@@ -137,6 +146,8 @@ class SimpleLayer : public Layer {
   std::unique_ptr<gpu::Pipeline> m_ubo_pipeline;
   std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
   std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
+  std::unique_ptr<gpu::UniformBuffer> m_matrix_buffer;
+  float m_rotate_degree = 0.f;
 };
 
 int main(int argc, const char** argv) {

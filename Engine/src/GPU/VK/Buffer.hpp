@@ -109,7 +109,7 @@ class UniformBuffer : public gpu::UniformBuffer {
 
  private:
   FrameInfoProvider* m_frame_provider;
-  std::vector<VMAUniformBuffer> m_vk_buffers;
+  std::vector<std::unique_ptr<VMAUniformBuffer>> m_vk_buffers;
 };
 
 }  // namespace vk

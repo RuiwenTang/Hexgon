@@ -38,22 +38,14 @@ void VMABuffer::InitVMABuffer(VkBufferCreateInfo const& buffer_info, VmaAllocati
 }
 
 void VMABuffer::UploadDataToBuffer(void* data, size_t size, size_t offset) {
-  if (m_vma_info.pMappedData) {
-    std::memcpy(m_vma_info.pMappedData, data, size);
+  if (!m_vma_info.pMappedData) {
+    HEX_CORE_ERROR("vma buffer not mapped!!");
     return;
   }
 
-  void* vma_buffer_pointer = nullptr;
-  if (vmaMapMemory(m_vma_allocator, m_vma_allocation, &vma_buffer_pointer) != VK_SUCCESS) {
-    HEX_CORE_ERROR("Failed map vulkan memory to local");
-    return;
-  }
-
-  uint8_t* p = static_cast<uint8_t*>(vma_buffer_pointer) + offset;
+  uint8_t* p = static_cast<uint8_t*>(m_vma_info.pMappedData) + offset;
 
   std::memcpy(p, data, size);
-
-  vmaUnmapMemory(m_vma_allocator, m_vma_allocation);
 }
 
 void VMABuffer::CleanUp() {
@@ -82,6 +74,7 @@ void VertexBuffer::InitBuffer(size_t size) {
 
   VmaAllocationCreateInfo vma_info{};
   vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  vma_info.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
   vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
   InitVMABuffer(buffer_info, vma_info);
@@ -102,6 +95,7 @@ void IndexBuffer::InitBuffer(size_t size) {
 
   VmaAllocationCreateInfo vma_info{};
   vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  vma_info.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
   vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
   InitVMABuffer(buffer_info, vma_info);
@@ -113,13 +107,15 @@ UniformBuffer::UniformBuffer(size_t size, FrameInfoProvider* provider, VmaAlloca
 }
 
 void UniformBuffer::UploadData(void* data, size_t size, size_t offset) {
-  m_vk_buffers[m_frame_provider->CurrentFrame()].UploadData(data, size, offset);
+  m_vk_buffers[m_frame_provider->CurrentFrame()]->UploadData(data, size, offset);
 }
 
 void UniformBuffer::Init(VmaAllocator allocator) {
   for (uint32_t i = 0; i < m_frame_provider->TotalFrameCount(); i++) {
-    m_vk_buffers.emplace_back(VMAUniformBuffer(allocator));
-    m_vk_buffers.back().Init(GetBufferSize());
+    auto buffer = std::make_unique<VMAUniformBuffer>(allocator);
+    buffer->Init(GetBufferSize());
+
+    m_vk_buffers.emplace_back(std::move(buffer));
   }
 }
 

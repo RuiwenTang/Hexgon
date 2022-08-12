@@ -424,7 +424,7 @@ std::unique_ptr<gpu::IndexBuffer> GraphicsContext::CreateIndexBuffer() {
 }
 
 std::unique_ptr<gpu::UniformBuffer> GraphicsContext::CreateUniformBuffer(size_t size) {
-  return std::unique_ptr<gpu::UniformBuffer>();
+  return std::make_unique<vk::UniformBuffer>(size, &m_frame_data, m_vma_allocator);
 }
 
 void GraphicsContext::InitVkInstance() {
