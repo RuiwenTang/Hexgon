@@ -110,6 +110,10 @@ void UniformBuffer::UploadData(void* data, size_t size, size_t offset) {
   m_vk_buffers[m_frame_provider->CurrentFrame()]->UploadData(data, size, offset);
 }
 
+VkBuffer UniformBuffer::NativeBuffer() { m_vk_buffers[m_frame_provider->CurrentFrame()]->NativeBuffer(); }
+
+VkDeviceSize UniformBuffer::NativeOffset() { return 0; }
+
 void UniformBuffer::Init(VmaAllocator allocator) {
   for (uint32_t i = 0; i < m_frame_provider->TotalFrameCount(); i++) {
     auto buffer = std::make_unique<VMAUniformBuffer>(allocator);

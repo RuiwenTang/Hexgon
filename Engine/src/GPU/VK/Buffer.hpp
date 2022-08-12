@@ -104,6 +104,10 @@ class UniformBuffer : public gpu::UniformBuffer {
 
   void UploadData(void* data, size_t size, size_t offset) override;
 
+  VkBuffer NativeBuffer();
+
+  VkDeviceSize NativeOffset();
+
  private:
   void Init(VmaAllocator allocator);
 

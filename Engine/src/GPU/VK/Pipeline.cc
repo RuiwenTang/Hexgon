@@ -23,10 +23,24 @@
 
 #include "GPU/VK/Pipeline.hpp"
 
+#include "GPU/VK/Buffer.hpp"
 #include "GPU/VK/GraphicsContext.hpp"
 #include "LogPrivate.hpp"
 
 namespace hexgon::gpu::vk {
+
+static VkWriteDescriptorSet write_descriptor_set(VkDescriptorSet dst_set, VkDescriptorType type, uint32_t binding,
+                                                 VkDescriptorBufferInfo* buffer_info, uint32_t descriptor_count) {
+  VkWriteDescriptorSet write_set{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+
+  write_set.dstSet = dst_set;
+  write_set.descriptorType = type;
+  write_set.dstBinding = binding;
+  write_set.pBufferInfo = buffer_info;
+  write_set.descriptorCount = descriptor_count;
+
+  return write_set;
+}
 
 Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
                    std::vector<VkDescriptorSetLayout> set_layout, std::vector<DescriptorSetLayoutData> set_info)
@@ -51,7 +65,34 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
     return;
   }
 
-  // TODO update descriptor set and bind it
+  // update descriptor set
+  std::vector<VkWriteDescriptorSet> write_sets;
+  std::vector<VkDescriptorBufferInfo> buffer_infos;
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(bindings.size()); i++) {
+    // TODO support ImageSet
+    auto vk_ubo = dynamic_cast<vk::UniformBuffer*>(bindings[i].ubo);
+    if (vk_ubo == nullptr) {
+      HEX_CORE_ERROR("uniform buffer object is error");
+      return;
+    }
+
+    VkDescriptorBufferInfo buff_info{};
+    buff_info.buffer = vk_ubo->NativeBuffer();
+    buff_info.offset = vk_ubo->NativeOffset();
+    buff_info.range = vk_ubo->GetBufferSize();
+
+    buffer_infos.emplace_back(buff_info);
+
+    write_sets.emplace_back(
+        write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, &buffer_infos.back(), 1));
+  }
+
+  vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(write_sets.size()), write_sets.data(), 0, VK_NULL_HANDLE);
+
+  // bind descriptor set
+  auto vk_cmd = dynamic_cast<vk::CommandBuffer*>(m_vk_context->CurrentCommandBuffer())->GetCMD();
+  vkCmdBindDescriptorSets(vk_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, slot, 1, &vk_set, 0, nullptr);
 }
 
 void Pipeline::CleanUp() {
