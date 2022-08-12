@@ -15,5 +15,6 @@
   "copyrighter.author": "RuiwenTang",
   "copyrighter.license": "MIT",
   "copyrighter.newFilesOnly": true,
-  "cmake.generator": "Ninja"
+  "cmake.generator": "Ninja",
+  "glsllint.glslangValidatorArgs": "-V"
 }

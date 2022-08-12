@@ -427,6 +427,10 @@ std::unique_ptr<gpu::UniformBuffer> GraphicsContext::CreateUniformBuffer(size_t 
   return std::make_unique<vk::UniformBuffer>(size, &m_frame_data, m_vma_allocator);
 }
 
+VkDescriptorSet GraphicsContext::ObtainUniformBufferSet(VkDescriptorSetLayout layout) {
+  return m_frame_data.ObtainUniformBufferSet(layout);
+}
+
 void GraphicsContext::InitVkInstance() {
   if (g_enable_validation && !check_validation_layer_support()) {
     HEX_CORE_ERROR("validation layers requested but not available!");

@@ -23,6 +23,9 @@
 
 #include "GPU/VK/Pipeline.hpp"
 
+#include "GPU/VK/GraphicsContext.hpp"
+#include "LogPrivate.hpp"
+
 namespace hexgon::gpu::vk {
 
 Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
@@ -35,7 +38,28 @@ Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout
 
 Pipeline::~Pipeline() { CleanUp(); }
 
-void Pipeline::UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) {}
+void Pipeline::UpdateDescriptorSet(hexgon::GraphicsContext* ctx, uint32_t slot,
+                                   std::vector<DescriptorBinding> const& bindings) {
+  auto vk_ctx = dynamic_cast<vk::GraphicsContext*>(ctx);
+  if (vk_ctx == nullptr) {
+    HEX_CORE_ERROR("command buffer is null");
+    return;
+  }
+
+  if (slot >= m_set_info.size()) {
+    HEX_CORE_ERROR("Slot: {} is not present in this pipeline", slot);
+    return;
+  }
+
+  auto vk_set = vk_ctx->ObtainUniformBufferSet(m_set_layout[slot]);
+
+  if (vk_set == VK_NULL_HANDLE) {
+    HEX_CORE_ERROR("Failed obtain descriptor set for slot {}", slot);
+    return;
+  }
+
+  // TODO update descriptor set and bind it
+}
 
 void Pipeline::CleanUp() {
   vkDestroyPipelineLayout(m_device, m_layout, nullptr);

@@ -34,6 +34,8 @@
 
 namespace hexgon {
 
+class GraphicsContext;
+
 namespace gpu {
 
 class RenderPass;
@@ -88,7 +90,8 @@ class Pipeline {
  public:
   virtual ~Pipeline() = default;
 
-  virtual void UpdateDescriptorSet(std::string const& name, std::vector<DescriptorBinding> const& bindings) = 0;
+  virtual void UpdateDescriptorSet(GraphicsContext* ctx, uint32_t slot,
+                                   std::vector<DescriptorBinding> const& bindings) = 0;
 };
 
 }  // namespace gpu
