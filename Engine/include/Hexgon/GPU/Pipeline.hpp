@@ -37,6 +37,7 @@ namespace hexgon {
 namespace gpu {
 
 class RenderPass;
+class UniformBuffer;
 
 struct VertexBinding {
   uint32_t slot = 0;
@@ -78,9 +79,9 @@ struct PipelineInfo {
   RenderPass* render_pass = nullptr;
 };
 
+// TODO support image texture
 struct DescriptorBinding {
-  void* data = nullptr;
-  size_t data_size = 0;
+  UniformBuffer* ubo = nullptr;
 };
 
 class Pipeline {
