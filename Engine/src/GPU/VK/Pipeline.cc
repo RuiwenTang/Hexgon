@@ -38,20 +38,13 @@ Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout
 
 Pipeline::~Pipeline() { CleanUp(); }
 
-void Pipeline::UpdateDescriptorSet(hexgon::GraphicsContext* ctx, uint32_t slot,
-                                   std::vector<DescriptorBinding> const& bindings) {
-  auto vk_ctx = dynamic_cast<vk::GraphicsContext*>(ctx);
-  if (vk_ctx == nullptr) {
-    HEX_CORE_ERROR("command buffer is null");
-    return;
-  }
-
+void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings) {
   if (slot >= m_set_info.size()) {
     HEX_CORE_ERROR("Slot: {} is not present in this pipeline", slot);
     return;
   }
 
-  auto vk_set = vk_ctx->ObtainUniformBufferSet(m_set_layout[slot]);
+  auto vk_set = m_vk_context->ObtainUniformBufferSet(m_set_layout[slot]);
 
   if (vk_set == VK_NULL_HANDLE) {
     HEX_CORE_ERROR("Failed obtain descriptor set for slot {}", slot);

@@ -41,14 +41,17 @@ struct DescriptorSetLayoutData {
   VkShaderStageFlags stage;
 };
 
+class GraphicsContext;
+
 class Pipeline : public gpu::Pipeline {
  public:
   Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout, std::vector<VkDescriptorSetLayout> set_layout,
            std::vector<DescriptorSetLayoutData> set_info);
   ~Pipeline() override;
 
-  void UpdateDescriptorSet(hexgon::GraphicsContext* ctx, uint32_t slot,
-                           std::vector<DescriptorBinding> const& bindings) override;
+  void UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings) override;
+
+  void SetContext(GraphicsContext* ctx) { m_vk_context = ctx; }
 
   VkPipeline NativePipeline() const { return m_pipeline; }
 
@@ -61,6 +64,7 @@ class Pipeline : public gpu::Pipeline {
   VkPipelineLayout m_layout;
   std::vector<VkDescriptorSetLayout> m_set_layout;
   std::vector<DescriptorSetLayoutData> m_set_info;
+  GraphicsContext* m_vk_context = nullptr;
 };
 
 }  // namespace vk
