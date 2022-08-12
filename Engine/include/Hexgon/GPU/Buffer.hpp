@@ -93,6 +93,19 @@ class HEX_API IndexBuffer {
   virtual void UploadData(void* data, size_t size) = 0;
 };
 
+class HEX_API UniformBuffer {
+ public:
+  UniformBuffer(size_t size) : m_size(size) {}
+  virtual ~UniformBuffer() = default;
+
+  virtual void UploadData(void* data, size_t size, size_t offset) = 0;
+
+  size_t GetBufferSize() const { return m_size; }
+
+ private:
+  size_t m_size;
+};
+
 }  // namespace gpu
 
 }  // namespace hexgon

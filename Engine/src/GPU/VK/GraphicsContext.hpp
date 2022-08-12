@@ -72,6 +72,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   std::unique_ptr<gpu::IndexBuffer> CreateIndexBuffer() override;
 
+  std::unique_ptr<gpu::UniformBuffer> CreateUniformBuffer(size_t size) override;
+
  private:
   void InitVkInstance();
   void InitVkSurface();

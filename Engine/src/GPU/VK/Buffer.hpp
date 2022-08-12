@@ -27,6 +27,7 @@
 #include <vk_mem_alloc.h>
 
 #include <Hexgon/GPU/Buffer.hpp>
+#include <vector>
 
 namespace hexgon {
 namespace gpu {
@@ -46,7 +47,7 @@ class VMABuffer {
  protected:
   void InitVMABuffer(VkBufferCreateInfo const& buffer_info, VmaAllocationCreateInfo const& vma_info);
 
-  void UploadDataToBuffer(void* data, size_t size);
+  void UploadDataToBuffer(void* data, size_t size, size_t offset);
 
   void CleanUp();
 
@@ -73,13 +74,42 @@ class VertexBuffer : public gpu::VertexBuffer, public VMABuffer {
 class IndexBuffer : public gpu::IndexBuffer, public VMABuffer {
  public:
   IndexBuffer(VmaAllocator allocator) : gpu::IndexBuffer(), VMABuffer(allocator) {}
-  
+
   ~IndexBuffer() override = default;
 
   void UploadData(void* data, size_t size) override;
 
-  private:
+ private:
   void InitBuffer(size_t size);
+};
+
+class FrameInfoProvider;
+
+class UniformBuffer : public gpu::UniformBuffer {
+  class VMAUniformBuffer : public VMABuffer {
+   public:
+    VMAUniformBuffer(VmaAllocator allocator);
+
+    ~VMAUniformBuffer() override = default;
+
+    void Init(size_t size);
+
+    void UploadData(void* data, size_t size, size_t offset);
+  };
+
+ public:
+  UniformBuffer(size_t size, FrameInfoProvider* provider, VmaAllocator allocator);
+
+  ~UniformBuffer() override = default;
+
+  void UploadData(void* data, size_t size, size_t offset) override;
+
+ private:
+  void Init(VmaAllocator allocator);
+
+ private:
+  FrameInfoProvider* m_frame_provider;
+  std::vector<VMAUniformBuffer> m_vk_buffers;
 };
 
 }  // namespace vk

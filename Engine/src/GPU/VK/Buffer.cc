@@ -23,6 +23,7 @@
 
 #include "GPU/VK/Buffer.hpp"
 
+#include "GPU/VK/FrameData.hpp"
 #include "LogPrivate.hpp"
 
 namespace hexgon::gpu::vk {
@@ -36,7 +37,7 @@ void VMABuffer::InitVMABuffer(VkBufferCreateInfo const& buffer_info, VmaAllocati
   m_buffer_size = buffer_info.size;
 }
 
-void VMABuffer::UploadDataToBuffer(void* data, size_t size) {
+void VMABuffer::UploadDataToBuffer(void* data, size_t size, size_t offset) {
   if (m_vma_info.pMappedData) {
     std::memcpy(m_vma_info.pMappedData, data, size);
     return;
@@ -48,7 +49,9 @@ void VMABuffer::UploadDataToBuffer(void* data, size_t size) {
     return;
   }
 
-  std::memcpy(vma_buffer_pointer, data, size);
+  uint8_t* p = static_cast<uint8_t*>(vma_buffer_pointer) + offset;
+
+  std::memcpy(p, data, size);
 
   vmaUnmapMemory(m_vma_allocator, m_vma_allocation);
 }
@@ -69,7 +72,7 @@ void VertexBuffer::UploadData(void* data, size_t size) {
     CleanUp();
     InitBuffer(size);
   }
-  UploadDataToBuffer(data, size);
+  UploadDataToBuffer(data, size, 0);
 }
 
 void VertexBuffer::InitBuffer(size_t size) {
@@ -89,7 +92,7 @@ void IndexBuffer::UploadData(void* data, size_t size) {
     CleanUp();
     InitBuffer(size);
   }
-  UploadDataToBuffer(data, size);
+  UploadDataToBuffer(data, size, 0);
 }
 
 void IndexBuffer::InitBuffer(size_t size) {
@@ -102,6 +105,41 @@ void IndexBuffer::InitBuffer(size_t size) {
   vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
   InitVMABuffer(buffer_info, vma_info);
+}
+
+UniformBuffer::UniformBuffer(size_t size, FrameInfoProvider* provider, VmaAllocator allocator)
+    : gpu::UniformBuffer(size), m_frame_provider(provider) {
+  Init(allocator);
+}
+
+void UniformBuffer::UploadData(void* data, size_t size, size_t offset) {
+  m_vk_buffers[m_frame_provider->CurrentFrame()].UploadData(data, size, offset);
+}
+
+void UniformBuffer::Init(VmaAllocator allocator) {
+  for (uint32_t i = 0; i < m_frame_provider->TotalFrameCount(); i++) {
+    m_vk_buffers.emplace_back(VMAUniformBuffer(allocator));
+    m_vk_buffers.back().Init(GetBufferSize());
+  }
+}
+
+UniformBuffer::VMAUniformBuffer::VMAUniformBuffer(VmaAllocator allocator) : VMABuffer(allocator) {}
+
+void UniformBuffer::VMAUniformBuffer::Init(size_t size) {
+  VkBufferCreateInfo buffer_info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  buffer_info.size = size;
+  buffer_info.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+
+  VmaAllocationCreateInfo vma_info{};
+  vma_info.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  vma_info.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
+  vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+  InitVMABuffer(buffer_info, vma_info);
+}
+
+void UniformBuffer::VMAUniformBuffer::UploadData(void* data, size_t size, size_t offset) {
+  UploadDataToBuffer(data, size, offset);
 }
 
 }  // namespace hexgon::gpu::vk

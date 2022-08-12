@@ -34,6 +34,14 @@ namespace hexgon {
 namespace gpu {
 namespace vk {
 
+class FrameInfoProvider {
+ public:
+  virtual ~FrameInfoProvider() = default;
+
+  virtual uint32_t TotalFrameCount() = 0;
+  virtual uint32_t CurrentFrame() = 0;
+};
+
 class Frame final {
   enum {
     FRAME_DEFAULT_POOL_SIZE = 1024,
@@ -59,7 +67,7 @@ class Frame final {
   int32_t m_pool_index;
 };
 
-class FrameData final {
+class FrameData final : public FrameInfoProvider {
  public:
   FrameData() = default;
 
@@ -73,6 +81,9 @@ class FrameData final {
   void ResetCurrentFrame();
 
   VkDescriptorSet ObtainUniformBufferSet(VkDescriptorSetLayout layout);
+
+  uint32_t TotalFrameCount() override { return m_total_frame; }
+  uint32_t CurrentFrame() override { return m_current_frame; }
 
  private:
   uint32_t m_total_frame = 0;
