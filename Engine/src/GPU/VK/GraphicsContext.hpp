@@ -76,6 +76,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   VkDescriptorSet ObtainUniformBufferSet(VkDescriptorSetLayout layout);
 
+  VkSampler Get2DSampler() const { return m_2d_sampler; }
+
  private:
   void InitVkInstance();
   void InitVkSurface();
@@ -88,6 +90,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   void CreateSyncObjects();
   void CreateRenderPass();
   void CreateFramebuffer();
+  void InitSampler();
 
   void InitVMA();
 
@@ -119,6 +122,7 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<VkSemaphore> m_render_semaphore = {};
   std::unique_ptr<RenderPass> m_render_pass = {};
   std::vector<VkFramebuffer> m_framebuffers = {};
+  VkSampler m_2d_sampler = {};
   uint32_t m_current_frame = 0;
   uint32_t m_frame_index = 0;
   VmaAllocator m_vma_allocator = {};
