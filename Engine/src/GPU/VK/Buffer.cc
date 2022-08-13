@@ -110,7 +110,7 @@ void UniformBuffer::UploadData(void* data, size_t size, size_t offset) {
   m_vk_buffers[m_frame_provider->CurrentFrame()]->UploadData(data, size, offset);
 }
 
-VkBuffer UniformBuffer::NativeBuffer() { m_vk_buffers[m_frame_provider->CurrentFrame()]->NativeBuffer(); }
+VkBuffer UniformBuffer::NativeBuffer() { return m_vk_buffers[m_frame_provider->CurrentFrame()]->NativeBuffer(); }
 
 VkDeviceSize UniformBuffer::NativeOffset() { return 0; }
 

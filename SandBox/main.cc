@@ -60,13 +60,15 @@ class SimpleLayer : public Layer {
 
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
 
-    cmd->BindPipeline(m_pipeline.get());
+    cmd->BindPipeline(m_ubo_pipeline.get());
 
     cmd->BindVertexBuffer(m_vertex_buffer.get(), 0);
 
-    // cmd->Draw(3, 1, 0, 0);
-
     cmd->BindIndexBuffer(m_index_buffer.get());
+
+    std::vector<gpu::DescriptorBinding> bindings;
+    bindings.emplace_back(gpu::DescriptorBinding{m_matrix_buffer.get()});
+    m_ubo_pipeline->UpdateDescriptorSet(0, bindings);
 
     cmd->DrawIndexed(6, 1, 0, 0);
   }
