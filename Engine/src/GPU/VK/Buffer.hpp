@@ -27,6 +27,7 @@
 #include <vk_mem_alloc.h>
 
 #include <Hexgon/GPU/Buffer.hpp>
+#include <memory>
 #include <vector>
 
 namespace hexgon {
