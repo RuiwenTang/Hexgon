@@ -172,6 +172,8 @@ VkPrimitiveTopology Convertor<gpu::PrimitiveType, VkPrimitiveTopology>::ToVulkan
 
 gpu::PixelFormat Convertor<gpu::PixelFormat, VkFormat>::ToGPU(VkFormat value) {
   switch (value) {
+    case VK_FORMAT_R8G8B8_UNORM:
+      return gpu::PixelFormat::R8G8B8UNormInt;
     case VK_FORMAT_R8G8B8A8_UNORM:
       return gpu::PixelFormat::R8G8B8A8UNormInt;
     case VK_FORMAT_R8G8B8A8_SRGB:
@@ -191,6 +193,8 @@ gpu::PixelFormat Convertor<gpu::PixelFormat, VkFormat>::ToGPU(VkFormat value) {
 
 VkFormat Convertor<gpu::PixelFormat, VkFormat>::ToVulkan(gpu::PixelFormat value) {
   switch (value) {
+    case gpu::PixelFormat::R8G8B8UNormInt:
+      return VK_FORMAT_R8G8B8_UNORM;
     case gpu::PixelFormat::R8G8B8A8UNormIntSRGB:
       return VK_FORMAT_R8G8B8A8_SRGB;
     case gpu::PixelFormat::R8G8B8A8UNormInt:

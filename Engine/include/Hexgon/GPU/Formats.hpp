@@ -32,6 +32,7 @@ namespace gpu {
 enum class PixelFormat {
   Unknown,
   A8UNormInt,
+  R8G8B8UNormInt,
   R8G8B8A8UNormInt,
   R8G8B8A8UNormIntSRGB,
   B8G8R8A8UNormInt,

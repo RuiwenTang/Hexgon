@@ -13,6 +13,7 @@ target_include_directories(
     Hexgon PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src
     ${PROJECT_SOURCE_DIR}/third_party/VulkanMemoryAllocator/include
+    ${PROJECT_SOURCE_DIR}/third_party/stb
 )
 
 if(WIN32)
@@ -56,6 +57,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Shader.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Texture.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/IO/Image.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
@@ -83,6 +85,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/IO/Image.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )

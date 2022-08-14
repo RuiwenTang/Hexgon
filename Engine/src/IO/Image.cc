@@ -21,32 +21,51 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
-#include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// glm transform
-#include <glm/gtc/matrix_transform.hpp>
-// IO image
 #include <Hexgon/IO/Image.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#include "LogPrivate.hpp"
+
+namespace hexgon::io {
+
+std::shared_ptr<Image> Image::Load(std::string const& path) {
+  int32_t width = 0;
+  int32_t height = 0;
+  int32_t channels = 0;
+  void* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+  if (!data) {
+    return std::shared_ptr<Image>();
+  }
+
+  if (channels < 3) {
+    HEX_CORE_ERROR("Currently Image Texture only support RGBA or RGB formats");
+    return std::shared_ptr<Image>();
+  }
+
+  std::shared_ptr<Image> img{new Image};
+
+  img->m_width = width;
+  img->m_height = height;
+  img->m_data = data;
+
+  if (channels == 4) {
+    img->m_format = gpu::PixelFormat::R8G8B8A8UNormInt;
+  } else if (channels == 3) {
+    img->m_format = gpu::PixelFormat::R8G8B8A8UNormInt;
+  }
+
+  return img;
+}
+
+void Image::CleanUp() {
+  if (m_data) {
+    stbi_image_free(m_data);
+
+    m_data = nullptr;
+  }
+}
+
+}  // namespace hexgon::io

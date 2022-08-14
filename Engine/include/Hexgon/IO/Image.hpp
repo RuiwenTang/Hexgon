@@ -21,32 +21,35 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
-#include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
+#ifndef ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+#define ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+
 #include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// glm transform
-#include <glm/gtc/matrix_transform.hpp>
-// IO image
-#include <Hexgon/IO/Image.hpp>
+#include <Hexgon/Macro.hpp>
+#include <memory>
+#include <string>
+
+namespace hexgon {
+namespace io {
+class HEX_API Image {
+ public:
+  ~Image() { CleanUp(); }
+
+  static std::shared_ptr<Image> Load(std::string const& path);
+
+ private:
+  Image() = default;
+
+  void CleanUp();
+
+ private:
+  void* m_data = nullptr;
+  uint32_t m_width = 0;
+  uint32_t m_height = 0;
+  gpu::PixelFormat m_format = gpu::PixelFormat::Unknown;
+};
+
+}  // namespace io
+}  // namespace hexgon
+
+#endif  // ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
