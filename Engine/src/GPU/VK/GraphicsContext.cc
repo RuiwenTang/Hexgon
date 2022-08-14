@@ -251,8 +251,13 @@ void GraphicsContext::Destroy() {
     vkDestroyFence(m_device, fence, nullptr);
   }
 
+  vkDestroyFence(m_device, m_internal_fence, nullptr);
+
   vkResetCommandPool(m_device, m_cmd_pool, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
   vkDestroyCommandPool(m_device, m_cmd_pool, nullptr);
+
+  vkResetCommandPool(m_device, m_internal_pool, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+  vkDestroyCommandPool(m_device, m_internal_pool, nullptr);
 
   for (auto image_view : m_swapchain_views) {
     vkDestroyImageView(m_device, image_view, nullptr);
@@ -437,6 +442,40 @@ std::unique_ptr<gpu::UniformBuffer> GraphicsContext::CreateUniformBuffer(size_t 
 
 VkDescriptorSet GraphicsContext::ObtainUniformBufferSet(VkDescriptorSetLayout layout) {
   return m_frame_data.ObtainUniformBufferSet(layout);
+}
+
+VkCommandBuffer GraphicsContext::ObtainCommandBuffer() {
+  VkCommandBufferAllocateInfo buffer_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
+  buffer_info.commandBufferCount = 1;
+  buffer_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  buffer_info.commandPool = m_internal_pool;
+
+  VkCommandBuffer cmd;
+
+  if (vkAllocateCommandBuffers(m_device, &buffer_info, &cmd) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Faled allocate internal command buffer!");
+    return VK_NULL_HANDLE;
+  }
+
+  VkCommandBufferBeginInfo begin_info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  vkBeginCommandBuffer(cmd, &begin_info);
+
+  return cmd;
+}
+
+void GraphicsContext::SubmitCommandBuffer(VkCommandBuffer cmd) {
+  vkEndCommandBuffer(cmd);
+
+  VkSubmitInfo submit_info{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  submit_info.commandBufferCount = 1;
+  submit_info.pCommandBuffers = &cmd;
+
+  vkQueueSubmit(m_graphic_queue, 1, &submit_info, m_internal_fence);
+
+  vkWaitForFences(m_device, 1, &m_internal_fence, VK_TRUE, 1000000000);
+  vkResetFences(m_device, 1, &m_internal_fence);
 }
 
 void GraphicsContext::InitVkInstance() {
@@ -852,6 +891,11 @@ void GraphicsContext::CreateCommandPool() {
     HEX_CORE_ERROR("Failed create command pool");
     exit(-1);
   }
+
+  if (vkCreateCommandPool(m_device, &create_info, nullptr, &m_internal_pool) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Faield create internal command pool");
+    exit(-1);
+  }
 }
 
 void GraphicsContext::CreateCommandBuffer() {
@@ -882,6 +926,8 @@ void GraphicsContext::CreateSyncObjects() {
       exit(-1);
     }
   }
+
+  vkCreateFence(m_device, &create_info, nullptr, &m_internal_fence);
 
   m_present_semaphore.resize(m_cmds.size());
   m_render_semaphore.resize(m_cmds.size());

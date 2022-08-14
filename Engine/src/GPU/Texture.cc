@@ -21,49 +21,35 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_
-#define ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_
+#include <Hexgon/GPU/Texture.hpp>
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <cstdint>
+#include "LogPrivate.hpp"
 
 namespace hexgon {
 namespace gpu {
 
-class HEX_API Texture {
- public:
-  Texture(PixelFormat format, TextureUsage usage, TextureType type) : m_format(format), m_usage(usage), m_type(type) {}
-  virtual ~Texture() = default;
+void Texture::Resize(uint32_t width, uint32_t height) {
+  OnResize(GetWidth(), GetHeight(), width, height);
 
-  void Resize(uint32_t width, uint32_t height);
+  m_width = width;
+  m_height = height;
+}
 
-  void UploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void* data);
+void Texture::UploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void *data) {
+  if (offset_x + width > GetWidth()) {
+    HEX_CORE_ERROR("Texture upload failed since offset_x: {} + width: {} > texture width: {}", offset_x, width,
+                   GetWidth());
+    return;
+  }
 
-  PixelFormat GetFormat() const { return m_format; }
+  if (offset_y + height > GetHeight()) {
+    HEX_CORE_ERROR("Texture upload failed since offset_y: {} + height: {} > texture height: {}", offset_y, height,
+                   GetHeight());
+    return;
+  }
 
-  TextureUsage GetUsage() const { return m_usage; }
-
-  TextureType GetType() const { return m_type; }
-
-  uint32_t GetWidth() const { return m_width; }
-
-  uint32_t GetHeight() const { return m_height; }
-
- protected:
-  virtual void OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) = 0;
-
-  virtual void OnUploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void* data) = 0;
-
- private:
-  PixelFormat m_format;
-  TextureUsage m_usage;
-  TextureType m_type;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-};
+  OnUploadData(offset_x, offset_y, width, height, data);
+}
 
 }  // namespace gpu
 }  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_

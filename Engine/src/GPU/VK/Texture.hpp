@@ -21,49 +21,55 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_
-#define ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_
+#ifndef ENGINE_SRC_GPU_VK_TEXTURE_HPP_
+#define ENGINE_SRC_GPU_VK_TEXTURE_HPP_
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <cstdint>
+#include <vk_mem_alloc.h>
+
+#include <Hexgon/GPU/Texture.hpp>
 
 namespace hexgon {
 namespace gpu {
+namespace vk {
 
-class HEX_API Texture {
+class GraphicsContext;
+
+class Texture : public gpu::Texture {
  public:
-  Texture(PixelFormat format, TextureUsage usage, TextureType type) : m_format(format), m_usage(usage), m_type(type) {}
-  virtual ~Texture() = default;
+  Texture(PixelFormat format, TextureUsage usage, TextureType type, GraphicsContext* ctx, VmaAllocator allocator);
 
-  void Resize(uint32_t width, uint32_t height);
+  ~Texture() override { CleanUp(); }
 
-  void UploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void* data);
+  void Init();
 
-  PixelFormat GetFormat() const { return m_format; }
-
-  TextureUsage GetUsage() const { return m_usage; }
-
-  TextureType GetType() const { return m_type; }
-
-  uint32_t GetWidth() const { return m_width; }
-
-  uint32_t GetHeight() const { return m_height; }
+  void CleanUp();
 
  protected:
-  virtual void OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) = 0;
+  void OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) override;
 
-  virtual void OnUploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void* data) = 0;
+  void OnUploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height, void* data) override;
+
+  void InitImage(uint32_t width, uint32_t height);
+
+  void TransforImageLayout(VkCommandBuffer cmd, VkImageLayout new_layout);
+
+  void CopyBufferToImage(VkCommandBuffer cmd, VkBuffer vk_buffer, VkBufferImageCopy const& copy_info);
 
  private:
-  PixelFormat m_format;
-  TextureUsage m_usage;
-  TextureType m_type;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
+  GraphicsContext* m_ctx;
+  VmaAllocator m_allocator;
+  VmaAllocation m_allocation_info = {};
+  VkImageUsageFlags m_vk_usage = {};
+  VkFormat m_vk_format = {};
+  VkImageSubresourceRange m_sub_range = {};
+  VkImage m_image = {};
+  VkImageLayout m_image_layout = {};
+  VkImageView m_image_view = {};
+  VkExtent3D m_image_extent = {};
 };
 
+}  // namespace vk
 }  // namespace gpu
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_GPU_TEXTURE_HPP_
+#endif  // ENGINE_SRC_GPU_VK_TEXTURE_HPP_

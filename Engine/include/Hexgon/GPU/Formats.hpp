@@ -111,6 +111,7 @@ enum class TextureUsage : uint64_t {
 
 enum class TextureType {
   kImageTexture = 1,
+  kDepthTexture,
   kDepthStencilTexture,
 };
 

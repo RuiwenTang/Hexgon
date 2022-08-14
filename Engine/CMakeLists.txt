@@ -64,6 +64,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Texture.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.cc
@@ -80,6 +81,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
 )

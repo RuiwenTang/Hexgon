@@ -142,4 +142,19 @@ void UniformBuffer::VMAUniformBuffer::UploadData(void* data, size_t size, size_t
   UploadDataToBuffer(data, size, offset);
 }
 
+void StageBuffer::Init(size_t size) {
+  VkBufferCreateInfo buffer_info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  buffer_info.size = size;
+  buffer_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+  VmaAllocationCreateInfo vma_info{};
+  vma_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+  vma_info.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
+  vma_info.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+
+  InitVMABuffer(buffer_info, vma_info);
+}
+
+void StageBuffer::UploadData(void* data, size_t size) { UploadDataToBuffer(data, size, 0); }
+
 }  // namespace hexgon::gpu::vk

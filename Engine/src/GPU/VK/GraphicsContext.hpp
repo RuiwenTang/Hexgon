@@ -78,6 +78,12 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   VkSampler Get2DSampler() const { return m_2d_sampler; }
 
+  VkDevice GetDevice() const { return m_device; }
+
+  VkCommandBuffer ObtainCommandBuffer();
+
+  void SubmitCommandBuffer(VkCommandBuffer cmd);
+
  private:
   void InitVkInstance();
   void InitVkSurface();
@@ -116,6 +122,8 @@ class GraphicsContext : public hexgon::GraphicsContext {
   std::vector<ImageWrapper> m_sampler_images = {};
   std::vector<ImageWrapper> m_depth_images = {};
   VkCommandPool m_cmd_pool = {};
+  VkCommandPool m_internal_pool = {};
+  VkFence m_internal_fence = {};
   std::vector<VkCommandBuffer> m_cmds = {};
   std::vector<VkFence> m_cmd_fences = {};
   std::vector<VkSemaphore> m_present_semaphore = {};

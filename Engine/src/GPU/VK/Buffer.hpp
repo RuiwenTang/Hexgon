@@ -117,6 +117,17 @@ class UniformBuffer : public gpu::UniformBuffer {
   std::vector<std::unique_ptr<VMAUniformBuffer>> m_vk_buffers;
 };
 
+class StageBuffer : public VMABuffer {
+ public:
+  StageBuffer(VmaAllocator allocator) : VMABuffer(allocator) {}
+
+  ~StageBuffer() override = default;
+
+  void Init(size_t size);
+
+  void UploadData(void* data, size_t size);
+};
+
 }  // namespace vk
 }  // namespace gpu
 }  // namespace hexgon

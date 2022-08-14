@@ -87,6 +87,7 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
 
       write_sets.emplace_back(
           write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, &buffer_infos.back(), 1));
+    } else if (bindings[i].type == gpu::DescriptorBinding::Type::kSampledTexture) {
     }
   }
 
