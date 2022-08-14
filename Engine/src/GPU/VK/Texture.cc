@@ -74,6 +74,10 @@ void Texture::Init() {
   m_sub_range.levelCount = 1;
   m_sub_range.baseArrayLayer = 0;
   m_sub_range.layerCount = 1;
+
+  if (GetType() == TextureType::kImageTexture) {
+    m_2d_sampler = m_ctx->Get2DSampler();
+  }
 }
 
 void Texture::CleanUp() {
@@ -89,6 +93,8 @@ void Texture::CleanUp() {
     m_image_view = VK_NULL_HANDLE;
   }
 }
+
+void Texture::PrepareForDraw() {}
 
 void Texture::OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) {
   if (old_w != new_w || old_h != new_h) {

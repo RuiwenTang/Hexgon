@@ -25,6 +25,7 @@
 
 #include "GPU/VK/Buffer.hpp"
 #include "GPU/VK/GraphicsContext.hpp"
+#include "GPU/VK/Texture.hpp"
 #include "LogPrivate.hpp"
 
 namespace hexgon::gpu::vk {
@@ -37,6 +38,19 @@ static VkWriteDescriptorSet write_descriptor_set(VkDescriptorSet dst_set, VkDesc
   write_set.descriptorType = type;
   write_set.dstBinding = binding;
   write_set.pBufferInfo = buffer_info;
+  write_set.descriptorCount = descriptor_count;
+
+  return write_set;
+}
+
+static VkWriteDescriptorSet write_descriptor_set(VkDescriptorSet dst_set, VkDescriptorType type, uint32_t binding,
+                                                 VkDescriptorImageInfo* image_info, uint32_t descriptor_count) {
+  VkWriteDescriptorSet write_set{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+
+  write_set.dstSet = dst_set;
+  write_set.descriptorType = type;
+  write_set.dstBinding = binding;
+  write_set.pImageInfo = image_info;
   write_set.descriptorCount = descriptor_count;
 
   return write_set;
@@ -68,6 +82,7 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
   // update descriptor set
   std::vector<VkWriteDescriptorSet> write_sets;
   std::vector<VkDescriptorBufferInfo> buffer_infos;
+  std::vector<VkDescriptorImageInfo> image_infos;
 
   for (uint32_t i = 0; i < static_cast<uint32_t>(bindings.size()); i++) {
     // TODO support ImageSet
@@ -88,6 +103,23 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
       write_sets.emplace_back(
           write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, &buffer_infos.back(), 1));
     } else if (bindings[i].type == gpu::DescriptorBinding::Type::kSampledTexture) {
+      auto vk_img = dynamic_cast<vk::Texture*>(bindings[i].data.texture);
+      if (vk_img == nullptr) {
+        HEX_CORE_ERROR("texture buffer object is error");
+        return;
+      }
+
+      vk_img->PrepareForDraw();
+
+      VkDescriptorImageInfo image_info{};
+      image_info.sampler = vk_img->Get2dSampler();
+      image_info.imageView = vk_img->GetImageView();
+      image_info.imageLayout = vk_img->GetImageLayout();
+
+      image_infos.emplace_back(image_info);
+
+      write_sets.emplace_back(
+          write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, i, &image_infos.back(), 1));
     }
   }
 

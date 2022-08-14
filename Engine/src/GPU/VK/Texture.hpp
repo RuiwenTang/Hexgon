@@ -44,6 +44,14 @@ class Texture : public gpu::Texture {
 
   void CleanUp();
 
+  void PrepareForDraw();
+
+  VkSampler Get2dSampler() const { return m_2d_sampler; }
+
+  VkImageView GetImageView() const { return m_image_view; }
+
+  VkImageLayout GetImageLayout() const { return m_image_layout; }
+
  protected:
   void OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) override;
 
@@ -61,6 +69,7 @@ class Texture : public gpu::Texture {
   VmaAllocation m_allocation_info = {};
   VkImageUsageFlags m_vk_usage = {};
   VkFormat m_vk_format = {};
+  VkSampler m_2d_sampler = {};
   VkImageSubresourceRange m_sub_range = {};
   VkImage m_image = {};
   VkImageLayout m_image_layout = {};
