@@ -37,6 +37,7 @@ namespace gpu {
 
 class RenderPass;
 class UniformBuffer;
+class Texture;
 
 struct VertexBinding {
   uint32_t slot = 0;
@@ -78,9 +79,21 @@ struct PipelineInfo {
   RenderPass* render_pass = nullptr;
 };
 
-// TODO support image texture
 struct DescriptorBinding {
-  UniformBuffer* ubo = nullptr;
+  enum class Type {
+    kUniformBuffer = 1,
+    kSampledTexture,
+  };
+
+  Type type;
+  union {
+    UniformBuffer* ubo = nullptr;
+    Texture* texture;
+  } data;
+
+  DescriptorBinding(UniformBuffer* ubo) : type(Type::kUniformBuffer) { data.ubo = ubo; }
+
+  DescriptorBinding(Texture* texture) : type(Type::kSampledTexture) { data.texture = texture; }
 };
 
 class Pipeline {

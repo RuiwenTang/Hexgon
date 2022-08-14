@@ -109,6 +109,11 @@ enum class TextureUsage : uint64_t {
   RenderTarget = 1 << 2,
 };
 
+enum class TextureType {
+  kImageTexture = 1,
+  kDepthStencilTexture,
+};
+
 enum class CullMode {
   None,
   FrontFace,

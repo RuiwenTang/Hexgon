@@ -54,6 +54,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Pipeline.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Shader.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Texture.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc

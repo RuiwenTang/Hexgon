@@ -71,21 +71,23 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
 
   for (uint32_t i = 0; i < static_cast<uint32_t>(bindings.size()); i++) {
     // TODO support ImageSet
-    auto vk_ubo = dynamic_cast<vk::UniformBuffer*>(bindings[i].ubo);
-    if (vk_ubo == nullptr) {
-      HEX_CORE_ERROR("uniform buffer object is error");
-      return;
+    if (bindings[i].type == gpu::DescriptorBinding::Type::kUniformBuffer) {
+      auto vk_ubo = dynamic_cast<vk::UniformBuffer*>(bindings[i].data.ubo);
+      if (vk_ubo == nullptr) {
+        HEX_CORE_ERROR("uniform buffer object is error");
+        return;
+      }
+
+      VkDescriptorBufferInfo buff_info{};
+      buff_info.buffer = vk_ubo->NativeBuffer();
+      buff_info.offset = vk_ubo->NativeOffset();
+      buff_info.range = vk_ubo->GetBufferSize();
+
+      buffer_infos.emplace_back(buff_info);
+
+      write_sets.emplace_back(
+          write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, &buffer_infos.back(), 1));
     }
-
-    VkDescriptorBufferInfo buff_info{};
-    buff_info.buffer = vk_ubo->NativeBuffer();
-    buff_info.offset = vk_ubo->NativeOffset();
-    buff_info.range = vk_ubo->GetBufferSize();
-
-    buffer_infos.emplace_back(buff_info);
-
-    write_sets.emplace_back(
-        write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, &buffer_infos.back(), 1));
   }
 
   vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(write_sets.size()), write_sets.data(), 0, VK_NULL_HANDLE);
