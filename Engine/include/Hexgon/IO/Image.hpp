@@ -37,6 +37,9 @@ class HEX_API Image {
 
   static std::shared_ptr<Image> Load(std::string const& path);
 
+  uint32_t GetWidth() const { return m_width; }
+  uint32_t GetHeight() const { return m_height; }
+
  private:
   Image() = default;
 
