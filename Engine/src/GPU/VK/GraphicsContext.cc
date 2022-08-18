@@ -36,6 +36,7 @@
 #include "GPU/VK/Formats.hpp"
 #include "GPU/VK/Pipeline.hpp"
 #include "GPU/VK/PipelineBuilder.hpp"
+#include "GPU/VK/Texture.hpp"
 #include "LogPrivate.hpp"
 
 #define HEX_ENABLE_VK_DEBUG 1
@@ -440,6 +441,15 @@ std::unique_ptr<gpu::UniformBuffer> GraphicsContext::CreateUniformBuffer(size_t 
   return std::make_unique<vk::UniformBuffer>(size, &m_frame_data, m_vma_allocator);
 }
 
+std::unique_ptr<gpu::Texture> GraphicsContext::CreateTexture(gpu::PixelFormat format, gpu::TextureUsage usage,
+                                                             gpu::TextureType type) {
+  auto texture = std::make_unique<vk::Texture>(format, usage, type, this, m_vma_allocator);
+
+  texture->Init();
+
+  return texture;
+}
+
 VkDescriptorSet GraphicsContext::ObtainUniformBufferSet(VkDescriptorSetLayout layout) {
   return m_frame_data.ObtainUniformBufferSet(layout);
 }
@@ -472,10 +482,10 @@ void GraphicsContext::SubmitCommandBuffer(VkCommandBuffer cmd) {
   submit_info.commandBufferCount = 1;
   submit_info.pCommandBuffers = &cmd;
 
+  vkResetFences(m_device, 1, &m_internal_fence);
   vkQueueSubmit(m_graphic_queue, 1, &submit_info, m_internal_fence);
 
   vkWaitForFences(m_device, 1, &m_internal_fence, VK_TRUE, 1000000000);
-  vkResetFences(m_device, 1, &m_internal_fence);
 }
 
 void GraphicsContext::InitVkInstance() {

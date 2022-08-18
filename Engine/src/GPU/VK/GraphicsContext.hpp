@@ -74,6 +74,9 @@ class GraphicsContext : public hexgon::GraphicsContext {
 
   std::unique_ptr<gpu::UniformBuffer> CreateUniformBuffer(size_t size) override;
 
+  std::unique_ptr<gpu::Texture> CreateTexture(gpu::PixelFormat format, gpu::TextureUsage usage,
+                                              gpu::TextureType type) override;
+
   VkDescriptorSet ObtainUniformBufferSet(VkDescriptorSetLayout layout);
 
   VkSampler Get2DSampler() const { return m_2d_sampler; }

@@ -28,6 +28,7 @@
 #include <Hexgon/GPU/CommandBuffer.hpp>
 #include <Hexgon/GPU/Formats.hpp>
 #include <Hexgon/GPU/Pipeline.hpp>
+#include <Hexgon/GPU/Texture.hpp>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
@@ -54,6 +55,9 @@ class GraphicsContext {
   virtual std::unique_ptr<gpu::IndexBuffer> CreateIndexBuffer() = 0;
 
   virtual std::unique_ptr<gpu::UniformBuffer> CreateUniformBuffer(size_t size) = 0;
+
+  virtual std::unique_ptr<gpu::Texture> CreateTexture(gpu::PixelFormat format, gpu::TextureUsage usage,
+                                                      gpu::TextureType type) = 0;
 
   virtual std::vector<gpu::ColorAttachmentDescriptor> ScreenColorAttachment() = 0;
 

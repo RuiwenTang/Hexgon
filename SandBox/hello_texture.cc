@@ -53,6 +53,7 @@ class SimpleLayer : public Layer {
     HEX_INFO("{} layer OnDetach", this->GetLayerName());
 
     m_texture.reset();
+    m_gpu_texture.reset();
     m_matrix_buffer.reset();
     m_index_buffer.reset();
     m_vertex_buffer.reset();
@@ -60,6 +61,10 @@ class SimpleLayer : public Layer {
   }
 
   void OnUpdate(float tm) override {
+    if (!m_gpu_texture) {
+      UploadTexture();
+    }
+
     m_rotate_degree += 1.f;
 
     // auto matrix = glm::rotate(glm::identity<glm::mat4>(), glm::radians(m_rotate_degree), glm::vec3{0.f, 0.f, 1.f});
@@ -83,6 +88,15 @@ class SimpleLayer : public Layer {
 
   void OnEvent(const Event* event) override {
     HEX_INFO("{} layer OnEvent event: {}", this->GetLayerName(), event->GetName());
+  }
+
+  void UploadTexture() {
+    m_gpu_texture = GetGraphicsContext()->CreateTexture(m_texture->GetFormat(), gpu::TextureUsage::ShaderRead,
+                                                        gpu::TextureType::kImageTexture);
+
+    m_gpu_texture->Resize(m_texture->GetWidth(), m_texture->GetHeight());
+
+    m_gpu_texture->UploadData(0, 0, m_texture->GetWidth(), m_texture->GetHeight(), m_texture->GetRawData());
   }
 
  private:
@@ -149,6 +163,7 @@ class SimpleLayer : public Layer {
   std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
   std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
   std::unique_ptr<gpu::UniformBuffer> m_matrix_buffer;
+  std::unique_ptr<gpu::Texture> m_gpu_texture;
   std::shared_ptr<io::Image> m_texture;
   float m_rotate_degree = 0.f;
 };

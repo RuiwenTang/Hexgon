@@ -114,6 +114,8 @@ void Texture::OnUploadData(uint32_t offset_x, uint32_t offset_y, uint32_t width,
 
   std::unique_ptr<StageBuffer> stage_buffer = std::make_unique<StageBuffer>(m_allocator);
 
+  stage_buffer->Init(buffer_size);
+
   stage_buffer->UploadData(data, buffer_size);
 
   VkCommandBuffer cmd = m_ctx->ObtainCommandBuffer();
@@ -280,6 +282,8 @@ void Texture::TransforImageLayout(VkCommandBuffer cmd, VkImageLayout new_layout)
   }
 
   vkCmdPipelineBarrier(cmd, src_stage, dst_stage, 0, 0, nullptr, 0, nullptr, 1, &image_memory_barrier);
+
+  m_image_layout = new_layout;
 }
 
 void Texture::CopyBufferToImage(VkCommandBuffer cmd, VkBuffer vk_buffer, VkBufferImageCopy const& copy_info) {

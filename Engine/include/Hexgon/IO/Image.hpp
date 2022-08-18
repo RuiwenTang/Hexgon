@@ -40,6 +40,10 @@ class HEX_API Image {
   uint32_t GetWidth() const { return m_width; }
   uint32_t GetHeight() const { return m_height; }
 
+  gpu::PixelFormat GetFormat() const { return m_format; }
+
+  void* GetRawData() const { return m_data; }
+
  private:
   Image() = default;
 
