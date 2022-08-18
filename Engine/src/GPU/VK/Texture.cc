@@ -95,6 +95,10 @@ void Texture::CleanUp() {
 }
 
 void Texture::PrepareForDraw() {
+  if (m_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    return;
+  }
+
   auto cmd = m_ctx->ObtainCommandBuffer();
 
   TransforImageLayout(cmd, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
