@@ -202,7 +202,7 @@ void PipelineBuilder::InitPipelineLayout() {
       }
 
       set_data->create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      set_data->create_info.bindingCount = refl_set->binding_count;
+      set_data->create_info.bindingCount = static_cast<uint32_t>(set_data->bindings.size());
       set_data->create_info.pBindings = set_data->bindings.data();
 
       set_data->set_number = refl_set->set;

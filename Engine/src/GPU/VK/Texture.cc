@@ -94,7 +94,13 @@ void Texture::CleanUp() {
   }
 }
 
-void Texture::PrepareForDraw() {}
+void Texture::PrepareForDraw() {
+  auto cmd = m_ctx->ObtainCommandBuffer();
+
+  TransforImageLayout(cmd, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+  m_ctx->SubmitCommandBuffer(cmd);
+}
 
 void Texture::OnResize(uint32_t old_w, uint32_t old_h, uint32_t new_w, uint32_t new_h) {
   if (old_w != new_w || old_h != new_h) {
