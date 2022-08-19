@@ -25,6 +25,9 @@ set(SPIRV_REFLECT_EXAMPLES OFF CACHE INTERNAL "" FORCE)
 set(SPIRV_REFLECT_STATIC_LIB ON CACHE INTERNAL "" FORCE)
 add_subdirectory(third_party/SPIRV-Reflect)
 
+# imgui
+add_subdirectory(third_party/imgui)
+
 # engine
 add_subdirectory(Engine)
 
