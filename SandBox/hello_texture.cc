@@ -67,8 +67,7 @@ class SimpleLayer : public Layer {
 
     m_rotate_degree += 1.f;
 
-    // auto matrix = glm::rotate(glm::identity<glm::mat4>(), glm::radians(m_rotate_degree), glm::vec3{0.f, 0.f, 1.f});
-    auto matrix = glm::identity<glm::mat4>();
+    auto matrix = glm::rotate(glm::identity<glm::mat4>(), glm::radians(m_rotate_degree), glm::vec3{0.f, 0.f, 1.f});
     m_matrix_buffer->UploadData(&matrix, sizeof(matrix), 0);
 
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
