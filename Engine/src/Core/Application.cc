@@ -53,10 +53,16 @@ void Application::Run() { m_window->Show(); }
 
 void Application::PushLayer(std::shared_ptr<Layer> const& layer) {
   layer->m_context = m_window->GetContext();
-  m_layer_stack.PushLayer(std::move(layer));
+  layer->m_application = this;
+  m_layer_stack.PushLayer(layer);
 }
 
-void Application::PopLayer(std::shared_ptr<Layer> const& layer) { m_layer_stack.PopLayer(layer); }
+void Application::PopLayer(std::shared_ptr<Layer> const& layer) {
+  m_layer_stack.PopLayer(layer);
+
+  layer->m_application = nullptr;
+  layer->m_context = nullptr;
+}
 
 void Application::OnWindowResize(int32_t width, int32_t height) {
   HEX_CORE_INFO("Window Resize to { {}, {} }", width, height);

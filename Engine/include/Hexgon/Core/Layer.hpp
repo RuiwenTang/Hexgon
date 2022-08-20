@@ -49,9 +49,13 @@ class HEX_API Layer {
 
   GraphicsContext* GetGraphicsContext() const { return m_context; }
 
+ protected:
+  Application* GetApplication() const { return m_application; }
+
  private:
   std::string m_name;
   GraphicsContext* m_context = nullptr;
+  Application* m_application = nullptr;
 };
 
 }  // namespace hexgon
