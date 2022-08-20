@@ -186,6 +186,22 @@ enum class EventType {
   MouseScrolled
 };
 
+enum MouseCode {
+  Button0 = 0,
+  Button1 = 1,
+  Button2 = 2,
+  Button3 = 3,
+  Button4 = 4,
+  Button5 = 5,
+  Button6 = 6,
+  Button7 = 7,
+
+  ButtonLast = Button7,
+  ButtonLeft = Button0,
+  ButtonRight = Button1,
+  ButtonMiddle = Button2
+};
+
 class HEX_API Event {
  public:
   virtual ~Event() = default;
@@ -224,6 +240,46 @@ class HEX_API KeyReleaseEvent : public KeyEvent {
   std::string GetName() const override;
 
   EventType GetType() const override;
+};
+
+class MouseEvent : public Event {
+ public:
+  MouseEvent(float x, float y) : m_mouse_x(x), m_mouse_y(y) {}
+  ~MouseEvent() override = default;
+
+  float GetX() const { return m_mouse_x; }
+  float GetY() const { return m_mouse_y; }
+
+ private:
+  float m_mouse_x;
+  float m_mouse_y;
+};
+
+class MouseMovedEvent : public MouseEvent {
+ public:
+  MouseMovedEvent(float x, float y) : MouseEvent(x, y) {}
+  ~MouseMovedEvent() override = default;
+
+  EventType GetType() const override { return EventType::MouseMoved; }
+  std::string GetName() const override { return std::string("MouseMoved"); }
+};
+
+class MouseScrolledEvent : public MouseEvent {
+ public:
+  MouseScrolledEvent(float x, float y, float offset_x, float offset_y)
+      : MouseEvent(x, y), m_offset_x(offset_x), m_offset_y(offset_y) {}
+  ~MouseScrolledEvent() override = default;
+
+  EventType GetType() const override { return EventType::MouseScrolled; }
+
+  std::string GetName() const override { return std::string("MouseScrolled"); }
+
+  float GetOffsetX() const { return m_offset_x; }
+  float GetOffsetY() const { return m_offset_y; }
+
+ private:
+  float m_offset_x;
+  float m_offset_y;
 };
 
 }  // namespace hexgon
