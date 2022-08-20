@@ -101,6 +101,8 @@ class Pipeline {
   virtual ~Pipeline() = default;
 
   virtual void UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings) = 0;
+
+  virtual void UpdatePushConstant(uint32_t offset, uint32_t size, void* data) = 0;
 };
 
 }  // namespace gpu

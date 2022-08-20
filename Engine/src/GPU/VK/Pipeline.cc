@@ -57,12 +57,14 @@ static VkWriteDescriptorSet write_descriptor_set(VkDescriptorSet dst_set, VkDesc
 }
 
 Pipeline::Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout,
-                   std::vector<VkDescriptorSetLayout> set_layout, std::vector<DescriptorSetLayoutData> set_info)
+                   std::vector<VkDescriptorSetLayout> set_layout, std::vector<DescriptorSetLayoutData> set_info,
+                   std::vector<VkPushConstantRange> pc_range)
     : m_device(device),
       m_pipeline(pipeline),
       m_layout(layout),
       m_set_layout(std::move(set_layout)),
-      m_set_info(std::move(set_info)) {}
+      m_set_info(std::move(set_info)),
+      m_pc_range(std::move(pc_range)) {}
 
 Pipeline::~Pipeline() { CleanUp(); }
 
@@ -128,6 +130,25 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
   // bind descriptor set
   auto vk_cmd = dynamic_cast<vk::CommandBuffer*>(m_vk_context->CurrentCommandBuffer())->GetCMD();
   vkCmdBindDescriptorSets(vk_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, slot, 1, &vk_set, 0, nullptr);
+}
+
+void Pipeline::UpdatePushConstant(uint32_t offset, uint32_t size, void* data) {
+  if (m_pc_range.empty()) {
+    return;
+  }
+
+  auto it = std::find_if(m_pc_range.begin(), m_pc_range.end(), [offset, size](VkPushConstantRange const& range) {
+    return range.offset == offset && range.size == size;
+  });
+
+  if (it == m_pc_range.end()) {
+    HEX_CORE_ERROR("Unknown push constant [ offset: {}, size: {} ] update", offset, size);
+    return;
+  }
+
+  auto vk_cmd = dynamic_cast<vk::CommandBuffer*>(m_vk_context->CurrentCommandBuffer())->GetCMD();
+
+  vkCmdPushConstants(vk_cmd, m_layout, it->stageFlags, offset, size, data);
 }
 
 void Pipeline::CleanUp() {

@@ -59,12 +59,21 @@ void VMABuffer::CleanUp() {
   m_vma_allocation = nullptr;
 }
 
-void VertexBuffer::UploadData(void* data, size_t size) {
-  if (size != BufferSize()) {
-    CleanUp();
-    InitBuffer(size);
+void VertexBuffer::Resize(size_t size) {
+  if (size <= BufferSize()) {
+    return;
   }
-  UploadDataToBuffer(data, size, 0);
+
+  CleanUp();
+  InitBuffer(size);
+}
+
+void VertexBuffer::UploadData(void* data, size_t size, size_t offset) {
+  if (size + offset > BufferSize()) {
+    HEX_CORE_ERROR("Failed upload vertex buffer with size overflow size: {} offset: {}, buffer-size: {}", size, offset,
+                   BufferSize());
+  }
+  UploadDataToBuffer(data, size, offset);
 }
 
 void VertexBuffer::InitBuffer(size_t size) {
@@ -80,12 +89,22 @@ void VertexBuffer::InitBuffer(size_t size) {
   InitVMABuffer(buffer_info, vma_info);
 }
 
-void IndexBuffer::UploadData(void* data, size_t size) {
-  if (size != BufferSize()) {
-    CleanUp();
-    InitBuffer(size);
+void IndexBuffer::Resize(size_t size) {
+  if (size <= BufferSize()) {
+    return;
   }
-  UploadDataToBuffer(data, size, 0);
+
+  CleanUp();
+
+  InitBuffer(size);
+}
+
+void IndexBuffer::UploadData(void* data, size_t size, size_t offset) {
+  if (size + offset > BufferSize()) {
+    HEX_CORE_ERROR("Failed upload index buffer with size overflow size: {} offset: {}, buffer-size: {}", size, offset,
+                   BufferSize());
+  }
+  UploadDataToBuffer(data, size, offset);
 }
 
 void IndexBuffer::InitBuffer(size_t size) {

@@ -79,7 +79,9 @@ class HEX_API VertexBuffer {
 
   BufferLayout const& Layout() const { return m_layout; }
 
-  virtual void UploadData(void* data, size_t size) = 0;
+  virtual void Resize(size_t size) = 0;
+
+  virtual void UploadData(void* data, size_t size, size_t offset) = 0;
 
  private:
   BufferLayout m_layout;
@@ -90,7 +92,9 @@ class HEX_API IndexBuffer {
   IndexBuffer() = default;
   virtual ~IndexBuffer() = default;
 
-  virtual void UploadData(void* data, size_t size) = 0;
+  virtual void Resize(size_t size) = 0;
+
+  virtual void UploadData(void* data, size_t size, size_t offset) = 0;
 };
 
 class HEX_API UniformBuffer {

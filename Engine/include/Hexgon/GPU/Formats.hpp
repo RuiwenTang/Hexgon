@@ -50,6 +50,10 @@ enum class DataType {
   Int2,
   Int3,
   Int4,
+  Char,
+  Char2,
+  Char3,
+  Char4
 };
 
 enum class BlendFactor {

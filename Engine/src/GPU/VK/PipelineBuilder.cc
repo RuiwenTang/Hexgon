@@ -105,6 +105,8 @@ std::vector<VkDescriptorSetLayout> const& PipelineBuilder::GetDescriptorSetLayou
 
 std::vector<DescriptorSetLayoutData> const& PipelineBuilder::GetDescriptorSetInfo() const { return m_set_info; }
 
+std::vector<VkPushConstantRange> const& PipelineBuilder::GetPushConstantRange() const { return m_pc_ranges; }
+
 void PipelineBuilder::InitShaderStage() {
   for (auto const& shader : m_info.shaders) {
     VkShaderModule shader_module = create_shader_module(m_device, shader.GetSource(), shader.GetSize());
@@ -142,6 +144,7 @@ void PipelineBuilder::InitPipelineLayout() {
     }
 
     uint32_t count = 0;
+    // descriptor sets
     result = spvReflectEnumerateDescriptorSets(&module, &count, nullptr);
 
     if (result != SPV_REFLECT_RESULT_SUCCESS) {
@@ -151,6 +154,8 @@ void PipelineBuilder::InitPipelineLayout() {
       HEX_CORE_INFO("reflect {} stage with {} sets",
                     shader.GetShaderStage() == Shader::Stage::Vertex ? "vertex" : "fragment", count);
     }
+
+    VkFlags vk_stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
 
     std::vector<SpvReflectDescriptorSet*> descs(count);
 
@@ -179,8 +184,7 @@ void PipelineBuilder::InitPipelineLayout() {
                          [i_binding](VkDescriptorSetLayoutBinding const& vk_b) { return vk_b.binding == i_binding; });
 
         if (it_binding != set_data->bindings.end()) {
-          it_binding->stageFlags |=
-              Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
+          it_binding->stageFlags |= vk_stage;
 
           continue;
         }
@@ -206,7 +210,45 @@ void PipelineBuilder::InitPipelineLayout() {
       set_data->create_info.pBindings = set_data->bindings.data();
 
       set_data->set_number = refl_set->set;
-      set_data->stage = Convertor<gpu::Shader::Stage, VkShaderStageFlagBits>::ToVulkan(shader.GetShaderStage());
+      set_data->stage = vk_stage;
+    }
+
+    // push constants
+    result = spvReflectEnumeratePushConstants(&module, &count, nullptr);
+
+    if (result != SPV_REFLECT_RESULT_SUCCESS) {
+      HEX_CORE_ERROR("Failed refelct shader push constants");
+      continue;
+    } else {
+      HEX_CORE_INFO("reflect {} stage with {} push constants",
+                    shader.GetShaderStage() == Shader::Stage::Vertex ? "vertex" : "fragment", count);
+    }
+    std::vector<SpvReflectBlockVariable*> ref_push_constants(count);
+
+    spvReflectEnumeratePushConstants(&module, &count, ref_push_constants.data());
+
+    // TODO support multiple push constants range
+    for (size_t i_pc = 0; i_pc < ref_push_constants.size(); i_pc++) {
+      auto ref_push_constant = ref_push_constants[i_pc];
+
+      HEX_CORE_INFO("pc offset = {}, size = {}", ref_push_constant->offset, ref_push_constant->size);
+
+      auto it = std::find_if(m_pc_ranges.begin(), m_pc_ranges.end(),
+                             [vk_stage, ref_push_constant](VkPushConstantRange const& data) {
+                               return data.offset == ref_push_constant->offset && data.size == ref_push_constant->size;
+                             });
+
+      if (it != m_pc_ranges.end()) {
+        it->stageFlags |= vk_stage;
+        continue;
+      }
+
+      VkPushConstantRange range;
+      range.size = ref_push_constant->size;
+      range.offset = ref_push_constant->offset;
+      range.stageFlags = vk_stage;
+
+      m_pc_ranges.emplace_back(range);
     }
   }
 
@@ -225,6 +267,11 @@ void PipelineBuilder::InitPipelineLayout() {
   create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   create_info.setLayoutCount = static_cast<uint32_t>(m_descriptor_set_layout.size());
   create_info.pSetLayouts = m_descriptor_set_layout.data();
+
+  if (!m_pc_ranges.empty()) {
+    create_info.pushConstantRangeCount = static_cast<uint32_t>(m_pc_ranges.size());
+    create_info.pPushConstantRanges = m_pc_ranges.data();
+  }
 
   if (vkCreatePipelineLayout(m_device, &create_info, nullptr, &m_layout) != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed to create pipeline layout!");

@@ -421,8 +421,9 @@ std::unique_ptr<gpu::Pipeline> GraphicsContext::CreatePipeline(gpu::PipelineInfo
   PipelineBuilder builder(m_device, info);
 
   VkPipeline vk_pipeline = builder.Build();
-  auto pipeline = std::make_unique<vk::Pipeline>(m_device, vk_pipeline, builder.GetLayout(),
-                                                 builder.GetDescriptorSetLayout(), builder.GetDescriptorSetInfo());
+  auto pipeline =
+      std::make_unique<vk::Pipeline>(m_device, vk_pipeline, builder.GetLayout(), builder.GetDescriptorSetLayout(),
+                                     builder.GetDescriptorSetInfo(), builder.GetPushConstantRange());
 
   pipeline->SetContext(this);
 

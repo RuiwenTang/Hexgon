@@ -6,6 +6,8 @@ set(SHADERS
   ${CMAKE_CURRENT_LIST_DIR}/hello_ubo_triangle.frag
   ${CMAKE_CURRENT_LIST_DIR}/hello_texture.vert
   ${CMAKE_CURRENT_LIST_DIR}/hello_texture.frag
+  ${CMAKE_CURRENT_LIST_DIR}/imgui.frag
+  ${CMAKE_CURRENT_LIST_DIR}/imgui.vert
 )
 
 set(SPV_SHADERS "")

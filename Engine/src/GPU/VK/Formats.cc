@@ -112,6 +112,14 @@ gpu::DataType Convertor<gpu::DataType, VkFormat>::ToGPU(VkFormat value) {
       return gpu::DataType::Int2;
     case VK_FORMAT_R32_SINT:
       return gpu::DataType::Int;
+    case VK_FORMAT_R8_UNORM:
+      return gpu::DataType::Char;
+    case VK_FORMAT_R8G8_UNORM:
+      return gpu::DataType::Char2;
+    case VK_FORMAT_R8G8B8_UNORM:
+      return gpu::DataType::Char3;
+    case VK_FORMAT_R8G8B8A8_UNORM:
+      return gpu::DataType::Char4;
     default:
       return gpu::DataType::None;
   }
@@ -135,6 +143,14 @@ VkFormat Convertor<gpu::DataType, VkFormat>::ToVulkan(gpu::DataType value) {
       return VK_FORMAT_R32G32_SINT;
     case gpu::DataType::Int:
       return VK_FORMAT_R32_SINT;
+    case gpu::DataType::Char:
+      return VK_FORMAT_R8_UNORM;
+    case gpu::DataType::Char2:
+      return VK_FORMAT_R8G8_UNORM;
+    case gpu::DataType::Char3:
+      return VK_FORMAT_R8G8B8_UNORM;
+    case gpu::DataType::Char4:
+      return VK_FORMAT_R8G8B8A8_UNORM;
     default:
       return VK_FORMAT_UNDEFINED;
   }

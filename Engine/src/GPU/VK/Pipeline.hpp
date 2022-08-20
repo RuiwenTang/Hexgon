@@ -46,10 +46,12 @@ class GraphicsContext;
 class Pipeline : public gpu::Pipeline {
  public:
   Pipeline(VkDevice device, VkPipeline pipeline, VkPipelineLayout layout, std::vector<VkDescriptorSetLayout> set_layout,
-           std::vector<DescriptorSetLayoutData> set_info);
+           std::vector<DescriptorSetLayoutData> set_info, std::vector<VkPushConstantRange> pc_range);
   ~Pipeline() override;
 
   void UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings) override;
+
+  void UpdatePushConstant(uint32_t offset, uint32_t size, void* data) override;
 
   void SetContext(GraphicsContext* ctx) { m_vk_context = ctx; }
 
@@ -64,6 +66,7 @@ class Pipeline : public gpu::Pipeline {
   VkPipelineLayout m_layout;
   std::vector<VkDescriptorSetLayout> m_set_layout;
   std::vector<DescriptorSetLayoutData> m_set_info;
+  std::vector<VkPushConstantRange> m_pc_range;
   GraphicsContext* m_vk_context = nullptr;
 };
 

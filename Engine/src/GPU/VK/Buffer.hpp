@@ -66,7 +66,9 @@ class VertexBuffer : public gpu::VertexBuffer, public VMABuffer {
 
   ~VertexBuffer() override = default;
 
-  void UploadData(void* data, size_t size) override;
+  void Resize(size_t size) override;
+
+  void UploadData(void* data, size_t size, size_t offset) override;
 
  private:
   void InitBuffer(size_t size);
@@ -78,7 +80,9 @@ class IndexBuffer : public gpu::IndexBuffer, public VMABuffer {
 
   ~IndexBuffer() override = default;
 
-  void UploadData(void* data, size_t size) override;
+  void Resize(size_t size) override;
+
+  void UploadData(void* data, size_t size, size_t offset) override;
 
  private:
   void InitBuffer(size_t size);

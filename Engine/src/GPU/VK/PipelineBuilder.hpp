@@ -47,6 +47,7 @@ class PipelineBuilder final {
 
   std::vector<VkDescriptorSetLayout> const& GetDescriptorSetLayout() const;
   std::vector<DescriptorSetLayoutData> const& GetDescriptorSetInfo() const;
+  std::vector<VkPushConstantRange> const& GetPushConstantRange() const;
 
  private:
   void CleanUp();
@@ -83,6 +84,7 @@ class PipelineBuilder final {
   // temp properties
   std::vector<VkShaderModule> m_shaders;
   std::vector<DescriptorSetLayoutData> m_set_info;
+  std::vector<VkPushConstantRange> m_pc_ranges;
 };
 
 }  // namespace vk

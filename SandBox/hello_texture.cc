@@ -147,7 +147,9 @@ class SimpleLayer : public Layer {
         0.5f,  0.5f,  0.f, 1.f, 1.f,  // point 3
     };
 
-    m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float));
+    m_vertex_buffer->Resize(vertex_data.size() * sizeof(float));
+
+    m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float), 0);
 
     std::vector<uint32_t> index_data{
         0, 1, 2, 1, 2, 3,
@@ -155,7 +157,9 @@ class SimpleLayer : public Layer {
 
     m_index_buffer = GetGraphicsContext()->CreateIndexBuffer();
 
-    m_index_buffer->UploadData(index_data.data(), index_data.size() * sizeof(uint32_t));
+    m_index_buffer->Resize(index_data.size() * sizeof(uint32_t));
+
+    m_index_buffer->UploadData(index_data.data(), index_data.size() * sizeof(uint32_t), 0);
   }
 
  private:
