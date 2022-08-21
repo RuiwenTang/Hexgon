@@ -50,6 +50,7 @@ class HEX_API Application final : public WindowClient {
   void OnWindowClose() override;
   void OnWindowUpdate() override;
   void OnKeyEvent(KeyEvent* event) override;
+  void OnMouseEvent(MouseEvent* event) override;
 
  private:
   Application() = default;

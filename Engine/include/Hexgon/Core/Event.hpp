@@ -282,6 +282,36 @@ class MouseScrolledEvent : public MouseEvent {
   float m_offset_y;
 };
 
+class MousePressedEvent : public MouseEvent {
+ public:
+  MousePressedEvent(float x, float y, MouseCode code) : MouseEvent(x, y), m_code(code) {}
+  ~MousePressedEvent() override = default;
+
+  EventType GetType() const override { return EventType::MouseButtonPressed; }
+
+  std::string GetName() const override { return std::string("MouseButtonPressed"); }
+
+  MouseCode GetCode() const { return m_code; }
+
+ private:
+  MouseCode m_code;
+};
+
+class MouseReleasedEvent : public MouseEvent {
+ public:
+  MouseReleasedEvent(float x, float y, MouseCode code) : MouseEvent(x, y), m_code(code) {}
+  ~MouseReleasedEvent() override = default;
+
+  EventType GetType() const override { return EventType::MouseButtonReleased; }
+
+  std::string GetName() const override { return std::string("MouseButtonReleased"); }
+
+  MouseCode GetCode() const { return m_code; }
+
+ private:
+  MouseCode m_code;
+};
+
 }  // namespace hexgon
 
 #endif  // ENGINE_INCLUDE_HEXGON_CORE_EVENT_HPP_

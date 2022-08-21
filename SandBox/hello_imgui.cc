@@ -61,6 +61,8 @@ class ImguiLayer : public Layer {
 
   void OnDetach() override {
     HEX_INFO("ImguiLayer OnDetach");
+    m_imgui_initialized = false;
+
     ImGui::DestroyContext();
 
     m_font_texture.reset();
@@ -69,7 +71,26 @@ class ImguiLayer : public Layer {
     m_imgui_pipeline.reset();
   }
 
-  void OnEvent(const Event* event) override {}
+  void OnEvent(const Event* event) override {
+    ImGuiIO& io = ImGui::GetIO();
+
+    switch (event->GetType()) {
+      case EventType::MouseMoved: {
+        auto me = (MouseEvent*)event;
+        io.AddMousePosEvent(me->GetX(), me->GetY());
+      } break;
+      case EventType::MouseButtonPressed: {
+        auto me = (MousePressedEvent*)event;
+        io.AddMouseButtonEvent((int32_t)me->GetCode(), true);
+      } break;
+      case EventType::MouseButtonReleased: {
+        auto me = (MouseReleasedEvent*)event;
+        io.AddMouseButtonEvent((int32_t)me->GetCode(), false);
+      } break;
+      default:
+        break;
+    }
+  }
 
  private:
   void InitImGui() {
@@ -92,13 +113,14 @@ class ImguiLayer : public Layer {
     m_font_texture->UploadData(0, 0, width, height, pixels);
 
     io.Fonts->SetTexID(reinterpret_cast<ImTextureID>(m_font_texture.get()));
+
+    m_imgui_initialized = true;
   }
 
   void DrawImGui() {
     ImGui::Begin("Hello, World!");
 
-    bool checked = false;
-    ImGui::Checkbox("Check box 1", &checked);
+    ImGui::Checkbox("Check box 1", &m_box_checked);
 
     ImGui::End();
   }
@@ -207,10 +229,13 @@ class ImguiLayer : public Layer {
   }
 
  private:
+  bool m_imgui_initialized = false;
   std::unique_ptr<gpu::Texture> m_font_texture;
   std::unique_ptr<gpu::Pipeline> m_imgui_pipeline;
   std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
   std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
+
+  bool m_box_checked = false;
 };
 
 int main(int argc, const char** argv) {

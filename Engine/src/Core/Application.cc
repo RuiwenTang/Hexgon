@@ -88,4 +88,10 @@ void Application::OnKeyEvent(KeyEvent* event) {
   }
 }
 
+void Application::OnMouseEvent(MouseEvent* event) {
+  for (auto const& it : m_layer_stack) {
+    it->OnEvent(event);
+  }
+}
+
 }  // namespace hexgon
