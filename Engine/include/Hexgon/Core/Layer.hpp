@@ -31,6 +31,7 @@
 namespace hexgon {
 
 class GraphicsContext;
+class Application;
 
 class HEX_API Layer {
   friend class Application;
