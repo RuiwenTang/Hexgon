@@ -177,15 +177,23 @@ class ImguiLayer : public Layer {
     vertex_offset = 0;
     index_offset = 0;
 
+    auto saved_scissor = cmd->CurrentScissorBox();
+
     for (int32_t n = 0; n < draw_data->CmdListsCount; n++) {
       auto cmd_list = draw_data->CmdLists[n];
       for (int32_t j = 0; j < cmd_list->CmdBuffer.Size; j++) {
         auto p_cmd = &cmd_list->CmdBuffer[j];
 
+        auto clip_rect = p_cmd->ClipRect;
+
+        cmd->SetSicssorBox(clip_rect.x, clip_rect.y, clip_rect.z - clip_rect.x, clip_rect.w - clip_rect.y);
+
         cmd->DrawIndexed(p_cmd->ElemCount, 1, index_offset, 0);
         index_offset += p_cmd->ElemCount;
       }
     }
+
+    cmd->SetSicssorBox(saved_scissor.x, saved_scissor.y, saved_scissor.z, saved_scissor.w);
   }
 
   void InitImguiPipeline() {

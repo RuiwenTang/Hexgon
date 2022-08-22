@@ -26,6 +26,7 @@
 
 #include <Hexgon/Macro.hpp>
 #include <cstdint>
+#include <glm/glm.hpp>
 
 namespace hexgon {
 namespace gpu {
@@ -48,6 +49,10 @@ class HEX_API CommandBuffer {
 
   virtual void DrawIndexed(uint32_t index_count, uint32_t instance_count, uint32_t first_index,
                            uint32_t first_instance) = 0;
+
+  virtual void SetSicssorBox(uint32_t offset_x, uint32_t offset_y, uint32_t wdith, uint32_t height) = 0;
+
+  virtual glm::ivec4 CurrentScissorBox() = 0;
 };
 
 }  // namespace gpu

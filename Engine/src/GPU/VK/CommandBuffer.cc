@@ -78,4 +78,31 @@ void CommandBuffer::DrawIndexed(uint32_t index_count, uint32_t instance_count, u
   vkCmdDrawIndexed(m_vk_cmd, index_count, instance_count, first_index, 0, first_instance);
 }
 
+void CommandBuffer::SetSicssorBox(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height) {
+  m_scissor_offset.x = offset_x;
+  m_scissor_offset.y = offset_y;
+
+  m_scissor_extend.width = width;
+  m_scissor_extend.height = height;
+
+  VkRect2D scissor{};
+
+  scissor.offset = m_scissor_offset;
+  scissor.extent = m_scissor_extend;
+
+  vkCmdSetScissor(m_vk_cmd, 0, 1, &scissor);
+}
+
+glm::ivec4 CommandBuffer::CurrentScissorBox() {
+  return glm::ivec4{m_scissor_offset.x, m_scissor_offset.y, m_scissor_extend.width, m_scissor_extend.height};
+}
+
+void CommandBuffer::SetCurrentScissorBox(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height) {
+  m_scissor_offset.x = offset_x;
+  m_scissor_offset.y = offset_y;
+
+  m_scissor_extend.width = width;
+  m_scissor_extend.height = height;
+}
+
 }  // namespace hexgon::gpu::vk

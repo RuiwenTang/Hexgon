@@ -52,8 +52,16 @@ class CommandBuffer : public gpu::CommandBuffer {
   void DrawIndexed(uint32_t index_count, uint32_t instance_count, uint32_t first_index,
                    uint32_t first_instance) override;
 
+  void SetSicssorBox(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height) override;
+
+  glm::ivec4 CurrentScissorBox() override;
+
+  void SetCurrentScissorBox(uint32_t offset_x, uint32_t offset_y, uint32_t width, uint32_t height);
+
  private:
   VkCommandBuffer m_vk_cmd = VK_NULL_HANDLE;
+  VkOffset2D m_scissor_offset = {};
+  VkExtent2D m_scissor_extend = {};
 };
 
 }  // namespace vk

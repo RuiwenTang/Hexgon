@@ -413,7 +413,7 @@ gpu::CommandBuffer* GraphicsContext::CurrentCommandBuffer() {
   if (m_cmd_wrapper.GetCMD() != m_cmds[m_current_frame]) {
     m_cmd_wrapper.SetCMD(m_cmds[m_current_frame]);
   }
-
+  m_cmd_wrapper.SetCurrentScissorBox(0, 0, m_swapchain_extent.width, m_swapchain_extent.height);
   return &m_cmd_wrapper;
 }
 
