@@ -5,7 +5,7 @@ project(Hexgon)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-if (WIN32)
+if(WIN32)
   set(BUILD_SHARED_LIBS TRUE)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif()
@@ -31,7 +31,7 @@ add_subdirectory(third_party/imgui)
 # engine
 add_subdirectory(Engine)
 
-#sand-box
+# sand-box
 add_subdirectory(SandBox)
 
 # source group for Xcode and Visual Studio
