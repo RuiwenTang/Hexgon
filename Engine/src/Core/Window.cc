@@ -88,6 +88,17 @@ class GLFWWindowImpl : public Window {
 
     m_glfw_window = glfwCreateWindow(GetWidth(), GetHeight(), GetTitle().c_str(), nullptr, nullptr);
 
+    int32_t display_w;
+    int32_t display_h;
+    glfwGetFramebufferSize(m_glfw_window, &display_w, &display_h);
+
+    glm::vec2 scale{
+        static_cast<float>(display_w) / GetWidth(),
+        static_cast<float>(display_h) / GetHeight(),
+    };
+
+    SetDisplayScale(scale);
+
     glfwSetWindowUserPointer(m_glfw_window, this);
 
     glfwSetKeyCallback(m_glfw_window, WindowKeyCallback);

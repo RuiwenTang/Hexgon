@@ -53,6 +53,11 @@ class ImguiLayer : public Layer {
     io.DisplaySize.x = GetApplication()->GetWindow()->GetWidth();
     io.DisplaySize.y = GetApplication()->GetWindow()->GetHeight();
 
+    auto display_scale = GetApplication()->GetWindow()->GetDisplayScale();
+
+    io.DisplayFramebufferScale.x = display_scale.x;
+    io.DisplayFramebufferScale.y = display_scale.y;
+
     ImGui::NewFrame();
     DrawImGui();
     ImGui::Render();
@@ -139,6 +144,8 @@ class ImguiLayer : public Layer {
     size_t vertex_size = draw_data->TotalVtxCount * sizeof(ImDrawVert);
     size_t index_size = draw_data->TotalIdxCount * sizeof(ImDrawIdx);
 
+    ImVec2 scale = io.DisplayFramebufferScale;
+
     m_vertex_buffer->Resize(vertex_size);
     m_index_buffer->Resize(index_size);
 
@@ -186,7 +193,8 @@ class ImguiLayer : public Layer {
 
         auto clip_rect = p_cmd->ClipRect;
 
-        cmd->SetSicssorBox(clip_rect.x, clip_rect.y, clip_rect.z - clip_rect.x, clip_rect.w - clip_rect.y);
+        cmd->SetSicssorBox(clip_rect.x * scale.x, clip_rect.y * scale.y, (clip_rect.z - clip_rect.x) * scale.x,
+                           (clip_rect.w - clip_rect.y) * scale.y);
 
         cmd->DrawIndexed(p_cmd->ElemCount, 1, index_offset, 0);
         index_offset += p_cmd->ElemCount;

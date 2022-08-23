@@ -56,6 +56,7 @@ class HEX_API Window {
 
   uint32_t GetWidth() const { return m_width; }
   uint32_t GetHeight() const { return m_height; }
+  glm::vec2 GetDisplayScale() const { return m_display_scale; }
 
   std::string const& GetTitle() const { return m_title; }
 
@@ -77,10 +78,14 @@ class HEX_API Window {
 
   glm::vec4 const& GetClearColor() const { return m_clear_color; }
 
+ protected:
+  void SetDisplayScale(glm::vec2 const& scale) { m_display_scale = scale; }
+
  private:
   std::string m_title;
   uint32_t m_width = 0;
   uint32_t m_height = 0;
+  glm::vec2 m_display_scale = {1.f, 1.f};
   glm::vec4 m_clear_color = {0.f, 0.f, 0.f, 0.f};
 
  protected:
