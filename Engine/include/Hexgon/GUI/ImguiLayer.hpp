@@ -21,34 +21,57 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
+#ifndef ENGINE_INCLUDE_HEXGON_GUI_IMGUI_LAYER_HPP_
+#define ENGINE_INCLUDE_HEXGON_GUI_IMGUI_LAYER_HPP_
+
 #include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// GUI
-#include <Hexgon/GUI/ImguiLayer.hpp>
-// glm transform
-#include <glm/gtc/matrix_transform.hpp>
-// IO image
-#include <Hexgon/IO/Image.hpp>
+
+namespace hexgon {
+
+namespace gpu {
+
+class Texture;
+class Pipeline;
+class VertexBuffer;
+class IndexBuffer;
+
+}  // namespace gpu
+
+class HEX_API ImguiLayer : public Layer {
+ public:
+  ImguiLayer();
+  ~ImguiLayer() override = default;
+
+ protected:
+  void OnAttach() override;
+
+  void OnUpdate(float tm) override;
+
+  void OnDetach() override;
+
+  void OnEvent(const Event *event) override;
+
+  virtual void OnImguiInit() = 0;
+
+  virtual void OnDrawImgui(float tm) = 0;
+
+ private:
+  void InitImGui();
+
+  void InitImGuiPipeline();
+
+  void InitImguiBuffers();
+
+  void FlushImgui();
+
+ private:
+  bool m_imgui_initialized = false;
+  std::unique_ptr<gpu::Texture> m_font_texture;
+  std::unique_ptr<gpu::Pipeline> m_imgui_pipeline;
+  std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
+  std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
+};
+
+}  // namespace hexgon
+
+#endif  // ENGINE_INCLUDE_HEXGON_GUI_IMGUI_LAYER_HPP_

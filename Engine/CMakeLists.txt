@@ -56,6 +56,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Shader.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Texture.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GUI/ImguiLayer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/IO/Image.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
@@ -85,6 +86,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/ImguiLayer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/IO/Image.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
@@ -95,3 +97,4 @@ target_link_libraries(Hexgon glfw)
 target_link_libraries(Hexgon glm::glm)
 target_link_libraries(Hexgon spdlog::spdlog)
 target_link_libraries(Hexgon spirv-reflect-static)
+target_link_libraries(Hexgon imgui)
