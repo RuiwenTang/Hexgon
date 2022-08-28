@@ -48,6 +48,8 @@
 #include <Hexgon/GPU/RenderPass.hpp>
 // GUI
 #include <Hexgon/GUI/ImguiLayer.hpp>
+// imgui
+#include <imgui.h>
 // glm transform
 #include <glm/gtc/matrix_transform.hpp>
 // IO image

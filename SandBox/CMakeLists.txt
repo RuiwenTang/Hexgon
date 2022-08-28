@@ -19,4 +19,10 @@ add_executable(HelloImgui
   ${CMAKE_CURRENT_LIST_DIR}/hello_imgui.cc
 )
 
-target_link_libraries(HelloImgui Hexgon ShaderSource imgui)
+target_link_libraries(HelloImgui Hexgon ShaderSource)
+
+add_executable(HelloMultiLayer
+  ${CMAKE_CURRENT_LIST_DIR}/hello_multi_layer.cc
+)
+
+target_link_libraries(HelloMultiLayer Hexgon ShaderSource)
