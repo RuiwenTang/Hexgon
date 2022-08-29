@@ -36,9 +36,13 @@ class ControlLayer : public ImguiLayer {
 
  protected:
   void OnImguiInit() override {
+    auto scale = GetApplication()->GetWindow()->GetDisplayScale();
     // Fonts
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF(RESOURCES_DIR "/Fonts/DroidSans.ttf", 16.f);
+    ImFontConfig config{};
+    config.OversampleH = scale.y;
+    config.OversampleV = scale.x;
+    io.Fonts->AddFontFromFileTTF(RESOURCES_DIR "/Fonts/DroidSans.ttf", 16.f, &config);
   }
 
   void OnDrawImgui(float tm) override {
