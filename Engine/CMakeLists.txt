@@ -45,6 +45,7 @@ target_sources(Hexgon
     PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Event.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Geometry.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Layer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/LayerStack.hpp
@@ -60,8 +61,10 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/IO/Image.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Object3D.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
@@ -90,6 +93,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/IO/Image.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
 )
 
 target_link_libraries(Hexgon Vulkan::Vulkan)
