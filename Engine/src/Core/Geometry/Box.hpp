@@ -21,41 +21,35 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_OBJECT_OBJECT3D_HPP
-#define ENGINE_INCLUDE_HEXGON_OBJECT_OBJECT3D_HPP
+#ifndef ENGINE_SRC_CORE_GEOMETRY_BOX_HPP_
+#define ENGINE_SRC_CORE_GEOMETRY_BOX_HPP_
 
-#include <Hexgon/Macro.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <Hexgon/Core/Geometry.hpp>
 
 namespace hexgon {
 
-class HEX_API Object3D {
+class Box : public Geometry {
  public:
-  Object3D() = default;
-  virtual ~Object3D() = default;
+  Box(float width, float height, float depth, uint32_t width_segments, uint32_t height_segments,
+      uint32_t depth_segment);
 
-  void SetPosition(glm::vec3 const& pos);
-  void SetRotation(glm::vec3 const& rotation);
-  void SetScale(glm::vec3 const& scale);
+  ~Box() override = default;
 
-  glm::vec3 const& GetPosition() const { return m_pos; }
-  glm::vec3 const& GetRotation() const { return m_rotate; }
-  glm::vec3 const& GetScale() const { return m_scale; }
-
-  glm::mat4 CalculateMatrix() const;
+  gpu::BufferLayout const& GetBufferLayout() override { return m_layout; }
 
  protected:
-  virtual void OnSetPosition(glm::vec3 const& pos) = 0;
-  virtual void OnSetRotation(glm::vec3 const& rotation) = 0;
-  virtual void OnSetScale(glm::vec3 const& scale) = 0;
+  void OnBuild() override;
 
  private:
-  glm::vec3 m_pos = {};
-  glm::vec3 m_rotate = {};
-  glm::vec3 m_scale = {1.f, 1.f, 1.f};
+  float m_width;
+  float m_height;
+  float m_depth;
+  uint32_t m_width_segments;
+  uint32_t m_height_segments;
+  uint32_t m_depth_segments;
+  gpu::BufferLayout m_layout;
 };
 
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_OBJECT_OBJECT3D_HPP
+#endif  // ENGINE_SRC_CORE_GEOMETRY_BOX_HPP_
