@@ -50,6 +50,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Layer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/LayerStack.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Log.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Material.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Window.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Buffer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Formats.hpp
@@ -68,6 +69,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/Material.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Texture.cc

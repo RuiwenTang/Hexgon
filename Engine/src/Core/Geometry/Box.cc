@@ -129,9 +129,9 @@ void Box::OnBuild() {
               glm::u32vec2{m_width_segments, m_height_segments}, GetCurrentVertex(), GetCurrentIndex());
 }
 
-std::shared_ptr<Geometry> Geometry::MakeBox(float width, float height, float depth, uint32_t width_segments,
+std::unique_ptr<Geometry> Geometry::MakeBox(float width, float height, float depth, uint32_t width_segments,
                                             uint32_t height_segments, uint32_t depth_segments) {
-  return std::make_shared<Box>(width, height, depth, width_segments, height_segments, depth_segments);
+  return std::make_unique<Box>(width, height, depth, width_segments, height_segments, depth_segments);
 }
 
 }  // namespace hexgon

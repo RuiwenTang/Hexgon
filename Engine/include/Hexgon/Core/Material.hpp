@@ -21,55 +21,42 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
-#define ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_CORE_MATERIAL_HPP_
+#define ENGINE_INCLUDE_HEXGON_CORE_MATERIAL_HPP_
 
-#include <Hexgon/GPU/Buffer.hpp>
+#include <Hexgon/GPU/Pipeline.hpp>
 #include <Hexgon/Macro.hpp>
-#include <memory>
-#include <vector>
 
 namespace hexgon {
 
+namespace gpu {
+class CommandBuffer;
+}
+
 class GraphicsContext;
 
-class HEX_API Geometry {
+class HEX_API Material {
  public:
-  Geometry() = default;
-  virtual ~Geometry() = default;
+  Material(gpu::PipelineInfo const& info) : m_pipeline_info(info) {}
 
-  void Build();
+  virtual ~Material() = default;
 
-  void InitBuffer(GraphicsContext* ctx);
+  void Init(GraphicsContext* ctx);
 
-  virtual gpu::BufferLayout const& GetBufferLayout() = 0;
-
-  size_t GetIndexCount() const { return m_index.size(); }
-
-  static std::unique_ptr<Geometry> MakeBox(float width = 1.f, float height = 1.f, float depth = 1.f,
-                                           uint32_t width_segments = 1, uint32_t height_segments = 1,
-                                           uint32_t depth_segment = 1);
+  void BindCMD(gpu::CommandBuffer* cmd);
 
  protected:
-  virtual void OnBuild() = 0;
+  virtual void OnPipelineInit() = 0;
 
-  std::vector<float>& GetCurrentVertex() { return m_vertex; }
+  virtual void OnBindCMD(gpu::CommandBuffer* cmd) = 0;
 
-  std::vector<uint32_t>& GetCurrentIndex() { return m_index; }
-
- private:
-  size_t GetIndexDataSize() const { return m_index.size() * sizeof(uint32_t); }
-
-  size_t GetVertexDataSize() const { return m_vertex.size() * sizeof(float); }
+  gpu::Pipeline* GetPipeline() const { return m_pipeline.get(); }
 
  private:
-  std::vector<float> m_vertex;
-  std::vector<uint32_t> m_index;
-
-  std::unique_ptr<gpu::VertexBuffer> m_gpu_vertex = {};
-  std::unique_ptr<gpu::IndexBuffer> m_gpu_index = {};
+  gpu::PipelineInfo m_pipeline_info;
+  std::unique_ptr<gpu::Pipeline> m_pipeline;
 };
 
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_CORE_MATERIAL_HPP_
