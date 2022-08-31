@@ -21,12 +21,11 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
-#define ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
+#ifndef ENGINE_INCLUDE_HEXGON_OBJECT_MESH_HPP_
+#define ENGINE_INCLUDE_HEXGON_OBJECT_MESH_HPP_
 
-#include <Hexgon/GPU/Buffer.hpp>
 #include <Hexgon/Macro.hpp>
-#include <memory>
+#include <Hexgon/Object/Object3D.hpp>
 #include <vector>
 
 namespace hexgon {
@@ -34,50 +33,55 @@ namespace hexgon {
 namespace gpu {
 
 class CommandBuffer;
+class UniformBuffer;
+struct DescriptorBinding;
 
-}
+}  // namespace gpu
 
+class Geometry;
+class Material;
 class GraphicsContext;
 
-class HEX_API Geometry {
+class HEX_API Mesh : public Object3D {
  public:
-  Geometry() = default;
-  virtual ~Geometry() = default;
+  Mesh(Geometry* geometry, Material* material) : Object3D(), m_geometry(geometry), m_material(material) {}
 
-  void Build();
+  ~Mesh() override;
 
-  void InitBuffer(GraphicsContext* ctx);
+  void AddChild(Mesh* child);
 
-  void BindCMD(gpu::CommandBuffer* cmd);
+  void RemoveChild(Mesh* child);
 
-  virtual gpu::BufferLayout const& GetBufferLayout() = 0;
+  void Init(GraphicsContext* ctx);
 
-  size_t GetIndexCount() const { return m_index.size(); }
+  void Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform = glm::identity<glm::mat4>());
 
-  static std::unique_ptr<Geometry> MakeBox(float width = 1.f, float height = 1.f, float depth = 1.f,
-                                           uint32_t width_segments = 1, uint32_t height_segments = 1,
-                                           uint32_t depth_segment = 1);
+  Mesh* GetParent() const { return m_parent; }
 
  protected:
-  virtual void OnBuild() = 0;
+  void OnSetPosition(const glm::vec3& pos) override {}
 
-  std::vector<float>& GetCurrentVertex() { return m_vertex; }
+  void OnSetRotation(const glm::vec3& rotation) override {}
 
-  std::vector<uint32_t>& GetCurrentIndex() { return m_index; }
+  void OnSetScale(const glm::vec3& scale) override {}
+
+  virtual void OnInit(GraphicsContext* ctx) {}
+
+  virtual void OnPrepareDraw(std::vector<gpu::DescriptorBinding>& bindings) {}
 
  private:
-  size_t GetIndexDataSize() const { return m_index.size() * sizeof(uint32_t); }
+  void InitModelMatrixBuffer(GraphicsContext* ctx);
 
-  size_t GetVertexDataSize() const { return m_vertex.size() * sizeof(float); }
+  void UploadModelMatrix(glm::mat4 const& transform);
 
  private:
-  std::vector<float> m_vertex;
-  std::vector<uint32_t> m_index;
-
-  std::unique_ptr<gpu::VertexBuffer> m_gpu_vertex = {};
-  std::unique_ptr<gpu::IndexBuffer> m_gpu_index = {};
+  Geometry* m_geometry;
+  Material* m_material;
+  Mesh* m_parent = nullptr;
+  std::unique_ptr<gpu::UniformBuffer> m_matrix_buffer;
+  std::vector<Mesh*> m_children = {};
 };
 
 }  // namespace hexgon
 
-#endif  // ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
+#endif  // ENGINE_INCLUDE_HEXGON_OBJECT_MESH_HPP_

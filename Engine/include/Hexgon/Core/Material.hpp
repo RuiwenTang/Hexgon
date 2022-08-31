@@ -45,12 +45,12 @@ class HEX_API Material {
 
   void BindCMD(gpu::CommandBuffer* cmd);
 
+  gpu::Pipeline* GetPipeline() const { return m_pipeline.get(); }
+
  protected:
   virtual void OnPipelineInit() = 0;
 
   virtual void OnBindCMD(gpu::CommandBuffer* cmd) = 0;
-
-  gpu::Pipeline* GetPipeline() const { return m_pipeline.get(); }
 
  private:
   gpu::PipelineInfo m_pipeline_info;

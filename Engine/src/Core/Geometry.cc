@@ -51,4 +51,10 @@ void Geometry::InitBuffer(GraphicsContext *ctx) {
   m_gpu_index->UploadData(m_index.data(), GetVertexDataSize(), 0);
 }
 
+void Geometry::BindCMD(gpu::CommandBuffer *cmd) {
+  cmd->BindVertexBuffer(m_gpu_vertex.get(), 0);
+
+  cmd->BindIndexBuffer(m_gpu_index.get());
+}
+
 }  // namespace hexgon
