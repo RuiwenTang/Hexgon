@@ -24,7 +24,6 @@
 #include <Hexgon/Core/Geometry.hpp>
 #include <Hexgon/Core/GraphicsContext.hpp>
 #include <Hexgon/Core/Material.hpp>
-#include <Hexgon/GPU/Buffer.hpp>
 #include <Hexgon/Object/Mesh.hpp>
 
 namespace hexgon {
@@ -59,8 +58,6 @@ void Mesh::Init(GraphicsContext* ctx) {
   m_geometry->InitBuffer(ctx);
   m_material->Init(ctx);
 
-  InitModelMatrixBuffer(ctx);
-
   OnInit(ctx);
 
   for (auto const& child : m_children) {
@@ -74,29 +71,11 @@ void Mesh::Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform) {
   m_geometry->BindCMD(cmd);
   m_material->BindCMD(cmd);
 
-  UploadModelMatrix(model_matrix);
-
-  std::vector<gpu::DescriptorBinding> bindings{};
-
-  bindings.emplace_back(gpu::DescriptorBinding(m_matrix_buffer.get()));
-
-  OnPrepareDraw(bindings);
-
-  m_material->GetPipeline()->UpdateDescriptorSet(0, bindings);
+  OnPrepareDraw();
 
   cmd->DrawIndexed(m_geometry->GetIndexCount(), 1, 0, 0);
 }
 
-void Mesh::InitModelMatrixBuffer(GraphicsContext* ctx) {
-  if (m_matrix_buffer) {
-    return;
-  }
-
-  m_matrix_buffer = ctx->CreateUniformBuffer(sizeof(glm::mat4));
-}
-
-void Mesh::UploadModelMatrix(glm::mat4 const& transform) {
-  m_matrix_buffer->UploadData((void*)&transform, sizeof(transform), 0);
-}
+gpu::Pipeline* Mesh::GetPipeline() const { return m_material->GetPipeline(); }
 
 }  // namespace hexgon

@@ -33,8 +33,7 @@ namespace hexgon {
 namespace gpu {
 
 class CommandBuffer;
-class UniformBuffer;
-struct DescriptorBinding;
+class Pipeline;
 
 }  // namespace gpu
 
@@ -65,20 +64,16 @@ class HEX_API Mesh : public Object3D {
 
   void OnSetScale(const glm::vec3& scale) override {}
 
-  virtual void OnInit(GraphicsContext* ctx) {}
+  gpu::Pipeline* GetPipeline() const;
 
-  virtual void OnPrepareDraw(std::vector<gpu::DescriptorBinding>& bindings) {}
+  virtual void OnInit(GraphicsContext* ctx) = 0;
 
- private:
-  void InitModelMatrixBuffer(GraphicsContext* ctx);
-
-  void UploadModelMatrix(glm::mat4 const& transform);
+  virtual void OnPrepareDraw() = 0;
 
  private:
   Geometry* m_geometry;
   Material* m_material;
   Mesh* m_parent = nullptr;
-  std::unique_ptr<gpu::UniformBuffer> m_matrix_buffer;
   std::vector<Mesh*> m_children = {};
 };
 
