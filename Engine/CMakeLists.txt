@@ -1,6 +1,8 @@
 
 add_library(Hexgon SHARED)
 
+include(${PROJECT_SOURCE_DIR}/CMake/ShaderUtil.cmake)
+
 find_package(Vulkan REQUIRED)
 
 target_include_directories(
@@ -98,6 +100,13 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Mesh.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
+)
+
+add_target_shader(Hexgon
+    gui_shaders
+    SHADERS
+    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/imgui.vert
+    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/imgui.frag
 )
 
 target_link_libraries(Hexgon Vulkan::Vulkan)

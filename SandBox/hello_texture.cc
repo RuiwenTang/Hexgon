@@ -23,7 +23,7 @@
 
 #include <Hexgon/Hexgon.hpp>
 
-#include "ShaderSource.hpp"
+#include "hello_texture_glsl.hpp"
 
 using namespace hexgon;
 
