@@ -51,3 +51,11 @@ add_target_shader(HelloMultiLayer
 )
 
 target_link_libraries(HelloMultiLayer Hexgon)
+
+add_subdirectory(Material)
+
+add_executable(HelloBox
+  ${CMAKE_CURRENT_LIST_DIR}/hello_box.cc
+)
+
+target_link_libraries(HelloBox Hexgon SandBoxMaterial)

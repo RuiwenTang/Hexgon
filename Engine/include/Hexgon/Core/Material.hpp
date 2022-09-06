@@ -45,12 +45,16 @@ class HEX_API Material {
 
   void BindCMD(gpu::CommandBuffer* cmd);
 
+  void PrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings);
+
   gpu::Pipeline* GetPipeline() const { return m_pipeline.get(); }
 
  protected:
-  virtual void OnPipelineInit() = 0;
+  virtual void OnPipelineInit(GraphicsContext* ctx) = 0;
 
   virtual void OnBindCMD(gpu::CommandBuffer* cmd) = 0;
+
+  virtual void OnPrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings) = 0;
 
  private:
   gpu::PipelineInfo m_pipeline_info;

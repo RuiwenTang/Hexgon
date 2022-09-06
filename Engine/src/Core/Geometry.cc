@@ -48,7 +48,7 @@ void Geometry::InitBuffer(GraphicsContext *ctx) {
 
   m_gpu_index->Resize(GetIndexDataSize());
 
-  m_gpu_index->UploadData(m_index.data(), GetVertexDataSize(), 0);
+  m_gpu_index->UploadData(m_index.data(), GetIndexDataSize(), 0);
 }
 
 void Geometry::BindCMD(gpu::CommandBuffer *cmd) {

@@ -27,6 +27,8 @@
 #include <Hexgon/Core/Application.hpp>
 // Event
 #include <Hexgon/Core/Event.hpp>
+// Geometry
+#include <Hexgon/Core/Geometry.hpp>
 // Window
 #include <Hexgon/Core/Window.hpp>
 // GraphicsContext
@@ -34,6 +36,8 @@
 // Layer
 #include <Hexgon/Core/Layer.hpp>
 #include <Hexgon/Core/LayerStack.hpp>
+// Material
+#include <Hexgon/Core/Material.hpp>
 // Logger
 #include <Hexgon/Core/Log.hpp>
 // GPU Formats
@@ -54,3 +58,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 // IO image
 #include <Hexgon/IO/Image.hpp>
+// object
+#include <Hexgon/Object/Mesh.hpp>
+#include <Hexgon/Object/Object3D.hpp>

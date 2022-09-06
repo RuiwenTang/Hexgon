@@ -30,7 +30,7 @@ namespace hexgon {
 void Material::Init(GraphicsContext *ctx) {
   m_pipeline = ctx->CreatePipeline(m_pipeline_info);
 
-  OnPipelineInit();
+  OnPipelineInit(ctx);
 }
 
 void Material::BindCMD(gpu::CommandBuffer *cmd) {
@@ -38,5 +38,7 @@ void Material::BindCMD(gpu::CommandBuffer *cmd) {
 
   OnBindCMD(cmd);
 }
+
+void Material::PrepareForDraw(std::vector<gpu::DescriptorBinding> &bindings) { OnPrepareForDraw(bindings); }
 
 }  // namespace hexgon

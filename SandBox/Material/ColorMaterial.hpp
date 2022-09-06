@@ -21,18 +21,35 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_GPU_RENDER_PASS_HPP_
-#define ENGINE_INCLUDE_HEXGON_GPU_RENDER_PASS_HPP_
+#ifndef SANDBOX_MATERIAL_COLOR_MATERIAL_HPP_
+#define SANDBOX_MATERIAL_COLOR_MATERIAL_HPP_
 
-namespace hexgon {
-namespace gpu {
+#include <Hexgon/Hexgon.hpp>
 
-class RenderPass {
+namespace example {
+
+class ColorMaterial : public hexgon::Material {
  public:
-  virtual ~RenderPass() = default;
+  ~ColorMaterial() override = default;
+
+  static std::unique_ptr<ColorMaterial> Create(hexgon::GraphicsContext* ctx, glm::vec4 const& color);
+
+ protected:
+  void OnPipelineInit(hexgon::GraphicsContext* ctx) override;
+
+  void OnBindCMD(hexgon::gpu::CommandBuffer* cmd) override;
+
+  void OnPrepareForDraw(std::vector<hexgon::gpu::DescriptorBinding>& bindings) override;
+
+ private:
+  ColorMaterial(glm::vec4 const& color, hexgon::gpu::PipelineInfo const& info)
+      : hexgon::Material(info), m_color(color) {}
+
+ private:
+  glm::vec4 m_color;
+  std::unique_ptr<hexgon::gpu::UniformBuffer> m_color_buffer;
 };
 
-}  // namespace gpu
-}  // namespace hexgon
+}  // namespace example
 
-#endif  // ENGINE_INCLUDE_HEXGON_GPU_RENDER_PASS_HPP_
+#endif  // SANDBOX_MATERIAL_COLOR_MATERIAL_HPP_

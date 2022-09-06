@@ -162,12 +162,13 @@ void PipelineBuilder::InitPipelineLayout() {
     spvReflectEnumerateDescriptorSets(&module, &count, descs.data());
 
     for (size_t i_set = 0; i_set < descs.size(); i_set++) {
+      uint32_t set_id = descs[i_set]->set;
       auto it = std::find_if(m_set_info.begin(), m_set_info.end(),
-                             [i_set](DescriptorSetLayoutData const& d) { return d.set_number == i_set; });
+                             [set_id](DescriptorSetLayoutData const& d) { return d.set_number == set_id; });
 
       DescriptorSetLayoutData* set_data = nullptr;
       if (it != m_set_info.end()) {
-        set_data = &m_set_info[std::distance(it, m_set_info.begin())];
+        set_data = &m_set_info[std::distance(m_set_info.begin(), it)];
       } else {
         m_set_info.emplace_back(DescriptorSetLayoutData{});
         set_data = &m_set_info.back();
@@ -202,7 +203,7 @@ void PipelineBuilder::InitPipelineLayout() {
         set_data->bindings.emplace_back(vk_binding);
         set_data->binding_names.emplace_back(refl_binding->name);
 
-        HEX_CORE_INFO("Reflect set [{}] binding [{}] with name [{}]", i_set, refl_binding->binding, refl_binding->name);
+        HEX_CORE_INFO("Reflect set [{}] binding [{}] with name [{}]", set_id, refl_binding->binding, refl_binding->name);
       }
 
       set_data->create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

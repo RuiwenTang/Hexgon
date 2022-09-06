@@ -131,7 +131,11 @@ void Box::OnBuild() {
 
 std::unique_ptr<Geometry> Geometry::MakeBox(float width, float height, float depth, uint32_t width_segments,
                                             uint32_t height_segments, uint32_t depth_segments) {
-  return std::make_unique<Box>(width, height, depth, width_segments, height_segments, depth_segments);
+  auto box = std::make_unique<Box>(width, height, depth, width_segments, height_segments, depth_segments);
+
+  box->Build();
+
+  return box;
 }
 
 }  // namespace hexgon

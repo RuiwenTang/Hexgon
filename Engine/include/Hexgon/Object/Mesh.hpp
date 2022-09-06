@@ -35,6 +35,8 @@ namespace gpu {
 class CommandBuffer;
 class Pipeline;
 
+struct DescriptorBinding;
+
 }  // namespace gpu
 
 class Geometry;
@@ -53,9 +55,19 @@ class HEX_API Mesh : public Object3D {
 
   void Init(GraphicsContext* ctx);
 
+  void Bind(gpu::CommandBuffer* cmd);
+
+  void UpdateDescriptorSet(uint32_t slot, std::vector<gpu::DescriptorBinding> const& bindings, uint32_t first_binding);
+
+  void UpdatePushConstant(uint32_t offset, uint32_t size, void* data);
+
   void Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform = glm::identity<glm::mat4>());
 
   Mesh* GetParent() const { return m_parent; }
+
+  Geometry* GetGeometry() const { return m_geometry; }
+
+  Material* GetMaterial() const { return m_material; }
 
  protected:
   void OnSetPosition(const glm::vec3& pos) override {}

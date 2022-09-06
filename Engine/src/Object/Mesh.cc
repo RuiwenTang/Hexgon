@@ -55,9 +55,6 @@ void Mesh::RemoveChild(Mesh* child) {
 }
 
 void Mesh::Init(GraphicsContext* ctx) {
-  m_geometry->InitBuffer(ctx);
-  m_material->Init(ctx);
-
   OnInit(ctx);
 
   for (auto const& child : m_children) {
@@ -65,12 +62,21 @@ void Mesh::Init(GraphicsContext* ctx) {
   }
 }
 
-void Mesh::Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform) {
-  glm::mat4 model_matrix = transform * CalculateMatrix();
-
+void Mesh::Bind(gpu::CommandBuffer* cmd) {
   m_geometry->BindCMD(cmd);
   m_material->BindCMD(cmd);
+}
 
+void Mesh::UpdateDescriptorSet(uint32_t slot, const std::vector<gpu::DescriptorBinding>& bindings,
+                               uint32_t first_binding) {
+  m_material->GetPipeline()->UpdateDescriptorSet(slot, bindings, first_binding);
+}
+
+void Mesh::UpdatePushConstant(uint32_t offset, uint32_t size, void* data) {
+  m_material->GetPipeline()->UpdatePushConstant(offset, size, data);
+}
+
+void Mesh::Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform) {
   OnPrepareDraw();
 
   cmd->DrawIndexed(m_geometry->GetIndexCount(), 1, 0, 0);

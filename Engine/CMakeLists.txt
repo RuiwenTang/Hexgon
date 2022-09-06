@@ -69,6 +69,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
