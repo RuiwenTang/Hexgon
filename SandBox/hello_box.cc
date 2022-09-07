@@ -69,8 +69,6 @@ class Simple3DLayer : public Layer {
 
     m_global_buffer = GetGraphicsContext()->CreateUniformBuffer(sizeof(glm::mat4));
 
-    m_obj_buffer = GetGraphicsContext()->CreateUniformBuffer(sizeof(glm::mat4));
-
     m_box_geometry = Geometry::MakeBox();
 
     m_box_geometry->InitBuffer(GetGraphicsContext());
@@ -85,15 +83,10 @@ class Simple3DLayer : public Layer {
     m_box_mesh->Init(GetGraphicsContext());
 
     m_box_mesh->SetPosition({0.4f, 0.f, 0.f});
-
-    InitBuffers();
   }
 
   void OnUpdate(float tm) override {
     m_global_buffer->UploadData(&m_view_proj, sizeof(glm::mat4), 0);
-
-    glm::mat4 model = glm::identity<glm::mat4>();
-    m_obj_buffer->UploadData(&model, sizeof(glm::mat4), 0);
 
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
 
@@ -129,37 +122,6 @@ class Simple3DLayer : public Layer {
 
   void OnEvent(const Event* event) override {}
 
-  void InitBuffers() {
-    gpu::BufferLayout layout({
-        gpu::BufferElement("pos", gpu::DataType::Float3, 0),
-        gpu::BufferElement("color", gpu::DataType::Float4, 3 * sizeof(float)),
-    });
-
-    m_vertex_buffer = GetGraphicsContext()->CreateVertexBuffer(layout);
-
-    std::vector<float> vertex_data{
-        // x   y      z     r    g    b   a
-        -0.5f, -0.5f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f,  // point 1
-        0.5f,  -0.5f, 0.f, 0.f, 1.f, 0.f, 1.f, 0.f,  // point 2
-        -0.5f, 0.5f,  0.f, 0.f, 0.f, 1.f, 1.f, 0.f,  // point 2
-        0.5f,  0.5f,  0.f, 1.f, 1.f, 0.f, 1.f, 0.f,  // point 3
-    };
-
-    m_vertex_buffer->Resize(vertex_data.size() * sizeof(float));
-
-    m_vertex_buffer->UploadData(vertex_data.data(), vertex_data.size() * sizeof(float), 0);
-
-    std::vector<uint32_t> index_data{
-        0, 1, 2, 1, 2, 3,
-    };
-
-    m_index_buffer = GetGraphicsContext()->CreateIndexBuffer();
-
-    m_index_buffer->Resize(index_data.size() * sizeof(uint32_t));
-
-    m_index_buffer->UploadData(index_data.data(), index_data.size() * sizeof(uint32_t), 0);
-  }
-
  private:
   glm::vec3 m_eye;
   glm::mat4 m_view_proj;
@@ -168,9 +130,6 @@ class Simple3DLayer : public Layer {
   std::unique_ptr<Material> m_color_material;
   std::unique_ptr<Mesh> m_box_mesh;
   std::unique_ptr<gpu::UniformBuffer> m_global_buffer;
-  std::unique_ptr<gpu::UniformBuffer> m_obj_buffer;
-  std::unique_ptr<gpu::VertexBuffer> m_vertex_buffer;
-  std::unique_ptr<gpu::IndexBuffer> m_index_buffer;
 };
 
 int main(int argc, const char** argv) {
