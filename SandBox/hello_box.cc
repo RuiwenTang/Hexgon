@@ -56,9 +56,43 @@ class SimpleMesh : public Mesh {
   std::unique_ptr<gpu::UniformBuffer> m_obj_buffer;
 };
 
+class ControlLayer : public ImguiLayer {
+ public:
+  ControlLayer() = default;
+  ~ControlLayer() override = default;
+
+  float CurrentDegreeX() const { return m_degree_x; }
+  float CurrentDegreeY() const { return m_degree_y; }
+  float CurrentDegreeZ() const { return m_degree_z; }
+
+ protected:
+  void OnImguiInit() override {
+    auto scale = GetApplication()->GetWindow()->GetDisplayScale();
+    // Fonts
+    ImGuiIO& io = ImGui::GetIO();
+    ImFontConfig config{};
+    config.OversampleH = scale.y;
+    config.OversampleV = scale.x;
+    io.Fonts->AddFontFromFileTTF(RESOURCES_DIR "/Fonts/DroidSans.ttf", 16.f, &config);
+  }
+
+  void OnDrawImgui(float tm) override {
+    ImGui::Begin("Control Panel");
+    ImGui::SliderFloat("Rotate degree axis-x", &m_degree_x, 0.f, 360.f);
+    ImGui::SliderFloat("Rotate degree axis-y", &m_degree_y, 0.f, 360.f);
+    ImGui::SliderFloat("Rotate degree axis-z", &m_degree_z, 0.f, 360.f);
+    ImGui::End();
+  }
+
+ private:
+  float m_degree_x = 0.f;
+  float m_degree_y = 0.f;
+  float m_degree_z = 0.f;
+};
+
 class Simple3DLayer : public Layer {
  public:
-  Simple3DLayer() : Layer("Simple3DLayer") {}
+  Simple3DLayer(ControlLayer* control) : Layer("Simple3DLayer"), m_control(control) {}
   ~Simple3DLayer() override = default;
 
  protected:
@@ -90,11 +124,13 @@ class Simple3DLayer : public Layer {
 
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
 
-    auto rotation = m_box_mesh->GetRotation();
+    glm::vec3 rotate{
+        glm::radians(m_control->CurrentDegreeX()),
+        glm::radians(m_control->CurrentDegreeY()),
+        glm::radians(m_control->CurrentDegreeZ()),
+    };
 
-    rotation.y += glm::radians(1.f);
-
-    m_box_mesh->SetRotation(rotation);
+    m_box_mesh->SetRotation(rotate);
 
     m_box_mesh->Bind(cmd);
 
@@ -123,6 +159,7 @@ class Simple3DLayer : public Layer {
   void OnEvent(const Event* event) override {}
 
  private:
+  ControlLayer* m_control;
   glm::vec3 m_eye;
   glm::mat4 m_view_proj;
   std::unique_ptr<Geometry> m_box_geometry;
@@ -139,7 +176,11 @@ int main(int argc, const char** argv) {
 
   app->GetWindow()->SetClearColor(glm::vec4{0.f, 0.f, 0.f, 0.f});
 
-  app->PushLayer(std::make_shared<Simple3DLayer>());
+  auto control = std::make_shared<ControlLayer>();
+
+  app->PushLayer(std::make_shared<Simple3DLayer>(control.get()));
+
+  app->PushLayer(control);
 
   app->Run();
 
