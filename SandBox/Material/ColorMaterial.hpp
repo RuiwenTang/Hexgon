@@ -30,20 +30,15 @@ namespace example {
 
 class ColorMaterial : public hexgon::Material {
  public:
+  ColorMaterial(glm::vec4 const& color, hexgon::gpu::Pipeline* pipeline);
   ~ColorMaterial() override = default;
 
-  static std::unique_ptr<ColorMaterial> Create(hexgon::GraphicsContext* ctx, glm::vec4 const& color);
+  void Init(hexgon::GraphicsContext* ctx) override;
+
+  static std::unique_ptr<hexgon::gpu::Pipeline> CreatePipeline(hexgon::GraphicsContext* ctx);
 
  protected:
-  void OnPipelineInit(hexgon::GraphicsContext* ctx) override;
-
-  void OnBindCMD(hexgon::gpu::CommandBuffer* cmd) override;
-
   void OnPrepareForDraw(std::vector<hexgon::gpu::DescriptorBinding>& bindings) override;
-
- private:
-  ColorMaterial(glm::vec4 const& color, hexgon::gpu::PipelineInfo const& info)
-      : hexgon::Material(info), m_color(color) {}
 
  private:
   glm::vec4 m_color;

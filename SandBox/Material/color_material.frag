@@ -12,9 +12,9 @@ layout(location = 1) in vec3 vPos;
 layout(location = 0) out vec4 fColor;
 
 void main() {
-  vec3 eye_dir = normalize(vPos - pc.eye);
+  vec3 eye_dir = normalize(pc.eye - vPos);
 
-  float diff = max(dot(vNom, eye_dir), 0.0);
+  vec3 diff = max(dot(vNom, eye_dir), 0.3) * vec3(1.0, 1.0, 1.0);
 
-  fColor = vec4(1.0, 1.0, 1.0, 1.0);
+  fColor = vec4(uObj.color.rgb * diff, uObj.color.a);
 }

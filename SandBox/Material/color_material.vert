@@ -13,7 +13,7 @@ layout(location = 0) out vec3 vNom;
 layout(location = 1) out vec3 vPos;
 
 void main() {
-  vNom = aNom;
+  vNom = (uObj.obj_mat * vec4(aNom, 0.0)).xyz;
   vPos = (uObj.obj_mat * vec4(aPos, 1.0)).xyz;
 
   gl_Position = uGlobal.view_proj * uObj.obj_mat * vec4(aPos, 1.0);

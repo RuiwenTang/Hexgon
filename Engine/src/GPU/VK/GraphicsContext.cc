@@ -297,7 +297,7 @@ void GraphicsContext::BeginFrame(const glm::vec4& clear_color) {
 
   std::vector<VkClearValue> clear_values{3};
   clear_values[0].color = {clear_color.x, clear_color.y, clear_color.z, clear_color.w};
-  clear_values[1].depthStencil = {0.f, 0};
+  clear_values[1].depthStencil = {1.f, 0};
   clear_values[2].color = {clear_color.x, clear_color.y, clear_color.z, clear_color.w};
 
   VkRenderPassBeginInfo render_pass_begin_info{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};

@@ -203,7 +203,8 @@ void PipelineBuilder::InitPipelineLayout() {
         set_data->bindings.emplace_back(vk_binding);
         set_data->binding_names.emplace_back(refl_binding->name);
 
-        HEX_CORE_INFO("Reflect set [{}] binding [{}] with name [{}]", set_id, refl_binding->binding, refl_binding->name);
+        HEX_CORE_INFO("Reflect set [{}] binding [{}] with name [{}]", set_id, refl_binding->binding,
+                      refl_binding->name);
       }
 
       set_data->create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

@@ -27,15 +27,10 @@
 
 namespace example {
 
-void ColorMaterial::OnPipelineInit(hexgon::GraphicsContext* ctx) {
-  if (m_color_buffer) {
-    return;
-  }
+ColorMaterial::ColorMaterial(glm::vec4 const& color, hexgon::gpu::Pipeline* pipeline)
+    : hexgon::Material(pipeline), m_color(color) {}
 
-  m_color_buffer = ctx->CreateUniformBuffer(sizeof(glm::vec4));
-}
-
-void ColorMaterial::OnBindCMD(hexgon::gpu::CommandBuffer* cmd) {}
+void ColorMaterial::Init(hexgon::GraphicsContext* ctx) { m_color_buffer = ctx->CreateUniformBuffer(sizeof(glm::vec4)); }
 
 void ColorMaterial::OnPrepareForDraw(std::vector<hexgon::gpu::DescriptorBinding>& bindings) {
   m_color_buffer->UploadData(&m_color, sizeof(glm::vec4), 0);
@@ -43,7 +38,7 @@ void ColorMaterial::OnPrepareForDraw(std::vector<hexgon::gpu::DescriptorBinding>
   bindings.emplace_back(hexgon::gpu::DescriptorBinding{m_color_buffer.get()});
 }
 
-std::unique_ptr<ColorMaterial> ColorMaterial::Create(hexgon::GraphicsContext* ctx, const glm::vec4& color) {
+std::unique_ptr<hexgon::gpu::Pipeline> ColorMaterial::CreatePipeline(hexgon::GraphicsContext* ctx) {
   hexgon::gpu::PipelineInfo info;
 
   // sample count
@@ -55,19 +50,10 @@ std::unique_ptr<ColorMaterial> ColorMaterial::Create(hexgon::GraphicsContext* ct
                                                 (const char*)color_material_frag_spv, color_material_frag_spv_size));
   info.vertex_binding.emplace_back(hexgon::gpu::VertexBinding{0, 8 * sizeof(float)});
   // pos
-  info.attr_desc.emplace_back(hexgon::gpu::VertexAttributeDescriptor{
-      0,
-      0,
-      hexgon::gpu::DataType::Float3,
-      0,
-  });
+  info.attr_desc.emplace_back(hexgon::gpu::VertexAttributeDescriptor{0, 0, hexgon::gpu::DataType::Float3, 0});
   // normal
-  info.attr_desc.emplace_back(hexgon::gpu::VertexAttributeDescriptor{
-      0,
-      1,
-      hexgon::gpu::DataType::Float3,
-      3 * sizeof(float),
-  });
+  info.attr_desc.emplace_back(
+      hexgon::gpu::VertexAttributeDescriptor{0, 1, hexgon::gpu::DataType::Float4, 3 * sizeof(float)});
 
   // attachments
   info.color_attachment = ctx->ScreenColorAttachment();
@@ -76,7 +62,7 @@ std::unique_ptr<ColorMaterial> ColorMaterial::Create(hexgon::GraphicsContext* ct
   // render pass
   info.render_pass = ctx->ScreenRenderPass();
 
-  return std::unique_ptr<ColorMaterial>(new ColorMaterial(color, info));
+  return ctx->CreatePipeline(info);
 }
 
 }  // namespace example

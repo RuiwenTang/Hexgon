@@ -31,34 +31,30 @@ namespace hexgon {
 
 namespace gpu {
 class CommandBuffer;
-}
+class Pipeline;
+}  // namespace gpu
 
 class GraphicsContext;
 
 class HEX_API Material {
  public:
-  Material(gpu::PipelineInfo const& info) : m_pipeline_info(info) {}
+  Material(gpu::Pipeline* pipeline) : m_pipeline(pipeline) {}
 
   virtual ~Material() = default;
 
-  void Init(GraphicsContext* ctx);
+  virtual void Init(GraphicsContext* ctx) = 0;
 
   void BindCMD(gpu::CommandBuffer* cmd);
 
   void PrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings);
 
-  gpu::Pipeline* GetPipeline() const { return m_pipeline.get(); }
+  gpu::Pipeline* GetPipeline() const { return m_pipeline; }
 
  protected:
-  virtual void OnPipelineInit(GraphicsContext* ctx) = 0;
-
-  virtual void OnBindCMD(gpu::CommandBuffer* cmd) = 0;
-
   virtual void OnPrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings) = 0;
 
  private:
-  gpu::PipelineInfo m_pipeline_info;
-  std::unique_ptr<gpu::Pipeline> m_pipeline;
+  gpu::Pipeline* m_pipeline;
 };
 
 }  // namespace hexgon

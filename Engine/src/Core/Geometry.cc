@@ -42,7 +42,7 @@ void Geometry::InitBuffer(GraphicsContext *ctx) {
 
   m_gpu_vertex->Resize(GetVertexDataSize());
 
-  m_gpu_vertex->UploadData(m_vertex.data(), GetIndexDataSize(), 0);
+  m_gpu_vertex->UploadData(m_vertex.data(), GetVertexDataSize(), 0);
 
   m_gpu_index = ctx->CreateIndexBuffer();
 

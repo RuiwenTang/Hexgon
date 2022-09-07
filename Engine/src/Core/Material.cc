@@ -27,17 +27,7 @@
 
 namespace hexgon {
 
-void Material::Init(GraphicsContext *ctx) {
-  m_pipeline = ctx->CreatePipeline(m_pipeline_info);
-
-  OnPipelineInit(ctx);
-}
-
-void Material::BindCMD(gpu::CommandBuffer *cmd) {
-  cmd->BindPipeline(m_pipeline.get());
-
-  OnBindCMD(cmd);
-}
+void Material::BindCMD(gpu::CommandBuffer *cmd) { cmd->BindPipeline(m_pipeline); }
 
 void Material::PrepareForDraw(std::vector<gpu::DescriptorBinding> &bindings) { OnPrepareForDraw(bindings); }
 
