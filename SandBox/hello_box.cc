@@ -97,7 +97,7 @@ class Simple3DLayer : public Layer {
 
  protected:
   void OnAttach() override {
-    m_eye = glm::vec3(0.f, -1.f, 5.f);
+    m_eye = glm::vec3(0.f, -2.f, 5.f);
     m_view_proj = glm::perspective(glm::radians(60.f), 4.f / 3.f, 0.001f, 1000.f) *
                   glm::lookAt(m_eye, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 
