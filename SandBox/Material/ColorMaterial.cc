@@ -53,7 +53,7 @@ std::unique_ptr<hexgon::gpu::Pipeline> ColorMaterial::CreatePipeline(hexgon::Gra
   info.attr_desc.emplace_back(hexgon::gpu::VertexAttributeDescriptor{0, 0, hexgon::gpu::DataType::Float3, 0});
   // normal
   info.attr_desc.emplace_back(
-      hexgon::gpu::VertexAttributeDescriptor{0, 1, hexgon::gpu::DataType::Float4, 3 * sizeof(float)});
+      hexgon::gpu::VertexAttributeDescriptor{0, 1, hexgon::gpu::DataType::Float3, 3 * sizeof(float)});
 
   // attachments
   info.color_attachment = ctx->ScreenColorAttachment();

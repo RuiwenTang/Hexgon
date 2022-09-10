@@ -115,8 +115,6 @@ class Simple3DLayer : public Layer {
     m_box_mesh = std::make_unique<SimpleMesh>(m_box_geometry.get(), m_color_material.get());
 
     m_box_mesh->Init(GetGraphicsContext());
-
-    m_box_mesh->SetPosition({0.4f, 0.f, 0.f});
   }
 
   void OnUpdate(float tm) override {
