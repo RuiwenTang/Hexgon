@@ -67,9 +67,8 @@ void Mesh::Bind(gpu::CommandBuffer* cmd) {
   m_material->BindCMD(cmd);
 }
 
-void Mesh::UpdateDescriptorSet(uint32_t slot, const std::vector<gpu::DescriptorBinding>& bindings,
-                               uint32_t first_binding) {
-  m_material->GetPipeline()->UpdateDescriptorSet(slot, bindings, first_binding);
+void Mesh::UpdateDescriptorSet(uint32_t slot, const std::vector<gpu::DescriptorBinding>& bindings) {
+  m_material->GetPipeline()->UpdateDescriptorSet(slot, bindings);
 }
 
 void Mesh::UpdatePushConstant(uint32_t offset, uint32_t size, void* data) {

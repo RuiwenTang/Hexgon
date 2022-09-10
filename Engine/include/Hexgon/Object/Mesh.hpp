@@ -57,7 +57,7 @@ class HEX_API Mesh : public Object3D {
 
   void Bind(gpu::CommandBuffer* cmd);
 
-  void UpdateDescriptorSet(uint32_t slot, std::vector<gpu::DescriptorBinding> const& bindings, uint32_t first_binding);
+  void UpdateDescriptorSet(uint32_t slot, std::vector<gpu::DescriptorBinding> const& bindings);
 
   void UpdatePushConstant(uint32_t offset, uint32_t size, void* data);
 

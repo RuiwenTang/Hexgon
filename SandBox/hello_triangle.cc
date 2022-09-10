@@ -68,7 +68,7 @@ class SimpleLayer : public Layer {
 
     std::vector<gpu::DescriptorBinding> bindings;
     bindings.emplace_back(gpu::DescriptorBinding{m_matrix_buffer.get()});
-    m_ubo_pipeline->UpdateDescriptorSet(0, bindings, 0);
+    m_ubo_pipeline->UpdateDescriptorSet(0, bindings);
 
     cmd->DrawIndexed(6, 1, 0, 0);
   }

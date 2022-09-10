@@ -49,8 +49,7 @@ class Pipeline : public gpu::Pipeline {
            std::vector<DescriptorSetLayoutData> set_info, std::vector<VkPushConstantRange> pc_range);
   ~Pipeline() override;
 
-  void UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings,
-                           uint32_t first_binding) override;
+  void UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding> const& bindings) override;
 
   void UpdatePushConstant(uint32_t offset, uint32_t size, void* data) override;
 

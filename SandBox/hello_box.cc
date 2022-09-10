@@ -49,7 +49,7 @@ class SimpleMesh : public Mesh {
 
     GetMaterial()->PrepareForDraw(bindings);
 
-    UpdateDescriptorSet(1, bindings, 0);
+    UpdateDescriptorSet(1, bindings);
   }
 
  protected:
@@ -138,7 +138,7 @@ class Simple3DLayer : public Layer {
     bindings.emplace_back(gpu::DescriptorBinding{m_global_buffer.get()});
 
     // global sets
-    m_box_mesh->UpdateDescriptorSet(0, bindings, 0);
+    m_box_mesh->UpdateDescriptorSet(0, bindings);
 
     // push constants
     BoxPushConstBlock block;
