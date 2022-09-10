@@ -211,7 +211,7 @@ void ImguiLayer::FlushImgui() {
   m_imgui_pipeline->UpdatePushConstant(0, sizeof(PushConstBlock), &push_const);
 
   std::vector<gpu::DescriptorBinding> bindings;
-  bindings.emplace_back(gpu::DescriptorBinding{m_font_texture.get()});
+  bindings.emplace_back(gpu::DescriptorBinding{0, m_font_texture.get()});
   m_imgui_pipeline->UpdateDescriptorSet(0, bindings);
 
   vertex_offset = 0;

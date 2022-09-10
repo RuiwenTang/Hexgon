@@ -102,8 +102,8 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
 
       buffer_infos.emplace_back(std::move(buff_info));
 
-      write_sets.emplace_back(
-          write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, i, buffer_infos.back().get(), 1));
+      write_sets.emplace_back(write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, bindings[i].binding,
+                                                   buffer_infos.back().get(), 1));
     } else if (bindings[i].type == gpu::DescriptorBinding::Type::kSampledTexture) {
       auto vk_img = dynamic_cast<vk::Texture*>(bindings[i].data.texture);
       if (vk_img == nullptr) {
@@ -120,8 +120,8 @@ void Pipeline::UpdateDescriptorSet(uint32_t slot, std::vector<DescriptorBinding>
 
       image_infos.emplace_back(image_info);
 
-      write_sets.emplace_back(
-          write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, i, &image_infos.back(), 1));
+      write_sets.emplace_back(write_descriptor_set(vk_set, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                                   bindings[i].binding, &image_infos.back(), 1));
     }
   }
 

@@ -85,15 +85,21 @@ struct DescriptorBinding {
     kSampledTexture,
   };
 
+  uint32_t binding;
+
   Type type;
   union {
     UniformBuffer* ubo = nullptr;
     Texture* texture;
   } data;
 
-  DescriptorBinding(UniformBuffer* ubo) : type(Type::kUniformBuffer) { data.ubo = ubo; }
+  DescriptorBinding(uint32_t binding, UniformBuffer* ubo) : binding(binding), type(Type::kUniformBuffer) {
+    data.ubo = ubo;
+  }
 
-  DescriptorBinding(Texture* texture) : type(Type::kSampledTexture) { data.texture = texture; }
+  DescriptorBinding(uint32_t binding, Texture* texture) : binding(binding), type(Type::kSampledTexture) {
+    data.texture = texture;
+  }
 };
 
 class Pipeline {

@@ -45,7 +45,7 @@ class SimpleMesh : public Mesh {
     m_obj_buffer->UploadData(&matrix, sizeof(glm::mat4), 0);
 
     std::vector<gpu::DescriptorBinding> bindings;
-    bindings.emplace_back(gpu::DescriptorBinding{m_obj_buffer.get()});
+    bindings.emplace_back(gpu::DescriptorBinding{0, m_obj_buffer.get()});
 
     GetMaterial()->PrepareForDraw(bindings);
 
@@ -135,7 +135,7 @@ class Simple3DLayer : public Layer {
     m_box_mesh->Bind(cmd);
 
     std::vector<gpu::DescriptorBinding> bindings;
-    bindings.emplace_back(gpu::DescriptorBinding{m_global_buffer.get()});
+    bindings.emplace_back(gpu::DescriptorBinding{0, m_global_buffer.get()});
 
     // global sets
     m_box_mesh->UpdateDescriptorSet(0, bindings);

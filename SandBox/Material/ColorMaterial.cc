@@ -35,7 +35,7 @@ void ColorMaterial::Init(hexgon::GraphicsContext* ctx) { m_color_buffer = ctx->C
 void ColorMaterial::OnPrepareForDraw(std::vector<hexgon::gpu::DescriptorBinding>& bindings) {
   m_color_buffer->UploadData(&m_color, sizeof(glm::vec4), 0);
 
-  bindings.emplace_back(hexgon::gpu::DescriptorBinding{m_color_buffer.get()});
+  bindings.emplace_back(hexgon::gpu::DescriptorBinding{1, m_color_buffer.get()});
 }
 
 std::unique_ptr<hexgon::gpu::Pipeline> ColorMaterial::CreatePipeline(hexgon::GraphicsContext* ctx) {
