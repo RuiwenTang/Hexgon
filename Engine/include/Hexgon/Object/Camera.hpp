@@ -21,45 +21,43 @@
  *   SOFTWARE.
  */
 
-// macros
+#ifndef ENGINE_INCLUDE_HEXGON_OBJECT_CAMERA_HPP_
+#define ENGINE_INCLUDE_HEXGON_OBJECT_CAMERA_HPP_
+
 #include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Geometry
-#include <Hexgon/Core/Geometry.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
-#include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Material
-#include <Hexgon/Core/Material.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// GUI
-#include <Hexgon/GUI/ImguiLayer.hpp>
-// imgui
-#include <imgui.h>
-// glm transform
-#include <glm/gtc/matrix_transform.hpp>
-// IO image
-#include <Hexgon/IO/Image.hpp>
-// object
-#include <Hexgon/Object/Mesh.hpp>
 #include <Hexgon/Object/Object3D.hpp>
-// camera
-#include <Hexgon/Object/Camera.hpp>
+#include <memory>
+
+namespace hexgon {
+
+class HEX_API Camera : public Object3D {
+ public:
+  Camera(glm::mat4 const& project);
+
+  ~Camera() override = default;
+
+  void SetTarget(glm::vec3 const& target) { m_target = target; }
+
+  void SetUp(glm::vec3 const& up) { m_up = up; }
+
+  glm::mat4 GetCameraMatrix();
+
+  glm::vec3 GetForward() const;
+
+  static std::shared_ptr<Camera> MakePerspectiveCamera(float fov, float aspect, float near, float far);
+
+ protected:
+  void OnSetPosition(const glm::vec3& pos) override;
+  void OnSetRotation(const glm::vec3& rotation) override;
+  void OnSetScale(const glm::vec3& scale) override;
+
+ private:
+  glm::mat4 m_proj;
+  glm::vec3 m_target;
+  glm::vec3 m_up;
+  glm::vec3 m_forward;
+};
+
+}  // namespace hexgon
+
+#endif  // ENGINE_INCLUDE_HEXGON_OBJECT_CAMERA_HPP_

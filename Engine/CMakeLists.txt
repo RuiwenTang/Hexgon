@@ -64,6 +64,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/IO/Image.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Camera.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Mesh.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Object3D.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
@@ -100,6 +101,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/IO/Image.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Object/Camera.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Mesh.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
 )

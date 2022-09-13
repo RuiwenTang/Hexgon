@@ -97,9 +97,8 @@ class Simple3DLayer : public Layer {
 
  protected:
   void OnAttach() override {
-    m_eye = glm::vec3(0.f, -2.f, 5.f);
-    m_view_proj = glm::perspective(glm::radians(60.f), 4.f / 3.f, 0.001f, 1000.f) *
-                  glm::lookAt(m_eye, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+    m_camera = Camera::MakePerspectiveCamera(glm::radians(60.f), 4.f / 3.f, 0.001f, 1000.f);
+    m_camera->SetPosition({0.f, 0.f, 10.f});
 
     m_global_buffer = GetGraphicsContext()->CreateUniformBuffer(sizeof(glm::mat4));
 
@@ -118,7 +117,8 @@ class Simple3DLayer : public Layer {
   }
 
   void OnUpdate(float tm) override {
-    m_global_buffer->UploadData(&m_view_proj, sizeof(glm::mat4), 0);
+    auto pv = m_camera->GetCameraMatrix();
+    m_global_buffer->UploadData(&pv, sizeof(glm::mat4), 0);
 
     auto cmd = GetGraphicsContext()->CurrentCommandBuffer();
 
@@ -140,7 +140,7 @@ class Simple3DLayer : public Layer {
 
     // push constants
     BoxPushConstBlock block;
-    block.eye = m_eye;
+    block.eye = m_camera->GetPosition();
     m_box_mesh->UpdatePushConstant(0, sizeof(BoxPushConstBlock), &block);
 
     m_box_mesh->Draw(cmd);
@@ -154,12 +154,45 @@ class Simple3DLayer : public Layer {
     m_global_buffer.reset();
   }
 
-  void OnEvent(const Event* event) override {}
+  void OnEvent(const Event* event) override {
+    if (event->GetType() == EventType::KeyPressed) {
+      auto key_event = dynamic_cast<const KeyPressEvent*>(event);
+
+      auto code = key_event->GetKeyCode();
+
+      if (code == KeyCode::W) {
+        auto forward = m_camera->GetForward();
+        auto pos = m_camera->GetPosition();
+
+        pos += forward * 0.1f;
+
+        m_camera->SetPosition(pos);
+      } else if (code == KeyCode::S) {
+        auto forward = m_camera->GetForward();
+        auto pos = m_camera->GetPosition();
+
+        pos -= forward * 0.1f;
+
+        m_camera->SetPosition(pos);
+      } else if (code == KeyCode::A) {
+        auto rotate = m_camera->GetRotation();
+
+        rotate.y -= glm::radians(5.f);
+
+        m_camera->SetRotation(rotate);
+      } else if (code == KeyCode::D) {
+        auto rotate = m_camera->GetRotation();
+
+        rotate.y += glm::radians(5.f);
+
+        m_camera->SetRotation(rotate);
+      }
+    }
+  }
 
  private:
   ControlLayer* m_control;
-  glm::vec3 m_eye;
-  glm::mat4 m_view_proj;
+  std::shared_ptr<Camera> m_camera;
   std::unique_ptr<Geometry> m_box_geometry;
   std::unique_ptr<gpu::Pipeline> m_color_pipeline;
   std::unique_ptr<Material> m_color_material;

@@ -21,45 +21,44 @@
  *   SOFTWARE.
  */
 
-// macros
-#include <Hexgon/Macro.hpp>
-// Application interface
-#include <Hexgon/Core/Application.hpp>
-// Event
-#include <Hexgon/Core/Event.hpp>
-// Geometry
-#include <Hexgon/Core/Geometry.hpp>
-// Window
-#include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
-// Layer
-#include <Hexgon/Core/Layer.hpp>
-#include <Hexgon/Core/LayerStack.hpp>
-// Material
-#include <Hexgon/Core/Material.hpp>
-// Logger
-#include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// GUI
-#include <Hexgon/GUI/ImguiLayer.hpp>
-// imgui
-#include <imgui.h>
-// glm transform
-#include <glm/gtc/matrix_transform.hpp>
-// IO image
-#include <Hexgon/IO/Image.hpp>
-// object
-#include <Hexgon/Object/Mesh.hpp>
-#include <Hexgon/Object/Object3D.hpp>
-// camera
 #include <Hexgon/Object/Camera.hpp>
+
+namespace hexgon {
+
+Camera::Camera(glm::mat4 const& project)
+    : Object3D(), m_proj(project), m_target(), m_up(0.f, -1.f, 0.f), m_forward(0.f, 0.f, -1.f) {
+  SetPosition({0.f, 0.f, 1.f});
+}
+
+glm::mat4 Camera::GetCameraMatrix() {
+  auto matrix = CalculateMatrix();
+
+  m_up = matrix * glm::vec4(m_up, 0.f);
+  glm::vec3 forward = matrix * glm::vec4(m_forward, 0.f);
+
+  m_target = GetPosition() + GetForward();
+
+  glm::mat4 view = glm::lookAt(GetPosition(), m_target, m_up);
+
+  return m_proj * view;
+}
+
+glm::vec3 Camera::GetForward() const {
+  glm::vec3 forward = CalculateMatrix() * glm::vec4(m_forward, 0.f);
+
+  return glm::normalize(forward);
+}
+
+void Camera::OnSetPosition(const glm::vec3& pos) {}
+
+void Camera::OnSetRotation(const glm::vec3& rotation) {}
+
+void Camera::OnSetScale(const glm::vec3& scale) {}
+
+std::shared_ptr<Camera> Camera::MakePerspectiveCamera(float fov, float aspect, float near, float far) {
+  glm::mat4 project = glm::perspective(fov, aspect, near, far);
+
+  return std::make_shared<Camera>(project);
+}
+
+}  // namespace hexgon
