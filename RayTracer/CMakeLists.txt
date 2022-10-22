@@ -6,6 +6,8 @@ add_executable(simple_tracer
 	Layer/GUILayer.hpp
 	Layer/RenderLayer.cc
 	Layer/RenderLayer.hpp
+	Core/Ray.cc
+	Core/Ray.hpp
 )
 
 add_target_shader(simple_tracer

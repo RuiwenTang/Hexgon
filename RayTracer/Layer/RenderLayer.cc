@@ -96,6 +96,8 @@ void RenderLayer::OnRender() {
   render_thread.detach();
 }
 
+void RenderLayer::SetRenderer(Renderer* renderer) { m_renderer = renderer; }
+
 void RenderLayer::InitPipeline() {
   gpu::PipelineInfo info;
   // sample count
@@ -135,10 +137,10 @@ void RenderLayer::InitBuffers() {
 
   std::vector<float> vertex_data{
       // x   y      z     u    v
-      -1.f, 1.f, 0.f, 0.f, 0.f,  // point 1
-      1.0f, 1.f, 0.f, 1.f, 0.f,  // point 2
-      -1.f, -1.f,  0.f, 0.f, 1.f,  // point 2
-      1.f,  -1.f,  0.f, 1.f, 1.f,  // point 3
+      -1.f, 1.f,  0.f, 0.f, 0.f,  // point 1
+      1.0f, 1.f,  0.f, 1.f, 0.f,  // point 2
+      -1.f, -1.f, 0.f, 0.f, 1.f,  // point 2
+      1.f,  -1.f, 0.f, 1.f, 1.f,  // point 3
   };
 
   m_vertex_buffer->Resize(vertex_data.size() * sizeof(float));
@@ -166,6 +168,10 @@ void RenderLayer::InitImage() {
                                                       hexgon::gpu::TextureType::kImageTexture);
 
   m_gpu_texture->Resize(m_texture->GetWidth(), m_texture->GetHeight());
+
+  if (m_renderer) {
+    m_renderer->InitViewPort(m_texture->GetWidth(), m_texture->GetHeight());
+  }
 }
 
 void RenderLayer::UploadTexture() {
@@ -173,14 +179,8 @@ void RenderLayer::UploadTexture() {
 }
 
 void RenderLayer::DoRender() {
-  int32_t width = m_texture->GetWidth();
-  int32_t height = m_texture->GetHeight();
-
-  for (int32_t j = height - 1; j >= 0; j--) {
-    for (int32_t i = 0; i < width; i++) {
-      m_texture->PutPixel(i, j,
-                          ToRGBA(glm::vec4{i / static_cast<float>(width), j / static_cast<float>(height), 0.25f, 1.f}));
-    }
+  if (m_renderer) {
+    m_renderer->DoRender(m_texture.get());
   }
 }
 
@@ -199,3 +199,5 @@ void RenderLayer::UploadTextureIfNeed() {
 
   m_image_dirty = false;
 }
+
+uint32_t RenderLayer::Renderer::ToRGBA(glm::vec4 const& pixel) { return ::ToRGBA(pixel); }

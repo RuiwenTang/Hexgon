@@ -21,29 +21,6 @@
  *   SOFTWARE.
  */
 
-#pragma once
+#include "Core/Ray.hpp"
 
-#include <Hexgon/Hexgon.hpp>
-
-class HEX_API GUILayer : public hexgon::ImguiLayer {
- public:
-  class Callback {
-   public:
-    virtual ~Callback() = default;
-
-    virtual void OnRender() = 0;
-  };
-
-  GUILayer() = default;
-  ~GUILayer() override = default;
-
-  void SetCallback(Callback* callback) { m_callback = callback; }
-
- protected:
-  void OnImguiInit() override;
-
-  void OnDrawImgui(float tm) override;
-
- private:
-  Callback* m_callback = nullptr;
-};
+glm::vec3 Ray::At(float t) const { return m_orig + t * m_dir; }

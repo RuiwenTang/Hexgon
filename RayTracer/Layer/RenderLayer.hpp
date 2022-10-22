@@ -28,8 +28,20 @@
 
 #include "Layer/GUILayer.hpp"
 
-class RenderLayer : public hexgon::Layer, public GUILayer::Callback {
+class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
  public:
+  class Renderer {
+   public:
+
+    virtual ~Renderer() = default;
+
+    virtual void InitViewPort(uint32_t width, uint32_t height) = 0;
+
+    virtual void DoRender(hexgon::io::Image* image) = 0;
+
+    static uint32_t ToRGBA(glm::vec4 const& pixel);
+  };
+
   RenderLayer() : Layer("SimpleTracer") {}
   ~RenderLayer() override = default;
 
@@ -42,6 +54,8 @@ class RenderLayer : public hexgon::Layer, public GUILayer::Callback {
   void OnEvent(const hexgon::Event* event) override {}
 
   void OnRender() override;
+
+  void SetRenderer(Renderer* renderer);
 
  private:
   void InitPipeline();
@@ -62,4 +76,5 @@ class RenderLayer : public hexgon::Layer, public GUILayer::Callback {
   bool m_rendering = false;
   bool m_image_dirty = false;
   std::mutex m_mutex = {};
+  Renderer* m_renderer = {};
 };

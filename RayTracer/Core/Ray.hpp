@@ -25,25 +25,18 @@
 
 #include <Hexgon/Hexgon.hpp>
 
-class HEX_API GUILayer : public hexgon::ImguiLayer {
+class HEX_API Ray {
  public:
-  class Callback {
-   public:
-    virtual ~Callback() = default;
+  Ray() : m_orig(), m_dir() {}
+  Ray(glm::vec3 const& origin, glm::vec3 const& direction) : m_orig(origin), m_dir(glm::normalize(direction)) {}
+  ~Ray() = default;
 
-    virtual void OnRender() = 0;
-  };
+  glm::vec3 const& Origin() const { return m_orig; }
+  glm::vec3 const& Direction() const { return m_dir; }
 
-  GUILayer() = default;
-  ~GUILayer() override = default;
-
-  void SetCallback(Callback* callback) { m_callback = callback; }
-
- protected:
-  void OnImguiInit() override;
-
-  void OnDrawImgui(float tm) override;
+  glm::vec3 At(float t) const;
 
  private:
-  Callback* m_callback = nullptr;
+  glm::vec3 m_orig;
+  glm::vec3 m_dir;
 };
