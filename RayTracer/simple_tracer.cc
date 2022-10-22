@@ -21,45 +21,28 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
-#define ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+#include <Hexgon/Hexgon.hpp>
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <memory>
-#include <string>
+#include "Layer/GUILayer.hpp"
+#include "Layer/RenderLayer.hpp"
 
-namespace hexgon {
-namespace io {
-class HEX_API Image {
- public:
-  ~Image() { CleanUp(); }
+int main(int argc, const char** argv) {
+  auto app = hexgon::Application::Create("Simple Ray Tracer");
 
-  static std::shared_ptr<Image> Load(std::string const& path);
-  static std::shared_ptr<Image> CreateEmpty(uint32_t width, uint32_t height);
+  HEX_INFO("create app instance 0x{:x}", reinterpret_cast<uintptr_t>(app));
 
-  uint32_t GetWidth() const { return m_width; }
-  uint32_t GetHeight() const { return m_height; }
+  app->GetWindow()->SetClearColor(glm::vec4{0.f, 0.f, 0.f, 0.f});
 
-  gpu::PixelFormat GetFormat() const { return m_format; }
+  auto render_layer = std::make_shared<RenderLayer>();
+  auto gui_layer = std::make_shared<GUILayer>();
 
-  void* GetRawData() const { return m_data; }
+  gui_layer->SetCallback(render_layer.get());
 
-  void PutPixel(uint32_t x, uint32_t y, uint32_t pixel);
+  app->PushLayer(render_layer);
 
- private:
-  Image() = default;
+  app->PushLayer(gui_layer);
 
-  void CleanUp();
+  app->Run();
 
- private:
-  void* m_data = nullptr;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-  gpu::PixelFormat m_format = gpu::PixelFormat::Unknown;
-};
-
-}  // namespace io
-}  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+  return 0;
+}

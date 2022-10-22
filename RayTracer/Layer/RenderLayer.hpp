@@ -21,45 +21,45 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
-#define ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+#pragma once
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <memory>
-#include <string>
+#include <Hexgon/Hexgon.hpp>
+#include <mutex>
 
-namespace hexgon {
-namespace io {
-class HEX_API Image {
+#include "Layer/GUILayer.hpp"
+
+class RenderLayer : public hexgon::Layer, public GUILayer::Callback {
  public:
-  ~Image() { CleanUp(); }
+  RenderLayer() : Layer("SimpleTracer") {}
+  ~RenderLayer() override = default;
 
-  static std::shared_ptr<Image> Load(std::string const& path);
-  static std::shared_ptr<Image> CreateEmpty(uint32_t width, uint32_t height);
+  void OnAttach() override;
 
-  uint32_t GetWidth() const { return m_width; }
-  uint32_t GetHeight() const { return m_height; }
+  void OnDetach() override;
 
-  gpu::PixelFormat GetFormat() const { return m_format; }
+  void OnUpdate(float tm) override;
 
-  void* GetRawData() const { return m_data; }
+  void OnEvent(const hexgon::Event* event) override {}
 
-  void PutPixel(uint32_t x, uint32_t y, uint32_t pixel);
-
- private:
-  Image() = default;
-
-  void CleanUp();
+  void OnRender() override;
 
  private:
-  void* m_data = nullptr;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-  gpu::PixelFormat m_format = gpu::PixelFormat::Unknown;
+  void InitPipeline();
+  void InitBuffers();
+  void InitImage();
+  void UploadTexture();
+
+  void UploadTextureIfNeed();
+
+  void DoRender();
+
+ private:
+  std::unique_ptr<hexgon::gpu::Pipeline> m_pipeline;
+  std::unique_ptr<hexgon::gpu::VertexBuffer> m_vertex_buffer;
+  std::unique_ptr<hexgon::gpu::IndexBuffer> m_index_buffer;
+  std::unique_ptr<hexgon::gpu::Texture> m_gpu_texture;
+  std::shared_ptr<hexgon::io::Image> m_texture;
+  bool m_rendering = false;
+  bool m_image_dirty = false;
+  std::mutex m_mutex = {};
 };
-
-}  // namespace io
-}  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_

@@ -21,45 +21,30 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
-#define ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+#include "Layer/GUILayer.hpp"
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <memory>
-#include <string>
+void GUILayer::OnImguiInit() {
+  auto scale = GetApplication()->GetWindow()->GetDisplayScale();
 
-namespace hexgon {
-namespace io {
-class HEX_API Image {
- public:
-  ~Image() { CleanUp(); }
+  ImGuiIO& io = ImGui::GetIO();
+  ImFontConfig config{};
 
-  static std::shared_ptr<Image> Load(std::string const& path);
-  static std::shared_ptr<Image> CreateEmpty(uint32_t width, uint32_t height);
+  config.OversampleH = scale.x;
+  config.OversampleV = scale.y;
 
-  uint32_t GetWidth() const { return m_width; }
-  uint32_t GetHeight() const { return m_height; }
+  io.Fonts->AddFontDefault(&config);
+}
 
-  gpu::PixelFormat GetFormat() const { return m_format; }
+void GUILayer::OnDrawImgui(float tm) {
+  ImGui::Begin("Control Panel");
 
-  void* GetRawData() const { return m_data; }
+  if (ImGui::Button("Render")) {
+    if (m_callback) {
+      m_callback->OnRender();
+    }
+  }
 
-  void PutPixel(uint32_t x, uint32_t y, uint32_t pixel);
+  ImGui::Text("Frame Time: %d ms", 0);
 
- private:
-  Image() = default;
-
-  void CleanUp();
-
- private:
-  void* m_data = nullptr;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-  gpu::PixelFormat m_format = gpu::PixelFormat::Unknown;
-};
-
-}  // namespace io
-}  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+  ImGui::End();
+}

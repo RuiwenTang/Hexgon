@@ -34,6 +34,9 @@ add_subdirectory(Engine)
 # sand-box
 add_subdirectory(SandBox)
 
+# ray tracer
+add_subdirectory(RayTracer)
+
 # source group for Xcode and Visual Studio
 get_target_property(HEXGON_SRC Hexgon SOURCES)
 

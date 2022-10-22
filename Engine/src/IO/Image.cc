@@ -59,6 +59,26 @@ std::shared_ptr<Image> Image::Load(std::string const& path) {
 
   return img;
 }
+std::shared_ptr<Image> Image::CreateEmpty(uint32_t width, uint32_t height) {
+  std::shared_ptr<Image> img{new Image};
+
+  img->m_width = width;
+  img->m_height = height;
+  img->m_data = STBI_MALLOC(width * height * 4);
+  img->m_format = gpu::PixelFormat::R8G8B8A8UNormInt;
+
+  return img;
+}
+
+void Image::PutPixel(uint32_t x, uint32_t y, uint32_t pixel) {
+  if (x >= m_width || y >= m_height) {
+    return;
+  }
+
+  uint32_t* p = static_cast<uint32_t*>(m_data);
+
+  p[y * m_width + x] = pixel;
+}
 
 void Image::CleanUp() {
   if (m_data) {

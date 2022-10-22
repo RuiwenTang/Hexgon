@@ -21,45 +21,29 @@
  *   SOFTWARE.
  */
 
-#ifndef ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
-#define ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
+#pragma once
 
-#include <Hexgon/GPU/Formats.hpp>
-#include <Hexgon/Macro.hpp>
-#include <memory>
-#include <string>
+#include <Hexgon/Hexgon.hpp>
 
-namespace hexgon {
-namespace io {
-class HEX_API Image {
+class GUILayer : public hexgon::ImguiLayer {
  public:
-  ~Image() { CleanUp(); }
+  class Callback {
+   public:
+    virtual ~Callback() = default;
 
-  static std::shared_ptr<Image> Load(std::string const& path);
-  static std::shared_ptr<Image> CreateEmpty(uint32_t width, uint32_t height);
+    virtual void OnRender() = 0;
+  };
 
-  uint32_t GetWidth() const { return m_width; }
-  uint32_t GetHeight() const { return m_height; }
+  GUILayer() = default;
+  ~GUILayer() override = default;
 
-  gpu::PixelFormat GetFormat() const { return m_format; }
+  void SetCallback(Callback* callback) { m_callback = callback; }
 
-  void* GetRawData() const { return m_data; }
+ protected:
+  void OnImguiInit() override;
 
-  void PutPixel(uint32_t x, uint32_t y, uint32_t pixel);
-
- private:
-  Image() = default;
-
-  void CleanUp();
+  void OnDrawImgui(float tm) override;
 
  private:
-  void* m_data = nullptr;
-  uint32_t m_width = 0;
-  uint32_t m_height = 0;
-  gpu::PixelFormat m_format = gpu::PixelFormat::Unknown;
+  Callback* m_callback = nullptr;
 };
-
-}  // namespace io
-}  // namespace hexgon
-
-#endif  // ENGINE_INCLUDE_HEXGON_IO_IMAGE_HPP_
