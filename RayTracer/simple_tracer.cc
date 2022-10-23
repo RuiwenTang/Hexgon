@@ -22,6 +22,7 @@
  */
 
 #include <Hexgon/Hexgon.hpp>
+#include <glm/gtc/random.hpp>
 #include <limits>
 
 #include "Common/Sphere.hpp"
@@ -45,6 +46,7 @@ class SimpleRender : public RenderLayer::Renderer {
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
     int32_t height = image->GetHeight();
+    int32_t samples_per_pixel = 20;
 
     glm::vec3 origin = glm::vec3(0.f, 0.f, 1.f);
 
@@ -52,17 +54,43 @@ class SimpleRender : public RenderLayer::Renderer {
 
     for (int32_t j = height - 1; j >= 0; j--) {
       for (int32_t i = 0; i < width; i++) {
-        image->PutPixel(i, j, ToRGBA(RayColor(camera.SendRay(i / (float)width, j / (float)height))));
+        glm::vec4 color{};
+        for (int32_t s = 0; s < samples_per_pixel; s++) {
+          color += RayColor(camera.SendRay(i / (float)width, j / (float)height), 10);
+        }
+        color /= (float)samples_per_pixel;
+        color = glm::sqrt(color);
+        color = glm::clamp(color, glm::vec4{0.f, 0.f, 0.f, 0.f}, glm::vec4{1.f, 1.f, 1.f, 1.f});
+
+        image->PutPixel(i, j, ToRGBA(color));
       }
     }
   }
 
  private:
-  glm::vec4 RayColor(Ray const& ray) {
+  glm::vec3 RandomInUnit() {
+    while (true) {
+      auto p = glm::linearRand(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1});
+
+      if (glm::length(p) >= 1.f) continue;
+
+      return p;
+    }
+  }
+
+  glm::vec3 UnitRandomInUnit() { return glm::normalize(RandomInUnit()); }
+
+  glm::vec4 RayColor(Ray const& ray, int32_t depth) {
+    if (depth <= 0) {
+      return glm::vec4{0.f, 0.f, 0.f, 1.f};
+    }
+
     HitResult result{};
 
     if (m_objects.Hit(ray, 0.f, std::numeric_limits<float>::max(), result)) {
-      return 0.5f * (glm::vec4{result.normal, 1.f} + 1.f);
+      auto target = result.p + result.normal + UnitRandomInUnit();
+
+      return 0.5f * RayColor(Ray{result.p, target - result.p}, depth - 1);
     }
 
     glm::vec3 unit_dir = glm::normalize(ray.Direction());
