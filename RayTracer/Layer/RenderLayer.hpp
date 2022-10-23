@@ -32,7 +32,6 @@ class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
  public:
   class Renderer {
    public:
-
     virtual ~Renderer() = default;
 
     virtual void InitViewPort(uint32_t width, uint32_t height) = 0;
@@ -40,6 +39,20 @@ class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
     virtual void DoRender(hexgon::io::Image* image) = 0;
 
     static uint32_t ToRGBA(glm::vec4 const& pixel);
+
+    void SetLayer(RenderLayer* layer) { m_layer = layer; }
+
+   protected:
+    void UpdateProgress(float value) {
+      if (!m_layer) {
+        return;
+      }
+
+      m_layer->UpdateProgress(value);
+    }
+
+   private:
+    RenderLayer* m_layer;
   };
 
   RenderLayer() : Layer("SimpleTracer") {}
@@ -56,6 +69,8 @@ class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
   void OnRender() override;
 
   void SetRenderer(Renderer* renderer);
+
+  void UpdateProgress(float value) { GUILayer::Callback::UpdateProgress(value); }
 
  private:
   void InitPipeline();

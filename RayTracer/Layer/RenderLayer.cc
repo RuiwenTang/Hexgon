@@ -96,7 +96,10 @@ void RenderLayer::OnRender() {
   render_thread.detach();
 }
 
-void RenderLayer::SetRenderer(Renderer* renderer) { m_renderer = renderer; }
+void RenderLayer::SetRenderer(Renderer* renderer) {
+  m_renderer = renderer;
+  m_renderer->SetLayer(this);
+}
 
 void RenderLayer::InitPipeline() {
   gpu::PipelineInfo info;

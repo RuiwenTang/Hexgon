@@ -44,6 +44,8 @@ void GUILayer::OnDrawImgui(float tm) {
     }
   }
 
+  ImGui::ProgressBar(m_progress);
+
   ImGui::Text("Frame Time: %d ms", 0);
 
   ImGui::End();

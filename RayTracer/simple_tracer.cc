@@ -52,6 +52,9 @@ class SimpleRender : public RenderLayer::Renderer {
 
     RayCamera camera{origin, image->GetWidth(), image->GetHeight()};
 
+    float total = width * (float)height;
+    float current = 0.f;
+
     for (int32_t j = height - 1; j >= 0; j--) {
       for (int32_t i = 0; i < width; i++) {
         glm::vec4 color{};
@@ -67,6 +70,9 @@ class SimpleRender : public RenderLayer::Renderer {
         color = glm::clamp(color, glm::vec4{0.f, 0.f, 0.f, 0.f}, glm::vec4{1.f, 1.f, 1.f, 1.f});
 
         image->PutPixel(i, j, ToRGBA(color));
+        
+        current += 1.f;
+        UpdateProgress(current / total);
       }
     }
   }

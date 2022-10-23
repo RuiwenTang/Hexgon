@@ -29,15 +29,34 @@ class HEX_API GUILayer : public hexgon::ImguiLayer {
  public:
   class Callback {
    public:
+    Callback() = default;
     virtual ~Callback() = default;
 
     virtual void OnRender() = 0;
+
+    void SetLayer(GUILayer* layer) { m_layer = layer; }
+
+   protected:
+    void UpdateProgress(float value) {
+      if (!m_layer) {
+        return;
+      }
+      m_layer->SetCurrentProgress(value);
+    }
+
+   private:
+    GUILayer* m_layer = {};
   };
 
   GUILayer() = default;
   ~GUILayer() override = default;
 
-  void SetCallback(Callback* callback) { m_callback = callback; }
+  void SetCallback(Callback* callback) {
+    m_callback = callback;
+    m_callback->SetLayer(this);
+  }
+
+  void SetCurrentProgress(float value) { m_progress = value; }
 
  protected:
   void OnImguiInit() override;
@@ -46,4 +65,5 @@ class HEX_API GUILayer : public hexgon::ImguiLayer {
 
  private:
   Callback* m_callback = nullptr;
+  float m_progress = 0.f;
 };
