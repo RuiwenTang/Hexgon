@@ -27,7 +27,9 @@
 
 #include "Common/Sphere.hpp"
 #include "Core/Hittable.hpp"
+#include "Core/Material.hpp"
 #include "Core/Ray.hpp"
+#include "Core/Util.hpp"
 #include "Layer/GUILayer.hpp"
 #include "Layer/RenderLayer.hpp"
 
@@ -39,8 +41,15 @@ class SimpleRender : public RenderLayer::Renderer {
   void InitViewPort(uint32_t width, uint32_t height) override {
     m_aspect = width / (float)height;
 
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f));
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -100.5f, -1.f}, 100.f));
+    auto material_ground = std::make_shared<Lambertian>(glm::vec3{0.8f, 0.8f, 0.f});
+    auto material_center = std::make_shared<Lambertian>(glm::vec3{0.7f, 0.3f, 0.3f});
+    auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f});
+    auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f});
+
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f, material_center));
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, 0.5f, material_left));
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{1.f, 0.f, -1.f}, 0.5f, material_right));
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -100.5f, -1.f}, 100.f, material_ground));
   }
 
   void DoRender(hexgon::io::Image* image) override {
@@ -78,27 +87,6 @@ class SimpleRender : public RenderLayer::Renderer {
   }
 
  private:
-  glm::vec3 RandomInUnit() {
-    while (true) {
-      auto p = glm::linearRand(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1});
-
-      if (glm::length(p) >= 1.f) continue;
-
-      return p;
-    }
-  }
-
-  glm::vec3 UnitRandomInUnit() { return glm::normalize(RandomInUnit()); }
-
-  glm::vec3 RandomInHemiSphere(glm::vec3 const& normal) {
-    auto p = UnitRandomInUnit();
-    if (glm::dot(p, normal) > 0.f) {
-      return p;
-    } else {
-      return -p;
-    }
-  }
-
   glm::vec4 RayColor(Ray const& ray, int32_t depth) {
     if (depth <= 0) {
       return glm::vec4{0.f, 0.f, 0.f, 1.f};
@@ -107,9 +95,13 @@ class SimpleRender : public RenderLayer::Renderer {
     HitResult result{};
 
     if (m_objects.Hit(ray, 0.f, std::numeric_limits<float>::max(), result)) {
-      auto target = result.p + RandomInHemiSphere(result.normal);
-
-      return 0.5f * RayColor(Ray{result.p, target - result.p}, depth - 1);
+      glm::vec4 attenuation{};
+      Ray scattered{};
+      if (result.material->Scatter(ray, result, attenuation, scattered)) {
+        return attenuation * RayColor(scattered, depth - 1);
+      } else {
+        return glm::vec4{};
+      }
     }
 
     glm::vec3 unit_dir = glm::normalize(ray.Direction());

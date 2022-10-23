@@ -21,22 +21,38 @@
  *   SOFTWARE.
  */
 
-#include "Core/Hittable.hpp"
+#pragma once
 
-#include "Core/Material.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
 
-bool HittableList::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const {
-  HitResult temp{};
-  bool hit_anything = false;
-  float closest_so_far = t_max;
 
-  for (auto const& object : m_objects) {
-    if (object->Hit(ray, t_min, closest_so_far, temp)) {
-      hit_anything = true;
-      closest_so_far = temp.t;
-      result = temp;
-    }
+namespace Util {
+
+static inline glm::vec3 RandomInUnit() {
+  while (true) {
+    auto p = glm::linearRand(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1});
+
+    if (glm::length(p) >= 1.f) continue;
+
+    return p;
   }
-
-  return hit_anything;
 }
+
+static inline glm::vec3 UnitRandomInUnit() { return glm::normalize(RandomInUnit()); }
+
+static inline glm::vec3 RandomInHemiSphere(glm::vec3 const& normal) {
+  auto p = UnitRandomInUnit();
+  if (glm::dot(p, normal) > 0.f) {
+    return p;
+  } else {
+    return -p;
+  }
+}
+
+static inline bool NearZero(glm::vec3 const& value) {
+  float s = 1e-8;
+  return (glm::abs(value[0]) < s) && (glm::abs(value[1]) < s) && (glm::abs(value[2]) < s);
+}
+
+}  // namespace Util

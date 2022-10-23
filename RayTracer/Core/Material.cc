@@ -21,22 +21,33 @@
  *   SOFTWARE.
  */
 
-#include "Core/Hittable.hpp"
-
 #include "Core/Material.hpp"
 
-bool HittableList::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const {
-  HitResult temp{};
-  bool hit_anything = false;
-  float closest_so_far = t_max;
+#include "Core/Util.hpp"
 
-  for (auto const& object : m_objects) {
-    if (object->Hit(ray, t_min, closest_so_far, temp)) {
-      hit_anything = true;
-      closest_so_far = temp.t;
-      result = temp;
-    }
+bool Lambertian::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
+  auto scatter_dir = rec.normal + Util::UnitRandomInUnit();
+
+  scattered = Ray{rec.p, scatter_dir};
+
+  if (Util::NearZero(scatter_dir)) {
+    scatter_dir = rec.normal;
   }
 
-  return hit_anything;
+  attenuation = glm::vec4{m_albedo, 1.f};
+
+  return true;
+}
+
+bool Metal::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
+  auto reflected = Reflect(ray.Direction(), rec.normal);
+
+  scattered = Ray{rec.p, reflected};
+  attenuation = glm::vec4{m_albedo, 1.f};
+
+  return (glm::dot(scattered.Direction(), rec.normal) > 0.f);
+}
+
+glm::vec3 Metal::Reflect(glm::vec3 const& dir, glm::vec3 const& normal) const {
+  return dir - 2.f * glm::dot(dir, normal) * normal;
 }

@@ -20,23 +20,41 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
+#pragma once
+
+#include <Hexgon/Hexgon.hpp>
 
 #include "Core/Hittable.hpp"
+#include "Core/Ray.hpp"
 
-#include "Core/Material.hpp"
+class HEX_API Material {
+ public:
+  virtual ~Material() = default;
 
-bool HittableList::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const {
-  HitResult temp{};
-  bool hit_anything = false;
-  float closest_so_far = t_max;
+  virtual bool Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const = 0;
+};
 
-  for (auto const& object : m_objects) {
-    if (object->Hit(ray, t_min, closest_so_far, temp)) {
-      hit_anything = true;
-      closest_so_far = temp.t;
-      result = temp;
-    }
-  }
+class HEX_API Lambertian : public Material {
+ public:
+  Lambertian(glm::vec3 const& color) : m_albedo(color) {}
+  ~Lambertian() override = default;
 
-  return hit_anything;
-}
+  bool Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const override;
+
+ private:
+  glm::vec3 m_albedo;
+};
+
+class HEX_API Metal : public Material {
+ public:
+  Metal(glm::vec3 const& color) : m_albedo(color) {}
+  ~Metal() override = default;
+
+  bool Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const override;
+
+ private:
+  glm::vec3 Reflect(glm::vec3 const& dir, glm::vec3 const& normal) const;
+
+ private:
+  glm::vec3 m_albedo;
+};

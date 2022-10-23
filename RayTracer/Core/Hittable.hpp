@@ -28,11 +28,14 @@
 
 #include "Core/Ray.hpp"
 
+class Material;
+
 struct HitResult {
   glm::vec3 p = {};
   glm::vec3 normal = {};
   float t = {};
   bool front_face = {};
+  std::shared_ptr<Material> material;
 
   void SetFaceNormal(Ray const& ray, glm::vec3 const& outward_normal) {
     front_face = glm::dot(ray.Direction(), outward_normal) < 0;
@@ -52,10 +55,10 @@ class HEX_API HittableList : public Hittable {
   HittableList() = default;
   ~HittableList() override = default;
 
-  void AddObject(std::shared_ptr<Hittable> object) { m_objects.emplace_back(std::move(object));
-  }
+  void AddObject(std::shared_ptr<Hittable> object) { m_objects.emplace_back(std::move(object)); }
 
   bool Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const override;
+
  private:
   std::vector<std::shared_ptr<Hittable>> m_objects;
 };

@@ -45,6 +45,7 @@ bool Sphere::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) co
   result.t = root;
   result.p = ray.At(root);
   result.SetFaceNormal(ray, (result.p - m_center) / m_radius);
+  result.material = m_material;
 
   return true;
 }

@@ -24,14 +24,18 @@
 #pragma once
 
 #include "Core/Hittable.hpp"
+#include "Core/Material.hpp"
 
 class HEX_API Sphere : public Hittable {
  public:
   Sphere() = default;
-  Sphere(glm::vec3 const& center, float radius) : m_center(center), m_radius(radius) {}
+  Sphere(glm::vec3 const& center, float radius, std::shared_ptr<Material> material)
+      : m_center(center), m_radius(radius), m_material(std::move(material)) {}
 
   bool Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const override;
+
  private:
   glm::vec3 m_center = {};
   float m_radius = {};
+  std::shared_ptr<Material> m_material;
 };
