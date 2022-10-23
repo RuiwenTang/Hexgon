@@ -70,7 +70,7 @@ class SimpleRender : public RenderLayer::Renderer {
         color = glm::clamp(color, glm::vec4{0.f, 0.f, 0.f, 0.f}, glm::vec4{1.f, 1.f, 1.f, 1.f});
 
         image->PutPixel(i, j, ToRGBA(color));
-        
+
         current += 1.f;
         UpdateProgress(current / total);
       }
@@ -90,6 +90,15 @@ class SimpleRender : public RenderLayer::Renderer {
 
   glm::vec3 UnitRandomInUnit() { return glm::normalize(RandomInUnit()); }
 
+  glm::vec3 RandomInHemiSphere(glm::vec3 const& normal) {
+    auto p = UnitRandomInUnit();
+    if (glm::dot(p, normal) > 0.f) {
+      return p;
+    } else {
+      return -p;
+    }
+  }
+
   glm::vec4 RayColor(Ray const& ray, int32_t depth) {
     if (depth <= 0) {
       return glm::vec4{0.f, 0.f, 0.f, 1.f};
@@ -98,7 +107,7 @@ class SimpleRender : public RenderLayer::Renderer {
     HitResult result{};
 
     if (m_objects.Hit(ray, 0.f, std::numeric_limits<float>::max(), result)) {
-      auto target = result.p + result.normal + UnitRandomInUnit();
+      auto target = result.p + RandomInHemiSphere(result.normal);
 
       return 0.5f * RayColor(Ray{result.p, target - result.p}, depth - 1);
     }
