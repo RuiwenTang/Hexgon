@@ -43,8 +43,8 @@ class SimpleRender : public RenderLayer::Renderer {
 
     auto material_ground = std::make_shared<Lambertian>(glm::vec3{0.8f, 0.8f, 0.f});
     auto material_center = std::make_shared<Lambertian>(glm::vec3{0.7f, 0.3f, 0.3f});
-    auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f});
-    auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f});
+    auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.3f);
+    auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f}, 1.f);
 
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f, material_center));
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, 0.5f, material_left));

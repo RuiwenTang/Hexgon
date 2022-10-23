@@ -47,7 +47,7 @@ class HEX_API Lambertian : public Material {
 
 class HEX_API Metal : public Material {
  public:
-  Metal(glm::vec3 const& color) : m_albedo(color) {}
+  Metal(glm::vec3 const& color, float f) : m_albedo(color), m_fuzz(f < 1.f ? f : 1.f) {}
   ~Metal() override = default;
 
   bool Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const override;
@@ -57,4 +57,5 @@ class HEX_API Metal : public Material {
 
  private:
   glm::vec3 m_albedo;
+  float m_fuzz;
 };
