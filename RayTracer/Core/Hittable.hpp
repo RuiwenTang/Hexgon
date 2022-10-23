@@ -23,12 +23,21 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "Core/Ray.hpp"
 
 struct HitResult {
   glm::vec3 p = {};
   glm::vec3 normal = {};
   float t = {};
+  bool front_face = {};
+
+  void SetFaceNormal(Ray const& ray, glm::vec3 const& outward_normal) {
+    front_face = glm::dot(ray.Direction(), outward_normal) < 0;
+    this->normal = this->front_face ? outward_normal : -outward_normal;
+  }
 };
 
 class HEX_API Hittable {
@@ -36,4 +45,17 @@ class HEX_API Hittable {
   virtual ~Hittable() = default;
 
   virtual bool Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const = 0;
+};
+
+class HEX_API HittableList : public Hittable {
+ public:
+  HittableList() = default;
+  ~HittableList() override = default;
+
+  void AddObject(std::shared_ptr<Hittable> object) { m_objects.emplace_back(std::move(object));
+  }
+
+  bool Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const override;
+ private:
+  std::vector<std::shared_ptr<Hittable>> m_objects;
 };

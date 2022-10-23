@@ -21,30 +21,20 @@
  *   SOFTWARE.
  */
 
-#include "Common/Sphere.hpp"
+#include "Core/Hittable.hpp"
 
-bool Sphere::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const {
-  auto oc = ray.Origin() - m_center;
+bool HittableList::Hit(Ray const& ray, float t_min, float t_max, HitResult& result) const {
+  HitResult temp{};
+  bool hit_anything = false;
+  float closest_so_far = t_max;
 
-  auto a = glm::dot(ray.Direction(), ray.Direction());
-  auto half_b = glm::dot(oc, ray.Direction());
-  auto c = glm::dot(oc, oc) - m_radius * m_radius;
-
-  auto discriminant = half_b * half_b - a * c;
-
-  if (discriminant < 0.f) {
-    return false;
+  for (auto const& object : m_objects) {
+    if (object->Hit(ray, t_min, closest_so_far, temp)) {
+      hit_anything = true;
+      closest_so_far = temp.t;
+      result = temp;
+    }
   }
 
-  auto root = (-half_b - glm::sqrt(discriminant)) / a;
-
-  if (root < t_min || root > t_max) {
-    return false;
-  }
-
-  result.t = root;
-  result.p = ray.At(root);
-  result.SetFaceNormal(ray, (result.p - m_center) / m_radius);
-
-  return true;
+  return hit_anything;
 }

@@ -40,3 +40,15 @@ class HEX_API Ray {
   glm::vec3 m_orig;
   glm::vec3 m_dir;
 };
+
+class HEX_API RayCamera {
+ public:
+  RayCamera(glm::vec3 const& origin,uint32_t width, uint32_t height);
+  ~RayCamera() = default;
+
+  Ray SendRay(float u, float v) const;
+
+ private:
+  glm::vec3 m_origin;
+  float m_aspect;
+};

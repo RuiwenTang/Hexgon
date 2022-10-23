@@ -22,7 +22,10 @@
  */
 
 #include <Hexgon/Hexgon.hpp>
+#include <limits>
 
+#include "Common/Sphere.hpp"
+#include "Core/Hittable.hpp"
 #include "Core/Ray.hpp"
 #include "Layer/GUILayer.hpp"
 #include "Layer/RenderLayer.hpp"
@@ -32,7 +35,12 @@ class SimpleRender : public RenderLayer::Renderer {
   SimpleRender() = default;
   ~SimpleRender() override = default;
 
-  void InitViewPort(uint32_t width, uint32_t height) override { m_aspect = width / (float)height; }
+  void InitViewPort(uint32_t width, uint32_t height) override {
+    m_aspect = width / (float)height;
+
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f));
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -100.5f, -1.f}, 100.f));
+  }
 
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
@@ -40,31 +48,23 @@ class SimpleRender : public RenderLayer::Renderer {
 
     glm::vec3 origin = glm::vec3(0.f, 0.f, 1.f);
 
-    glm::vec3 center = glm::vec3(0.f, 0.f, 0.f);
+    RayCamera camera{origin, image->GetWidth(), image->GetHeight()};
 
     for (int32_t j = height - 1; j >= 0; j--) {
       for (int32_t i = 0; i < width; i++) {
-        glm::vec3 uv = CalculateUV(i / (float)width, j / (float)height);
-
-        Ray ray(origin, uv - origin);
-
-        float t = HitSphere(center, 0.5f, ray);
-
-        if (t > 0.f) {
-          glm::vec3 n = glm::normalize(ray.At(t) - center);
-
-          image->PutPixel(i, j, ToRGBA(glm::vec4{0.5f * (n + 1.f), 1.f}));
-        } else {
-          image->PutPixel(i, j, ToRGBA(RayColor(ray)));
-        }
+        image->PutPixel(i, j, ToRGBA(RayColor(camera.SendRay(i / (float)width, j / (float)height))));
       }
     }
   }
 
  private:
-  glm::vec3 CalculateUV(float x, float y) { return glm::vec3{(x * 2.f - 1.f) * m_aspect, y * 2.f - 1.f, 0.f}; }
-
   glm::vec4 RayColor(Ray const& ray) {
+    HitResult result{};
+
+    if (m_objects.Hit(ray, 0.f, std::numeric_limits<float>::max(), result)) {
+      return 0.5f * (glm::vec4{result.normal, 1.f} + 1.f);
+    }
+
     glm::vec3 unit_dir = glm::normalize(ray.Direction());
 
     auto t = 0.5f * (unit_dir.y + 1.f);
@@ -72,24 +72,9 @@ class SimpleRender : public RenderLayer::Renderer {
     return (1.0f - t) * glm::vec4(1, 1, 1, 1) + t * glm::vec4(0.5f, 0.7f, 1.f, 1.f);
   }
 
-  float HitSphere(glm::vec3 const& center, float radius, Ray const& r) {
-    auto oc = r.Origin() - center;
-
-    auto a = glm::dot(r.Direction(), r.Direction());
-    auto half_b = glm::dot(oc, r.Direction());
-    auto c = glm::dot(oc, oc) - radius * radius;
-
-    auto discriminant = half_b * half_b - a * c;
-
-    if (discriminant < 0.f) {
-      return -1.f;
-    } else {
-      return (-half_b - glm::sqrt(discriminant)) / a;
-    }
-  }
-
  private:
   float m_aspect = 1.f;
+  HittableList m_objects = {};
 };
 
 int main(int argc, const char** argv) {

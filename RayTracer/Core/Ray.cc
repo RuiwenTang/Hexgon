@@ -24,3 +24,10 @@
 #include "Core/Ray.hpp"
 
 glm::vec3 Ray::At(float t) const { return m_orig + t * m_dir; }
+
+RayCamera::RayCamera(glm::vec3 const& origin, uint32_t width, uint32_t height)
+    : m_origin(origin), m_aspect(width / (float)height) {}
+
+Ray RayCamera::SendRay(float u, float v) const {
+  return Ray{m_origin, glm::normalize(glm::vec3{(u * 2.f - 1.f) * m_aspect, v * 2.f - 1.f, 0.f} - m_origin)};
+}

@@ -8,6 +8,7 @@ add_executable(simple_tracer
 	Layer/RenderLayer.hpp
 	Core/Ray.cc
 	Core/Ray.hpp
+	Core/Hittable.cc
 	Core/Hittable.hpp
 	Common/Sphere.cc
 	Common/Sphere.hpp
