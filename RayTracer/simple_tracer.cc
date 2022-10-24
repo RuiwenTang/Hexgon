@@ -68,8 +68,8 @@ class SimpleRender : public RenderLayer::Renderer {
       for (int32_t i = 0; i < width; i++) {
         glm::vec4 color{};
         for (int32_t s = 0; s < samples_per_pixel; s++) {
-          float s_x = glm::linearRand(-1.f, 1.f);
-          float s_y = glm::linearRand(-1.f, 1.f);
+          float s_x = glm::linearRand(0.f, 1.f);
+          float s_y = glm::linearRand(0.f, 1.f);
           float u = glm::clamp(i + s_x, 0.f, (float)width);
           float v = glm::clamp(j + s_y, 0.f, (float)height);
           color += RayColor(camera.SendRay(u / (float)width, v / (float)height), 10);

@@ -42,7 +42,7 @@ bool Lambertian::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
 bool Metal::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
   auto reflected = Reflect(ray.Direction(), rec.normal);
 
-  scattered = Ray{rec.p, reflected + m_fuzz * Util::UnitRandomInUnit()};
+  scattered = Ray{rec.p, reflected + m_fuzz * Util::UnitRandomInUnit() * 0.1f};
   attenuation = glm::vec4{m_albedo, 1.f};
 
   return (glm::dot(scattered.Direction(), rec.normal) > 0.f);
