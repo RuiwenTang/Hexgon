@@ -43,7 +43,7 @@ class HEX_API Ray {
 
 class HEX_API RayCamera {
  public:
-  RayCamera(glm::vec3 const& origin,uint32_t width, uint32_t height);
+  RayCamera(glm::vec3 const& origin, uint32_t width, uint32_t height);
   ~RayCamera() = default;
 
   Ray SendRay(float u, float v) const;

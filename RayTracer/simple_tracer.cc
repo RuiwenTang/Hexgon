@@ -44,6 +44,8 @@ class SimpleRender : public RenderLayer::Renderer {
     auto material_ground = std::make_shared<Lambertian>(glm::vec3{0.8f, 0.8f, 0.f});
     auto material_center = std::make_shared<Lambertian>(glm::vec3{0.7f, 0.3f, 0.3f});
     auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.3f);
+    // auto material_center = std::make_shared<Dielectric>(1.5f);
+    // auto material_left = std::make_shared<Dielectric>(1.5f);
     auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f}, 1.f);
 
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f, material_center));
@@ -55,7 +57,7 @@ class SimpleRender : public RenderLayer::Renderer {
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
     int32_t height = image->GetHeight();
-    int32_t samples_per_pixel = 20;
+    int32_t samples_per_pixel = 10;
 
     glm::vec3 origin = glm::vec3(0.f, 0.f, 1.f);
 
@@ -72,7 +74,8 @@ class SimpleRender : public RenderLayer::Renderer {
           float s_y = glm::linearRand(0.f, 1.f);
           float u = glm::clamp(i + s_x, 0.f, (float)width);
           float v = glm::clamp(j + s_y, 0.f, (float)height);
-          color += RayColor(camera.SendRay(u / (float)width, v / (float)height), 10);
+          auto ray = camera.SendRay(u / (float)width, v / (float)height);
+          color += RayColor(ray, 10);
         }
         color /= (float)samples_per_pixel;
         color = glm::sqrt(color);
@@ -94,7 +97,7 @@ class SimpleRender : public RenderLayer::Renderer {
 
     HitResult result{};
 
-    if (m_objects.Hit(ray, 0.f, std::numeric_limits<float>::max(), result)) {
+    if (m_objects.Hit(ray, 0.001f, std::numeric_limits<float>::max(), result)) {
       glm::vec4 attenuation{};
       Ray scattered{};
       if (result.material->Scatter(ray, result, attenuation, scattered)) {

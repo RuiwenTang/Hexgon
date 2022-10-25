@@ -59,3 +59,17 @@ class HEX_API Metal : public Material {
   glm::vec3 m_albedo;
   float m_fuzz;
 };
+
+class HEX_API Dielectric : public Material {
+ public:
+  Dielectric(float ir) : m_ir(ir) {}
+  ~Dielectric() override = default;
+
+  bool Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const override;
+
+ private:
+  glm::vec3 Refract(const glm::vec3& uv, const glm::vec3& n, float etai_over_etat) const;
+
+ private:
+  float m_ir;
+};
