@@ -25,6 +25,7 @@
 #include <Hexgon/Core/GraphicsContext.hpp>
 #include <Hexgon/Core/Material.hpp>
 #include <Hexgon/Object/Mesh.hpp>
+#include <algorithm>
 
 namespace hexgon {
 

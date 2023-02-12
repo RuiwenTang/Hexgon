@@ -17,6 +17,7 @@ function(add_target_shader target resource_name)
     get_filename_component(FILENAME ${shader} NAME)
 
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${target}_spvs/${FILENAME}.spv
+      COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${target}_spvs
       COMMAND glslc ${shader} -o ${CMAKE_CURRENT_BINARY_DIR}/${target}_spvs/${FILENAME}.spv
       DEPENDS ${shader}
       COMMENT "Compiling ${FILENAME}"

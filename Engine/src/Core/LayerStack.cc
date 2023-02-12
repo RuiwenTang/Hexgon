@@ -22,6 +22,7 @@
  */
 
 #include <Hexgon/Core/LayerStack.hpp>
+#include <algorithm>
 
 namespace hexgon {
 
