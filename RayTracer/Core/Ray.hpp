@@ -50,5 +50,6 @@ class HEX_API RayCamera {
 
  private:
   glm::vec3 m_origin;
+  glm::mat4 mvp;
   float m_aspect;
 };

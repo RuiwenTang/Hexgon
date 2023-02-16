@@ -75,7 +75,7 @@ class SimpleRender : public RenderLayer::Renderer {
           float s_y = glm::linearRand(0.f, 1.f);
           float u = glm::clamp(i + s_x, 0.f, (float)width);
           float v = glm::clamp(j + s_y, 0.f, (float)height);
-          auto ray = camera.SendRay(u / (float)width, v / (float)height);
+          auto ray = camera.SendRay(u, v);
           color += RayColor(ray, 10);
         }
         color /= (float)samples_per_pixel;
