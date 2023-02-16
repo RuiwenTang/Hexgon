@@ -49,7 +49,7 @@ bool Metal::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation
 }
 
 glm::vec3 Metal::Reflect(glm::vec3 const& dir, glm::vec3 const& normal) const {
-  return dir - 2.f * glm::dot(dir, normal) * normal;
+  return glm::reflect(dir, normal);
 }
 
 bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {

@@ -32,6 +32,7 @@
 #include "Core/Util.hpp"
 #include "Layer/GUILayer.hpp"
 #include "Layer/RenderLayer.hpp"
+#include "glm/common.hpp"
 
 class SimpleRender : public RenderLayer::Renderer {
  public:
@@ -111,7 +112,7 @@ class SimpleRender : public RenderLayer::Renderer {
 
     auto t = 0.5f * (unit_dir.y + 1.f);
 
-    return (1.0f - t) * glm::vec4(1, 1, 1, 1) + t * glm::vec4(0.5f, 0.7f, 1.f, 1.f);
+    return glm::mix(glm::vec4{1.f, 1.f, 1.f, 1.f}, glm::vec4{0.5f, 0.7f, 1.f, 1.f}, t);
   }
 
  private:
