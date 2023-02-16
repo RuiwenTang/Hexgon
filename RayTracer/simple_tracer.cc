@@ -80,7 +80,13 @@ class SimpleRender : public RenderLayer::Renderer {
         }
         color /= (float)samples_per_pixel;
         color = glm::sqrt(color);
-        color = glm::clamp(color, glm::vec4{0.f, 0.f, 0.f, 0.f}, glm::vec4{1.f, 1.f, 1.f, 1.f});
+        glm::vec4 tmp{
+            glm::sqrt(color.r),
+            glm::sqrt(color.g),
+            glm::sqrt(color.b),
+            1.f,
+        };
+        color = glm::clamp(tmp, glm::vec4{0.f, 0.f, 0.f, 0.f}, glm::vec4{1.f, 1.f, 1.f, 1.f});
 
         image->PutPixel(i, j, ToRGBA(color));
 
