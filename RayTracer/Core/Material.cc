@@ -28,11 +28,11 @@
 bool Lambertian::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
   auto scatter_dir = rec.normal + Util::UnitRandomInUnit();
 
-  scattered = Ray{rec.p, scatter_dir};
-
   if (Util::NearZero(scatter_dir)) {
     scatter_dir = rec.normal;
   }
+
+  scattered = Ray{rec.p, scatter_dir};
 
   attenuation = glm::vec4{m_albedo, 1.f};
 
@@ -42,15 +42,13 @@ bool Lambertian::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
 bool Metal::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
   auto reflected = Reflect(ray.Direction(), rec.normal);
 
-  scattered = Ray{rec.p, reflected + m_fuzz * Util::UnitRandomInUnit() * 0.1f};
+  scattered = Ray{rec.p, reflected + m_fuzz * Util::UnitRandomInUnit()};
   attenuation = glm::vec4{m_albedo, 1.f};
 
   return (glm::dot(scattered.Direction(), rec.normal) > 0.f);
 }
 
-glm::vec3 Metal::Reflect(glm::vec3 const& dir, glm::vec3 const& normal) const {
-  return glm::reflect(dir, normal);
-}
+glm::vec3 Metal::Reflect(glm::vec3 const& dir, glm::vec3 const& normal) const { return glm::reflect(dir, normal); }
 
 bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
   attenuation = glm::vec4{1.f, 1.f, 1.f, 1.f};

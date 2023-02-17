@@ -58,7 +58,7 @@ class SimpleRender : public RenderLayer::Renderer {
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
     int32_t height = image->GetHeight();
-    int32_t samples_per_pixel = 10;
+    int32_t samples_per_pixel = 50;
 
     glm::vec3 origin = glm::vec3(0.f, 0.f, 1.f);
 
