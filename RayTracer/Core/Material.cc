@@ -55,9 +55,18 @@ bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
 
   float reflect_radios = rec.front_face ? (1.f / m_ir) : m_ir;
 
-  auto reflected = this->Refract(ray.Direction(), rec.normal, reflect_radios);
+  auto cos_theta = glm::min(glm::dot(-ray.Direction(), rec.normal), 1.0f);
+  auto sin_theta = glm::sqrt(1.f - cos_theta * cos_theta);
 
-  scattered = Ray{rec.p, reflected};
+  bool cannot_refract = reflect_radios * sin_theta > 1.0f;
+
+  glm::vec3 refrected;
+  if (cannot_refract) {
+    refrected = glm::reflect(ray.Direction(), rec.normal);
+  } else {
+    refrected = this->Refract(ray.Direction(), rec.normal, reflect_radios);
+  }
+  scattered = Ray{rec.p, refrected};
 
   return true;
 }
