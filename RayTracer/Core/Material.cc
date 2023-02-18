@@ -72,8 +72,5 @@ bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
 }
 
 glm::vec3 Dielectric::Refract(const glm::vec3& uv, const glm::vec3& n, float etai_over_etat) const {
-  auto cos_theta = glm::min(glm::dot(-uv, n), 1.0f);
-  glm::vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-  glm::vec3 r_out_parallel = -glm::sqrt(glm::abs(1.0f - glm::length(r_out_perp))) * n;
-  return r_out_perp + r_out_parallel;
+  return glm::refract(uv, n, etai_over_etat);
 }
