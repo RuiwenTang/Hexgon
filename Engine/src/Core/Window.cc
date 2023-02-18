@@ -103,7 +103,8 @@ class GLFWWindowImpl : public Window {
 
     glfwSetKeyCallback(m_glfw_window, WindowKeyCallback);
     glfwSetCursorPosCallback(m_glfw_window, WindowCursorCallback);
-    glfwSetMouseButtonCallback(m_glfw_window, WIndowMouseButtonCallback);
+    glfwSetMouseButtonCallback(m_glfw_window, WindowMouseButtonCallback);
+    glfwSetCharCallback(m_glfw_window, WindowCharCallback);
   }
 
   void* GetNativeWindow() const override { return m_glfw_window; }
@@ -143,7 +144,7 @@ class GLFWWindowImpl : public Window {
     }
   }
 
-  static void WIndowMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+  static void WindowMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     auto platform_window = reinterpret_cast<GLFWWindowImpl*>(glfwGetWindowUserPointer(window));
 
     float x = static_cast<float>(platform_window->m_cursor_x);
@@ -159,6 +160,16 @@ class GLFWWindowImpl : public Window {
 
     for (auto client : platform_window->m_clients) {
       client->OnMouseEvent(event.get());
+    }
+  }
+
+  static void WindowCharCallback(GLFWwindow* window, unsigned int c) {
+    auto platform_window = reinterpret_cast<GLFWWindowImpl*>(glfwGetWindowUserPointer(window));
+
+    auto event = std::make_unique<CharEvent>(c);
+
+    for (auto client : platform_window->m_clients) {
+      client->OnCharEvent(event.get());
     }
   }
 

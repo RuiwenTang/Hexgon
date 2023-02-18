@@ -183,7 +183,8 @@ enum class EventType {
   MouseButtonPressed,
   MouseButtonReleased,
   MouseMoved,
-  MouseScrolled
+  MouseScrolled,
+  CharEvent,
 };
 
 enum MouseCode {
@@ -310,6 +311,20 @@ class MouseReleasedEvent : public MouseEvent {
 
  private:
   MouseCode m_code;
+};
+
+class CharEvent : public Event {
+ public:
+  CharEvent(uint32_t c) : m_char(c) {}
+
+  EventType GetType() const override { return EventType::CharEvent; }
+
+  std::string GetName() const override { return std::string("char event"); }
+
+  uint32_t GetChar() const { return m_char; }
+
+ private:
+  uint32_t m_char;
 };
 
 }  // namespace hexgon

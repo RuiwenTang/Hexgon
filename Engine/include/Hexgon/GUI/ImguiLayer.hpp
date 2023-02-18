@@ -25,6 +25,7 @@
 #define ENGINE_INCLUDE_HEXGON_GUI_IMGUI_LAYER_HPP_
 
 #include <Hexgon/Core/Layer.hpp>
+#include <memory>
 
 namespace hexgon {
 

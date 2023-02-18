@@ -35,6 +35,7 @@ namespace hexgon {
 
 class KeyEvent;
 class MouseEvent;
+class CharEvent;
 
 class HEX_API WindowClient {
  public:
@@ -45,6 +46,7 @@ class HEX_API WindowClient {
   virtual void OnWindowUpdate() = 0;
   virtual void OnKeyEvent(KeyEvent* event) = 0;
   virtual void OnMouseEvent(MouseEvent* event) = 0;
+  virtual void OnCharEvent(CharEvent* event) = 0;
 };
 
 class HEX_API Window {

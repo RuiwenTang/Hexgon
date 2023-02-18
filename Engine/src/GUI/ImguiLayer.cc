@@ -30,6 +30,7 @@
 #include <Hexgon/GPU/Texture.hpp>
 #include <Hexgon/GUI/ImguiLayer.hpp>
 
+#include "LogPrivate.hpp"
 #include "gui_shaders.hpp"
 
 namespace hexgon {
@@ -69,6 +70,115 @@ void ImguiLayer::OnUpdate(float tm) {
   FlushImgui();
 }
 
+static ImGuiKey convert_to_imgui(KeyCode::Code code) {
+  switch (code) {
+    case KeyCode::Code::A:
+      return ImGuiKey_A;
+    case KeyCode::Code::B:
+      return ImGuiKey_B;
+    case KeyCode::Code::C:
+      return ImGuiKey_C;
+    case KeyCode::Code::D:
+      return ImGuiKey_D;
+    case KeyCode::Code::E:
+      return ImGuiKey_E;
+    case KeyCode::Code::F:
+      return ImGuiKey_F;
+    case KeyCode::Code::G:
+      return ImGuiKey_G;
+    case KeyCode::Code::H:
+      return ImGuiKey_H;
+    case KeyCode::Code::I:
+      return ImGuiKey_I;
+    case KeyCode::Code::J:
+      return ImGuiKey_J;
+    case KeyCode::Code::K:
+      return ImGuiKey_K;
+    case KeyCode::Code::L:
+      return ImGuiKey_L;
+    case KeyCode::Code::M:
+      return ImGuiKey_M;
+    case KeyCode::Code::N:
+      return ImGuiKey_N;
+    case KeyCode::Code::O:
+      return ImGuiKey_O;
+    case KeyCode::Code::P:
+      return ImGuiKey_P;
+    case KeyCode::Code::Q:
+      return ImGuiKey_Q;
+    case KeyCode::Code::R:
+      return ImGuiKey_R;
+    case KeyCode::Code::S:
+      return ImGuiKey_S;
+    case KeyCode::Code::T:
+      return ImGuiKey_T;
+    case KeyCode::Code::U:
+      return ImGuiKey_U;
+    case KeyCode::Code::V:
+      return ImGuiKey_V;
+    case KeyCode::Code::W:
+      return ImGuiKey_W;
+    case KeyCode::Code::X:
+      return ImGuiKey_X;
+    case KeyCode::Code::Y:
+      return ImGuiKey_Y;
+    case KeyCode::Code::Z:
+      return ImGuiKey_Z;
+    case KeyCode::Code::D0:
+      return ImGuiKey_0;
+    case KeyCode::Code::D1:
+      return ImGuiKey_1;
+    case KeyCode::Code::D2:
+      return ImGuiKey_2;
+    case KeyCode::Code::D3:
+      return ImGuiKey_3;
+    case KeyCode::Code::D4:
+      return ImGuiKey_4;
+    case KeyCode::Code::D5:
+      return ImGuiKey_5;
+    case KeyCode::Code::D6:
+      return ImGuiKey_6;
+    case KeyCode::Code::D7:
+      return ImGuiKey_7;
+    case KeyCode::Code::D8:
+      return ImGuiKey_8;
+    case KeyCode::Code::D9:
+      return ImGuiKey_9;
+    case KeyCode::Code::Tab:
+      return ImGuiKey_Tab;
+    case KeyCode::Code::Left:
+      return ImGuiKey_LeftArrow;
+    case KeyCode::Code::Right:
+      return ImGuiKey_RightArrow;
+    case KeyCode::Code::Up:
+      return ImGuiKey_UpArrow;
+    case KeyCode::Code::Down:
+      return ImGuiKey_DownArrow;
+    case KeyCode::Code::PageUp:
+      return ImGuiKey_PageUp;
+    case KeyCode::Code::PageDown:
+      return ImGuiKey_PageDown;
+    case KeyCode::Code::Home:
+      return ImGuiKey_Home;
+    case KeyCode::Code::End:
+      return ImGuiKey_End;
+    case KeyCode::Code::Insert:
+      return ImGuiKey_Insert;
+    case KeyCode::Code::Delete:
+      return ImGuiKey_Delete;
+    case KeyCode::Code::Backspace:
+      return ImGuiKey_Backspace;
+    case KeyCode::Code::Space:
+      return ImGuiKey_Space;
+    case KeyCode::Code::Apostrophe:
+      return ImGuiKey_Apostrophe;
+    case KeyCode::Code::Comma:
+      return ImGuiKey_Comma;
+    default:
+      return ImGuiKey_None;
+  }
+}
+
 void ImguiLayer::OnEvent(const Event* event) {
   ImGuiIO& io = ImGui::GetIO();
 
@@ -84,6 +194,23 @@ void ImguiLayer::OnEvent(const Event* event) {
     case EventType::MouseButtonReleased: {
       auto me = (MouseReleasedEvent*)event;
       io.AddMouseButtonEvent((int32_t)me->GetCode(), false);
+    } break;
+    case EventType::KeyPressed: {
+      auto ke = (KeyEvent*)event;
+      ImGuiKey key_code = convert_to_imgui(ke->GetKeyCode());
+
+      io.AddKeyEvent(key_code, true);
+    } break;
+    case EventType::KeyReleased: {
+      auto ke = (KeyEvent*)event;
+      ImGuiKey key_code = convert_to_imgui(ke->GetKeyCode());
+
+      io.AddKeyEvent(key_code, false);
+    } break;
+    case EventType::CharEvent: {
+      auto ce = (CharEvent*)event;
+
+      io.AddInputCharacter(ce->GetChar());
     } break;
     default:
       break;

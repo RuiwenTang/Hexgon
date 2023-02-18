@@ -94,4 +94,10 @@ void Application::OnMouseEvent(MouseEvent* event) {
   }
 }
 
+void Application::OnCharEvent(CharEvent* event) {
+  for (auto const& it : m_layer_stack) {
+    it->OnEvent(event);
+  }
+}
+
 }  // namespace hexgon
