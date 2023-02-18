@@ -24,6 +24,7 @@
 #pragma once
 
 #include <Hexgon/Hexgon.hpp>
+#include <cstdint>
 
 class HEX_API Ray {
  public:
@@ -43,13 +44,18 @@ class HEX_API Ray {
 
 class HEX_API RayCamera {
  public:
-  RayCamera(glm::vec3 const& origin, uint32_t width, uint32_t height);
+  RayCamera(glm::vec3 const& origin, glm::vec3 const& target, glm::vec3 const& up, float fov, uint32_t width,
+            uint32_t height);
   ~RayCamera() = default;
 
   Ray SendRay(float u, float v) const;
 
  private:
   glm::vec3 m_origin;
-  glm::mat4 mvp;
-  float m_aspect;
+  glm::vec3 m_target;
+  glm::vec3 m_up;
+  glm::mat4 m_proj_inverse;
+  glm::mat4 m_view_inverse;
+  uint32_t m_width;
+  uint32_t m_height;
 };

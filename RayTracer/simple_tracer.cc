@@ -46,13 +46,18 @@ class SimpleRender : public RenderLayer::Renderer {
     auto material_center = std::make_shared<Lambertian>(glm::vec3{0.1f, 0.2f, 0.5f});
     // auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.3f);
     // auto material_center = std::make_shared<Dielectric>(1.5f);
-    auto material_left = std::make_shared<Dielectric>(1.7f);
+    auto material_left = std::make_shared<Dielectric>(1.3f);
     auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f}, 0.f);
 
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f, material_center));
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, 0.5f, material_left));
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, -0.4f, material_left));
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{1.f, 0.f, -1.f}, 0.5f, material_right));
     m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -100.5f, -1.f}, 100.f, material_ground));
+  }
+
+  void UpdateCameraPosition(const glm::vec3 &pos) override {
+    m_camera_pos = pos;
   }
 
   void DoRender(hexgon::io::Image* image) override {
@@ -60,9 +65,10 @@ class SimpleRender : public RenderLayer::Renderer {
     int32_t height = image->GetHeight();
     int32_t samples_per_pixel = 50;
 
-    glm::vec3 origin = glm::vec3(0.f, 0.f, 1.f);
+    glm::vec3 target = glm::vec3{0.f, 0.f, -1.f};
+    glm::vec3 up = glm::vec3{0.f, 1.f, 0.f};
 
-    RayCamera camera{origin, image->GetWidth(), image->GetHeight()};
+    RayCamera camera{m_camera_pos, target, up, 90.f, image->GetWidth(), image->GetHeight()};
 
     float total = width * (float)height;
     float current = 0.f;
@@ -123,6 +129,7 @@ class SimpleRender : public RenderLayer::Renderer {
 
  private:
   float m_aspect = 1.f;
+  glm::vec3 m_camera_pos = {};
   HittableList m_objects = {};
 };
 

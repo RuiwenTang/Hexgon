@@ -24,6 +24,7 @@
 #include "Core/Material.hpp"
 
 #include "Core/Util.hpp"
+#include "glm/gtc/random.hpp"
 
 bool Lambertian::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenuation, Ray& scattered) const {
   auto scatter_dir = rec.normal + Util::UnitRandomInUnit();
@@ -61,7 +62,7 @@ bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
   bool cannot_refract = reflect_radios * sin_theta > 1.0f;
 
   glm::vec3 refrected;
-  if (cannot_refract) {
+  if (cannot_refract || Reflectance(cos_theta, reflect_radios) > glm::linearRand(0.f, 1.f)) {
     refrected = glm::reflect(ray.Direction(), rec.normal);
   } else {
     refrected = this->Refract(ray.Direction(), rec.normal, reflect_radios);
@@ -73,4 +74,11 @@ bool Dielectric::Scatter(Ray const& ray, HitResult const& rec, glm::vec4& attenu
 
 glm::vec3 Dielectric::Refract(const glm::vec3& uv, const glm::vec3& n, float etai_over_etat) const {
   return glm::refract(uv, n, etai_over_etat);
+}
+
+float Dielectric::Reflectance(float cosine, float ref_idx) const {
+  float r0 = (1.f - ref_idx) / (1.f + ref_idx);
+  r0 = r0 * r0;
+
+  return r0 + (1.f - r0) * glm::pow(1.f - cosine, 5.f);
 }

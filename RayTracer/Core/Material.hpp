@@ -70,6 +70,8 @@ class HEX_API Dielectric : public Material {
  private:
   glm::vec3 Refract(const glm::vec3& uv, const glm::vec3& n, float etai_over_etat) const;
 
+  float Reflectance(float consine, float ref_idx) const;
+
  private:
   float m_ir;
 };

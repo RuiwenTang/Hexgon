@@ -38,6 +38,8 @@ class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
 
     virtual void DoRender(hexgon::io::Image* image) = 0;
 
+    virtual void UpdateCameraPosition(glm::vec3 const& pos) = 0;
+
     static uint32_t ToRGBA(glm::vec4 const& pixel);
 
     void SetLayer(RenderLayer* layer) { m_layer = layer; }
@@ -67,6 +69,8 @@ class HEX_API RenderLayer : public hexgon::Layer, public GUILayer::Callback {
   void OnEvent(const hexgon::Event* event) override {}
 
   void OnRender() override;
+
+  void OnUpdateCamera(const glm::vec3 &pos) override;
 
   void SetRenderer(Renderer* renderer);
 

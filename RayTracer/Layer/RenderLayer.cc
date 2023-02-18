@@ -71,6 +71,10 @@ void RenderLayer::OnUpdate(float tm) {
   cmd->DrawIndexed(6, 1, 0, 0);
 }
 
+void RenderLayer::OnUpdateCamera(glm::vec3 const& pos) {
+  m_renderer->UpdateCameraPosition(pos);
+}
+
 void RenderLayer::OnRender() {
   std::lock_guard guad{m_mutex};
   if (m_rendering || m_image_dirty) {

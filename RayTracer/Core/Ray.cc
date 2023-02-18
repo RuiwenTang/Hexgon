@@ -25,13 +25,27 @@
 
 glm::vec3 Ray::At(float t) const { return m_orig + t * m_dir; }
 
-RayCamera::RayCamera(glm::vec3 const& origin, uint32_t width, uint32_t height)
-    : m_origin(origin), m_aspect(width / (float)height) {
-  mvp = glm::ortho<float>(0, width, 0, height);
+RayCamera::RayCamera(glm::vec3 const& origin, glm::vec3 const& target, glm::vec3 const& up, float fov, uint32_t width,
+                     uint32_t height)
+    : m_origin(origin), m_target(target), m_up(up), m_width(width), m_height(height) {
+  auto proj = glm::perspective(fov, (float)width / height, 0.01f, 1000.f);
+
+  m_proj_inverse = glm::inverse(proj);
+
+  auto view = glm::lookAt(m_origin, m_target, m_up);
+
+  m_view_inverse = glm::inverse(view);
 }
 
 Ray RayCamera::SendRay(float u, float v) const {
-  auto p = mvp * glm::vec4{u, v, 0.f, 1.f};
+  glm::vec2 coord{u / m_width, v / m_height};
 
-  return Ray{m_origin, glm::normalize(glm::vec3{p.x, p.y, 0.f} - m_origin)};
+  coord = coord * 2.f - 1.f;
+
+  auto target = m_proj_inverse * glm::vec4{coord, 1.f, 1.f};
+
+  auto dir = glm::vec3(m_view_inverse * glm::vec4{glm::normalize(glm::vec3(target) / target.w), 0.f});
+
+
+  return Ray{m_origin, glm::normalize(glm::vec3{dir})};
 }

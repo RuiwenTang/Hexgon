@@ -38,8 +38,15 @@ void GUILayer::OnImguiInit() {
 void GUILayer::OnDrawImgui(float tm) {
   ImGui::Begin("Control Panel");
 
+  ImGui::Text("Render config:");
+  ImGui::Indent(20.f);
+  ImGui::InputFloat3("Camera Positon", m_camera_pos.data());
+  ImGui::NewLine();
+  ImGui::Indent(-20.f);
+
   if (ImGui::Button("Render")) {
     if (m_callback) {
+      m_callback->OnUpdateCamera(glm::vec3{m_camera_pos[0], m_camera_pos[1], m_camera_pos[2]});
       m_callback->OnRender();
     }
   }

@@ -24,6 +24,7 @@
 #pragma once
 
 #include <Hexgon/Hexgon.hpp>
+#include <array>
 
 class HEX_API GUILayer : public hexgon::ImguiLayer {
  public:
@@ -33,6 +34,7 @@ class HEX_API GUILayer : public hexgon::ImguiLayer {
     virtual ~Callback() = default;
 
     virtual void OnRender() = 0;
+    virtual void OnUpdateCamera(glm::vec3 const& pos) = 0;
 
     void SetLayer(GUILayer* layer) { m_layer = layer; }
 
@@ -66,4 +68,6 @@ class HEX_API GUILayer : public hexgon::ImguiLayer {
  private:
   Callback* m_callback = nullptr;
   float m_progress = 0.f;
+  std::array<float, 3> m_camera_pos = {0.f, 0.f, 1.f};
+  std::array<char, 100> m_str_buf = {};
 };
