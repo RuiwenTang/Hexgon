@@ -26,7 +26,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 
-
 namespace Util {
 
 static inline glm::vec3 RandomInUnit() {
@@ -39,7 +38,11 @@ static inline glm::vec3 RandomInUnit() {
   }
 }
 
+static inline glm::vec3 RandomColor() { return glm::linearRand(glm::vec3{0.f, 0.f, 0.f}, glm::vec3{1.f, 1.f, 1.f}); }
+
 static inline glm::vec3 UnitRandomInUnit() { return glm::normalize(RandomInUnit()); }
+
+static inline float RandonFloat() { return glm::linearRand(0.f, 1.f); }
 
 static inline glm::vec3 RandomInHemiSphere(glm::vec3 const& normal) {
   auto p = UnitRandomInUnit();

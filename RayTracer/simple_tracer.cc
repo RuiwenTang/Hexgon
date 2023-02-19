@@ -42,30 +42,63 @@ class SimpleRender : public RenderLayer::Renderer {
   void InitViewPort(uint32_t width, uint32_t height) override {
     m_aspect = width / (float)height;
 
-    auto material_ground = std::make_shared<Lambertian>(glm::vec3{0.8f, 0.8f, 0.f});
-    auto material_center = std::make_shared<Lambertian>(glm::vec3{0.1f, 0.2f, 0.5f});
-    // auto material_left = std::make_shared<Metal>(glm::vec3{0.8f, 0.8f, 0.8f}, 0.3f);
-    // auto material_center = std::make_shared<Dielectric>(1.5f);
-    auto material_left = std::make_shared<Dielectric>(1.3f);
-    auto material_right = std::make_shared<Metal>(glm::vec3{0.8f, 0.6f, 0.2f}, 0.f);
-
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 0.f, -1.f}, 0.5f, material_center));
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, 0.5f, material_left));
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-1.f, 0.f, -1.f}, -0.4f, material_left));
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{1.f, 0.f, -1.f}, 0.5f, material_right));
-    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -100.5f, -1.f}, 100.f, material_ground));
+    InitRandomSence();
   }
 
-  void UpdateCameraPosition(const glm::vec3 &pos) override {
-    m_camera_pos = pos;
+  void InitRandomSence() {
+    auto ground_material = std::make_shared<Lambertian>(glm::vec3{0.5f, 0.5f, 0.5f});
+
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, -1000.f, 0.f}, 1000.f, ground_material));
+
+    for (int a = -11; a < 11; a++) {
+      for (int b = -11; b < 11; b++) {
+        auto choose_mat = Util::RandonFloat();
+
+        glm::vec3 center{a + 0.9f * Util::RandonFloat(), 0.2f, b + 0.9f * Util::RandonFloat()};
+
+        if (glm::length(center - glm::vec3{4.f, 0.2f, 0.f}) > 0.9f) {
+          std::shared_ptr<Material> sphere_material;
+
+          if (choose_mat < 0.8f) {
+            // diffuse
+            auto albedo = Util::RandomColor() * Util::RandomColor();
+
+            sphere_material = std::make_shared<Lambertian>(albedo);
+
+          } else if (choose_mat < 0.95f) {
+            // metal
+            auto albedo = Util::RandomColor();
+            auto fuzz = Util::RandonFloat() * 0.5f;
+
+            sphere_material = std::make_shared<Metal>(albedo, fuzz);
+
+          } else {
+            // glass
+            sphere_material = std::make_shared<Dielectric>(1.5f);
+          }
+          m_objects.AddObject(std::make_shared<Sphere>(center, 0.2f, sphere_material));
+        }
+      }
+    }
+
+    auto material1 = std::make_shared<Dielectric>(1.5f);
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{0.f, 1.f, 0.f}, 1.f, material1));
+
+    auto material2 = std::make_shared<Lambertian>(glm::vec3{0.4f, 0.2f, 0.1f});
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{-4.f, 1.f, 0.f}, 1.f, material2));
+
+    auto material3 = std::make_shared<Metal>(glm::vec3{0.7f, 0.6f, 0.5f}, 0.f);
+    m_objects.AddObject(std::make_shared<Sphere>(glm::vec3{4.f, 1.f, 0.f}, 1.f, material3));
   }
+
+  void UpdateCameraPosition(const glm::vec3& pos) override { m_camera_pos = pos; }
 
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
     int32_t height = image->GetHeight();
     int32_t samples_per_pixel = 50;
 
-    glm::vec3 target = glm::vec3{0.f, 0.f, -1.f};
+    glm::vec3 target = glm::vec3{0.f, 0.f, 0.f};
     glm::vec3 up = glm::vec3{0.f, 1.f, 0.f};
 
     RayCamera camera{m_camera_pos, target, up, 90.f, image->GetWidth(), image->GetHeight()};
