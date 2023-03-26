@@ -29,7 +29,7 @@
 class HEX_API Ray {
  public:
   Ray() : m_orig(), m_dir() {}
-  Ray(glm::vec3 const& origin, glm::vec3 const& direction) : m_orig(origin), m_dir(glm::normalize(direction)) {}
+  Ray(glm::vec3 const& origin, glm::vec3 const& direction) : m_orig(origin), m_dir(direction) {}
   ~Ray() = default;
 
   glm::vec3 const& Origin() const { return m_orig; }
@@ -58,4 +58,27 @@ class HEX_API RayCamera {
   glm::mat4 m_view_inverse;
   uint32_t m_width;
   uint32_t m_height;
+};
+
+class HEX_API RayCamera2 {
+ public:
+  RayCamera2(glm::vec3 const& origin, glm::vec3 const& target, glm::vec3 const& up, float fov, uint32_t width,
+             uint32_t height, float aperture, float focus_dist);
+  ~RayCamera2() = default;
+
+  Ray SendRay(float u, float v) const;
+
+ private:
+  glm::vec3 m_origin;
+  glm::vec3 m_target;
+  glm::vec3 m_up;
+  float m_fov;
+  uint32_t m_width;
+  uint32_t m_height;
+  glm::vec3 m_llc = {};
+  glm::vec3 m_u = {};
+  glm::vec3 m_v = {};
+  glm::vec3 m_horizontal = {};
+  glm::vec3 m_vertical = {};
+  float m_lens_radius = 0.f;
 };

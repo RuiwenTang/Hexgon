@@ -96,10 +96,13 @@ class SimpleRender : public RenderLayer::Renderer {
   void DoRender(hexgon::io::Image* image) override {
     int32_t width = image->GetWidth();
     int32_t height = image->GetHeight();
-    int32_t samples_per_pixel = 50;
+    int32_t samples_per_pixel = 10;
 
     glm::vec3 target = glm::vec3{0.f, 0.f, 0.f};
     glm::vec3 up = glm::vec3{0.f, 1.f, 0.f};
+
+    float dist_to_focus = glm::length(m_camera_pos - target);
+    float aperture = 2.f;
 
     RayCamera camera{m_camera_pos, target, up, 90.f, image->GetWidth(), image->GetHeight()};
 
