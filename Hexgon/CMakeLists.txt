@@ -1,7 +1,10 @@
 
 add_library(Hexgon
     include/hexgon/core/application.hpp
+    include/hexgon/core/base.hpp
+    include/hexgon/core/log.hpp
     src/core/application.cc
+    src/core/log.cc
 )
 
 target_include_directories(
@@ -12,6 +15,10 @@ target_include_directories(
 
 
 # deps
+# glfw
 find_package(glfw3 CONFIG REQUIRED)
+# log
+find_package(spdlog CONFIG REQUIRED)
 
 target_link_libraries(Hexgon PRIVATE glfw)
+target_link_libraries(Hexgon PUBLIC spdlog::spdlog)

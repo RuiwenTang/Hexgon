@@ -1,7 +1,8 @@
 #include <filesystem>
 #include <hexgon/core/application.hpp>
+#include <hexgon/core/log.hpp>
 
-namespace hexgon {
+namespace Hexgon {
 
 Application* Application::s_instance = nullptr;
 
@@ -12,9 +13,13 @@ Application::Application(const ApplicationSpecification& specification)
   if (!m_specification.workingDirectory.empty()) {
     std::filesystem::current_path(m_specification.workingDirectory);
   }
+
+  Log::Init();
+
+  HEX_CORE_INFO("Hexgon engine start.");
 }
 
-Application::~Application() {}
+Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
 
 void Application::Close() {}
 
@@ -34,4 +39,4 @@ void Application::ExecuteMainThreadQueue() {
   m_mainThreadQueue.clear();
 }
 
-}  // namespace hexgon
+}  // namespace Hexgon

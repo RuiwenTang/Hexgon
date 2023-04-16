@@ -1,15 +1,18 @@
 
-#include <hexgon/core/application.hpp>
+#include <hexgon/hexgon.hpp>
 
-using namespace hexgon;
+using namespace Hexgon;
 
 int main(int argc, const char** argv) {
-    
-    Application app{ApplicationSpecification{}};
 
+  ApplicationSpecification spec;
 
-    app.Run();
+  spec.commandLineArgs.Count = argc;
+  spec.commandLineArgs.Args = (char**)argv;
 
+  Application app{spec};
 
-    return 0;
+  app.Run();
+
+  return 0;
 }

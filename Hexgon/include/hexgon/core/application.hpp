@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace hexgon {
+namespace Hexgon {
 
 struct ApplicationCommandLineArgs {
   int Count = 0;

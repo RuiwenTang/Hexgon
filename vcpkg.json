@@ -2,6 +2,7 @@
     "name": "hexgon",
     "version": "1.0",
     "dependencies": [
-        "glfw3"
+        "glfw3",
+        "spdlog"
     ]
 }
