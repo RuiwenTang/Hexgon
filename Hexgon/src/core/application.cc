@@ -17,13 +17,19 @@ Application::Application(const ApplicationSpecification& specification)
   Log::Init();
 
   HEX_CORE_INFO("Hexgon engine start.");
+
+  m_window = Window::Create(WindowProps{m_specification.name});
 }
 
 Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
 
-void Application::Close() {}
+void Application::Close() { m_running = false; }
 
-void Application::Run() {}
+void Application::Run() {
+  while (m_running) {
+    m_window->OnUpdate();
+  }
+}
 
 void Application::SubmitToMainThread(const std::function<void()>& function) {
   std::scoped_lock<std::mutex> lock(m_mainThreadQueueMutex);

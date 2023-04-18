@@ -3,8 +3,10 @@ add_library(Hexgon
     include/hexgon/core/application.hpp
     include/hexgon/core/base.hpp
     include/hexgon/core/log.hpp
+    include/hexgon/core/window.hpp
     src/core/application.cc
     src/core/log.cc
+    src/core/window.cc
 )
 
 target_include_directories(

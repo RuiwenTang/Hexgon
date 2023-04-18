@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <hexgon/core/window.hpp>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -45,6 +46,7 @@ class Application {
   bool m_running = true;
   bool m_minimized = false;
   float m_lastFrameTime = 0.0f;
+  Scope<Window> m_window = {};
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;
@@ -53,4 +55,4 @@ class Application {
   static Application* s_instance;
 };
 
-}  // namespace hexgon
+}  // namespace Hexgon
