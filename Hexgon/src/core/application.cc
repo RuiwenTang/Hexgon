@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <hexgon/core/application.hpp>
 #include <hexgon/core/log.hpp>
+#include "hexgon/core/base.hpp"
 
 namespace Hexgon {
 
@@ -19,6 +20,8 @@ Application::Application(const ApplicationSpecification& specification)
   HEX_CORE_INFO("Hexgon engine start.");
 
   m_window = Window::Create(WindowProps{m_specification.name});
+
+  m_window->SetEventCallback(HEX_BIND_EVENT_FN(Application::OnEvent));
 }
 
 Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
@@ -29,6 +32,12 @@ void Application::Run() {
   while (m_running) {
     m_window->OnUpdate();
   }
+}
+
+void Application::OnEvent(Event &event) {
+  EventDispatcher dispatcher{event};
+
+  dispatcher.Dispatch<WindowCloseEvent>(HEX_BIND_EVENT_FN(Application::OnWindowClose));
 }
 
 void Application::SubmitToMainThread(const std::function<void()>& function) {
@@ -43,6 +52,11 @@ void Application::ExecuteMainThreadQueue() {
   for (auto& func : m_mainThreadQueue) func();
 
   m_mainThreadQueue.clear();
+}
+
+bool Application::OnWindowClose(WindowCloseEvent& e) {
+  m_running = false;
+  return true;
 }
 
 }  // namespace Hexgon

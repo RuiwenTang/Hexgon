@@ -2,6 +2,7 @@
 
 #include <hexgon/core/log.hpp>
 #include <hexgon/core/window.hpp>
+#include <hexgon/event/window_event.hpp>
 
 namespace Hexgon {
 
@@ -14,6 +15,8 @@ struct WindowData {
   uint32_t width;
   uint32_t height;
   bool vsync;
+
+  Window::EventCallbackFn callback;
 };
 
 class WindowImpl : public Window {
@@ -26,6 +29,10 @@ class WindowImpl : public Window {
 
   uint32_t GetWidth() const override { return m_data.width; }
   uint32_t GetHeight() const override { return m_data.height; }
+
+  void SetEventCallback(const EventCallbackFn& callback) override {
+    m_data.callback = callback;
+  }
 
   void SetVSync(bool enabled) override {
     if (enabled) {
@@ -72,6 +79,12 @@ void WindowImpl::Init(const WindowProps& props) {
   glfwSetWindowUserPointer(m_nativeWindow, &m_data);
 
   SetVSync(true);
+
+  glfwSetWindowCloseCallback(m_nativeWindow, [](GLFWwindow* window) {
+    WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+    WindowCloseEvent event;
+    data->callback(event);
+  });
 }
 
 void WindowImpl::Shutdown() {

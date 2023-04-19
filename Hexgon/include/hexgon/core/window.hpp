@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hexgon/core/base.hpp>
+#include <hexgon/event/event.hpp>
 #include <string>
 
 namespace Hexgon {
@@ -17,6 +18,8 @@ struct WindowProps {
 
 class Window {
  public:
+  using EventCallbackFn = std::function<void(Event&)>;
+
   virtual ~Window() = default;
 
   virtual void OnUpdate() = 0;
@@ -25,6 +28,7 @@ class Window {
   virtual uint32_t GetHeight() const = 0;
 
   // Window attributes
+  virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
   virtual void SetVSync(bool enabled) = 0;
   virtual bool IsVSync() const = 0;
 

@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <hexgon/core/window.hpp>
+#include <hexgon/event/window_event.hpp>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -38,8 +39,12 @@ class Application {
 
   void Run();
 
+  void OnEvent(Event& event);
+
  private:
   void ExecuteMainThreadQueue();
+
+  bool OnWindowClose(WindowCloseEvent& e);
 
  private:
   ApplicationSpecification m_specification;

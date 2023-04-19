@@ -1,8 +1,15 @@
 #pragma once
 
+#include <functional>
 #include <memory>
+#include <type_traits>
 
 namespace Hexgon {
+
+#define HEX_BIND_EVENT_FN(fn)                               \
+  [this](auto&&... args) -> decltype(auto) {                \
+    return this->fn(std::forward<decltype(args)>(args)...); \
+  }
 
 template <typename T>
 using Scope = std::unique_ptr<T>;

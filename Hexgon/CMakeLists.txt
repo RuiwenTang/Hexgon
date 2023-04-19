@@ -4,6 +4,9 @@ add_library(Hexgon
     include/hexgon/core/base.hpp
     include/hexgon/core/log.hpp
     include/hexgon/core/window.hpp
+    include/hexgon/event/event.hpp
+    include/hexgon/event/key_event.hpp
+    include/hexgon/event/window_event.hpp
     src/core/application.cc
     src/core/log.cc
     src/core/window.cc
