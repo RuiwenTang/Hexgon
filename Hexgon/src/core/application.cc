@@ -1,7 +1,6 @@
 #include <filesystem>
 #include <hexgon/core/application.hpp>
 #include <hexgon/core/log.hpp>
-#include "hexgon/core/base.hpp"
 
 namespace Hexgon {
 
@@ -34,10 +33,16 @@ void Application::Run() {
   }
 }
 
-void Application::OnEvent(Event &event) {
+void Application::OnEvent(Event& event) {
+  HEX_CORE_INFO("receive event: {}", event.ToString());
+
   EventDispatcher dispatcher{event};
 
-  dispatcher.Dispatch<WindowCloseEvent>(HEX_BIND_EVENT_FN(Application::OnWindowClose));
+  dispatcher.Dispatch<WindowCloseEvent, EventType::WindowClose>(
+      HEX_BIND_EVENT_FN(Application::OnWindowClose));
+
+  dispatcher.Dispatch<WindowResizeEvent, EventType::WindowResize>(
+      HEX_BIND_EVENT_FN(Application::OnWindowResize));
 }
 
 void Application::SubmitToMainThread(const std::function<void()>& function) {
@@ -57,6 +62,17 @@ void Application::ExecuteMainThreadQueue() {
 bool Application::OnWindowClose(WindowCloseEvent& e) {
   m_running = false;
   return true;
+}
+
+bool Application::OnWindowResize(WindowResizeEvent& e) {
+  if (e.GetWidth() == 0 || e.GetHeight() == 0) {
+    m_minimized = true;
+    return false;
+  }
+
+  m_minimized = false;
+
+  return false;
 }
 
 }  // namespace Hexgon

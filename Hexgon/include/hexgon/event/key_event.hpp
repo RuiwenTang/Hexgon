@@ -5,7 +5,7 @@
 
 namespace Hexgon {
 
-using KeyCode = uint16_t;
+using KeyCode = int32_t;
 
 enum : KeyCode {
   // From glfw3.h
@@ -158,6 +158,7 @@ class KeyEvent : public Event {
 };
 
 class KeyPressedEvent : public KeyEvent {
+ public:
   KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
       : KeyEvent(keycode), m_isRepeat(isRepeat) {}
 

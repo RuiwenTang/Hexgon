@@ -45,6 +45,7 @@ class Application {
   void ExecuteMainThreadQueue();
 
   bool OnWindowClose(WindowCloseEvent& e);
+  bool OnWindowResize(WindowResizeEvent& e);
 
  private:
   ApplicationSpecification m_specification;

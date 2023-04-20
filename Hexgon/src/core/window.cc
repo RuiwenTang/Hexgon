@@ -2,6 +2,7 @@
 
 #include <hexgon/core/log.hpp>
 #include <hexgon/core/window.hpp>
+#include <hexgon/event/key_event.hpp>
 #include <hexgon/event/window_event.hpp>
 
 namespace Hexgon {
@@ -85,6 +86,44 @@ void WindowImpl::Init(const WindowProps& props) {
     WindowCloseEvent event;
     data->callback(event);
   });
+
+  glfwSetWindowSizeCallback(
+      m_nativeWindow, [](GLFWwindow* windiw, int32_t width, int32_t height) {
+        auto data = (WindowData*)glfwGetWindowUserPointer(windiw);
+
+        data->width = width;
+        data->height = height;
+
+        WindowResizeEvent event{static_cast<uint32_t>(width),
+                                static_cast<uint32_t>(height)};
+
+        data->callback(event);
+      });
+
+  glfwSetKeyCallback(
+      m_nativeWindow, [](GLFWwindow* window, int32_t key, int32_t scancode,
+                         int32_t action, int32_t mods) {
+        auto data = (WindowData*)glfwGetWindowUserPointer(window);
+
+        switch (action) {
+          case GLFW_PRESS: {
+            KeyPressedEvent event{key, 0};
+            data->callback(event);
+          } break;
+          case GLFW_RELEASE: {
+            KeyReleasedEvent event{key};
+            data->callback(event);
+          } break;
+
+          case GLFW_REPEAT: {
+            KeyPressedEvent event(key, true);
+            data->callback(event);
+          } break;
+
+          default:
+            break;
+        }
+      });
 }
 
 void WindowImpl::Shutdown() {
