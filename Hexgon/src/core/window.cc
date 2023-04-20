@@ -79,8 +79,6 @@ void WindowImpl::Init(const WindowProps& props) {
 
   glfwSetWindowUserPointer(m_nativeWindow, &m_data);
 
-  SetVSync(true);
-
   glfwSetWindowCloseCallback(m_nativeWindow, [](GLFWwindow* window) {
     WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
     WindowCloseEvent event;

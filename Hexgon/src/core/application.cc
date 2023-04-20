@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <hexgon/core/application.hpp>
 #include <hexgon/core/log.hpp>
+#include <hexgon/core/platform.hpp>
 
 namespace Hexgon {
 
@@ -21,6 +22,10 @@ Application::Application(const ApplicationSpecification& specification)
   m_window = Window::Create(WindowProps{m_specification.name});
 
   m_window->SetEventCallback(HEX_BIND_EVENT_FN(Application::OnEvent));
+
+#ifdef HEX_PLATFORM_MACOS
+  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kMetal);
+#endif
 }
 
 Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
@@ -28,9 +33,21 @@ Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
 void Application::Close() { m_running = false; }
 
 void Application::Run() {
+  if (!m_renderSystem) {
+    HEX_CORE_ERROR("Render system not pick!");
+    return;
+  }
+
+  if (!m_renderSystem->Init()) {
+    HEX_CORE_ERROR("Render system init failed!");
+    return;
+  }
+
   while (m_running) {
     m_window->OnUpdate();
   }
+
+  m_renderSystem->Shutdown();
 }
 
 void Application::OnEvent(Event& event) {

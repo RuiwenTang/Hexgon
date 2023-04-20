@@ -3,6 +3,7 @@
 #include <functional>
 #include <hexgon/core/window.hpp>
 #include <hexgon/event/window_event.hpp>
+#include <hexgon/render/render_system.hpp>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -53,6 +54,7 @@ class Application {
   bool m_minimized = false;
   float m_lastFrameTime = 0.0f;
   Scope<Window> m_window = {};
+  Scope<RenderSystem> m_renderSystem = {};
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;
