@@ -4,6 +4,7 @@
 #include <hexgon/core/window.hpp>
 #include <hexgon/event/window_event.hpp>
 #include <hexgon/render/render_system.hpp>
+#include <hexgon/render/swapchain.hpp>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -55,6 +56,7 @@ class Application {
   float m_lastFrameTime = 0.0f;
   Scope<Window> m_window = {};
   Scope<RenderSystem> m_renderSystem = {};
+  Scope<Swapchain> m_swapchain = {};
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;

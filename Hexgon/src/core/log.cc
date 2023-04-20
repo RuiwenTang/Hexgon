@@ -1,7 +1,7 @@
-#include <hexgon/core/log.hpp>
-
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include <hexgon/core/log.hpp>
 
 namespace Hexgon {
 
@@ -18,8 +18,8 @@ void Log::Init() {
   logSinks[0]->set_pattern("%^[%T] %n: %v%$");
   logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
-  s_coreLogger =
-      std::make_shared<spdlog::logger>("HEXGON", begin(logSinks), end(logSinks));
+  s_coreLogger = std::make_shared<spdlog::logger>("HEXGON", begin(logSinks),
+                                                  end(logSinks));
   spdlog::register_logger(s_coreLogger);
   s_coreLogger->set_level(spdlog::level::trace);
   s_coreLogger->flush_on(spdlog::level::trace);
