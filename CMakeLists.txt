@@ -9,5 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 # Engine
 add_subdirectory(Hexgon)
+
 # Sandbox
 add_subdirectory(Sandbox)

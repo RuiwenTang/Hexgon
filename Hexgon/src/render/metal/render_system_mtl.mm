@@ -10,6 +10,7 @@
 #include <GLFW/glfw3native.h>
 #include <MetalKit/MetalKit.h>
 
+#include "src/render/metal/renderpass_mtl.h"
 #include "src/render/metal/swapchain_mtl.h"
 
 namespace Hexgon {
@@ -35,6 +36,11 @@ class RenderSystemMTL : public RenderSystem {
     [native_window setContentView:view];
 
     return CreateScope<SwapchainMTL>(desc, view);
+  }
+
+  Scope<RenderPass> CreateRenderPass(
+      const RenderPassDescriptor &desc) override {
+    return CreateScope<RenderPassMTL>(desc);
   }
 
  private:

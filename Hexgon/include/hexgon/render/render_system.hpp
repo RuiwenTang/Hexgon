@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hexgon/core/base.hpp>
+#include <hexgon/render/renderpass.hpp>
 #include <hexgon/render/swapchain.hpp>
 
 namespace Hexgon {
@@ -26,6 +27,9 @@ class RenderSystem {
 
   virtual Scope<Swapchain> CreateSwapchain(Window* window,
                                            const SwapchainDescriptor& desc) = 0;
+
+  virtual Scope<RenderPass> CreateRenderPass(
+      const RenderPassDescriptor& desc) = 0;
 };
 
 }  // namespace Hexgon

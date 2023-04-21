@@ -3,6 +3,9 @@
 #include <hexgon/core/log.hpp>
 #include <hexgon/core/platform.hpp>
 
+#include "hexgon/render/format.hpp"
+#include "hexgon/render/renderpass.hpp"
+
 namespace Hexgon {
 
 Application* Application::s_instance = nullptr;
@@ -55,6 +58,11 @@ void Application::Run() {
     return;
   }
 
+  if (!InitScreenRenderPass()) {
+    HEX_CORE_ERROR("Screen RenderPass init failed!");
+    return;
+  }
+
   while (m_running) {
     m_window->OnUpdate();
   }
@@ -79,6 +87,32 @@ void Application::SubmitToMainThread(const std::function<void()>& function) {
   std::scoped_lock<std::mutex> lock(m_mainThreadQueueMutex);
 
   m_mainThreadQueue.emplace_back(function);
+}
+
+bool Application::InitScreenRenderPass() {
+  auto const& swapchain_desc = m_swapchain->GetDescriptor();
+
+  RenderPassDescriptor desc{};
+
+  // TODO should query swapchain formats
+  desc.color_attachments.emplace_back(AttachmentDescriptor{
+      Format::RGBA8UNorm,
+      AttachmentLoadOp::kClear,
+      AttachmentStoreOp::kStore,
+  });
+
+  // depth
+  desc.depth_attachment = AttachmentDescriptor{
+      Format::D24UNormS8UInt,
+      AttachmentLoadOp::kClear,
+      AttachmentStoreOp::kNotCare,
+  };
+
+  // for now not use stencil
+
+  m_screen_renderpass = m_renderSystem->CreateRenderPass(desc);
+
+  return m_screen_renderpass != nullptr;
 }
 
 void Application::ExecuteMainThreadQueue() {

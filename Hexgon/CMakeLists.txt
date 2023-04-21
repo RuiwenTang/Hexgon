@@ -8,7 +8,9 @@ add_library(Hexgon
     include/hexgon/event/event.hpp
     include/hexgon/event/key_event.hpp
     include/hexgon/event/window_event.hpp
+    include/hexgon/render/format.hpp
     include/hexgon/render/render_system.hpp
+    include/hexgon/render/renderpass.hpp
     include/hexgon/render/swapchain.hpp
     src/core/application.cc
     src/core/log.cc
@@ -20,8 +22,12 @@ if(APPLE)
     target_sources(Hexgon PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/render_system_mtl.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/render_system_mtl.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/types_mtl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/types_mtl.mm
     )
 
     target_link_libraries(Hexgon PRIVATE "-framework Metal")
@@ -52,3 +58,8 @@ find_package(glm CONFIG REQUIRED)
 target_link_libraries(Hexgon PRIVATE glfw)
 target_link_libraries(Hexgon PUBLIC spdlog::spdlog)
 target_link_libraries(Hexgon PUBLIC glm::glm)
+
+# source group for Xcode and Visual Studio
+get_target_property(HEXGON_SRC Hexgon SOURCES)
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${HEXGON_SRC})
