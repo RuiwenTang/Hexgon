@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <hexgon/core/base.hpp>
+#include <hexgon/render/render_target.hpp>
 
 namespace Hexgon {
 
@@ -22,6 +24,8 @@ class Swapchain {
   virtual void Shutdown() = 0;
 
   virtual glm::ivec2 GetResolution() = 0;
+
+  virtual Scope<RenderTarget> AcquireNextFrame() = 0;
 
   virtual void Present() = 0;
 

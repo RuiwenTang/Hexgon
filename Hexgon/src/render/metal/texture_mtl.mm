@@ -11,7 +11,7 @@ static void FillDesc(MTLTextureDescriptor* mtl_desc,
 TextureMTL::TextureMTL(const TextureDescriptor& desc, id<MTLTexture> texture)
     : Texture(desc), m_native_texture(texture) {}
 
-TextureMTL::~TextureMTL() { [m_native_texture release]; }
+TextureMTL::~TextureMTL() {}
 
 Ref<TextureMTL> TextureMTL::CreateTexture(const TextureDescriptor& desc,
                                           id<MTLDevice> gpu) {

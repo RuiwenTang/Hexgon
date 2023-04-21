@@ -1,7 +1,6 @@
 #include "src/render/metal/render_system_mtl.hpp"
 
 #include <hexgon/core/window.hpp>
-#include "hexgon/core/base.hpp"
 
 #include <AppKit/AppKit.h>
 #include <GLFW/glfw3.h>
@@ -27,16 +26,39 @@ class RenderSystemMTL : public RenderSystem {
   void Shutdown() override;
 
   Scope<Swapchain> CreateSwapchain(Window *window,
-                                   const SwapchainDescriptor &desc) override {
+                                   const SwapchainDescriptor &desc,
+                                   RenderPass *renderPass) override {
     NSWindow *native_window =
         glfwGetCocoaWindow((GLFWwindow *)window->GetNativeWindow());
 
     MTKView *view = [[MTKView alloc] initWithFrame:native_window.frame
                                             device:m_device];
 
-    [native_window setContentView:view];
+    auto render_pass_mtl = dynamic_cast<RenderPassMTL *>(renderPass);
 
-    return CreateScope<SwapchainMTL>(desc, view);
+    auto const &color_attachments = render_pass_mtl->GetColorAttachment();
+
+    if (color_attachments.empty()) {
+      return Scope<Swapchain>();
+    }
+
+    view.colorPixelFormat = color_attachments[0].format;
+
+    auto const &depth_attachment = render_pass_mtl->GetGetDepthAttachment();
+    auto const &stencil_attachment = render_pass_mtl->GetStencilAttachment();
+
+    if (depth_attachment) {
+      view.depthStencilPixelFormat = depth_attachment->format;
+    }
+
+    if (stencil_attachment) {
+      view.depthStencilPixelFormat = stencil_attachment->format;
+    }
+
+    [native_window setContentView:view];
+    [native_window.contentViewController setView:view];
+
+    return CreateScope<SwapchainMTL>(desc, render_pass_mtl, view);
   }
 
   Scope<RenderPass> CreateRenderPass(

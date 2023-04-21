@@ -27,7 +27,8 @@ class RenderSystem {
   virtual void Shutdown() = 0;
 
   virtual Scope<Swapchain> CreateSwapchain(Window* window,
-                                           const SwapchainDescriptor& desc) = 0;
+                                           const SwapchainDescriptor& desc,
+                                           RenderPass* renderPass) = 0;
 
   virtual Scope<RenderPass> CreateRenderPass(
       const RenderPassDescriptor& desc) = 0;

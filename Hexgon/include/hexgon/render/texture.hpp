@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <hexgon/render/format.hpp>
 #include <hexgon/render/types.hpp>

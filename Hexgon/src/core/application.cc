@@ -29,8 +29,6 @@ Application::Application(const ApplicationSpecification& specification)
 #ifdef HEX_PLATFORM_MACOS
   m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kMetal);
 #endif
-
-  m_swapchain = m_renderSystem->CreateSwapchain(m_window.get(), {});
 }
 
 Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
@@ -48,6 +46,14 @@ void Application::Run() {
     return;
   }
 
+  if (!InitScreenRenderPass()) {
+    HEX_CORE_ERROR("Screen RenderPass init failed!");
+    return;
+  }
+
+  m_swapchain = m_renderSystem->CreateSwapchain(m_window.get(), {},
+                                                m_screen_renderpass.get());
+
   if (!m_swapchain) {
     HEX_CORE_ERROR("Swapchain created failed!");
     return;
@@ -58,13 +64,12 @@ void Application::Run() {
     return;
   }
 
-  if (!InitScreenRenderPass()) {
-    HEX_CORE_ERROR("Screen RenderPass init failed!");
-    return;
-  }
-
   while (m_running) {
+    auto render_target = m_swapchain->AcquireNextFrame();
+
     m_window->OnUpdate();
+
+    m_swapchain->Present();
   }
 
   m_swapchain->Shutdown();

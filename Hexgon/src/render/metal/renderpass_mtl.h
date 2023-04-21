@@ -21,6 +21,18 @@ class RenderPassMTL : public RenderPass {
 
   ~RenderPassMTL() override = default;
 
+  const std::vector<MTLAttachmentDesc>& GetColorAttachment() const {
+    return mtl_color_attachments;
+  }
+
+  const std::optional<MTLAttachmentDesc>& GetGetDepthAttachment() const {
+    return mtl_depth_attachment;
+  }
+
+  const std::optional<MTLAttachmentDesc>& GetStencilAttachment() const {
+    return mtl_stencil_attachment;
+  }
+
  private:
   void InitAttachments();
 
@@ -28,6 +40,7 @@ class RenderPassMTL : public RenderPass {
   std::vector<MTLAttachmentDesc> mtl_color_attachments = {};
   std::optional<MTLAttachmentDesc> mtl_depth_attachment = {};
   std::optional<MTLAttachmentDesc> mtl_stencil_attachment = {};
+  MTLRenderPassDescriptor* m_mtl_desc = nil;
 };
 
 }  // namespace Hexgon

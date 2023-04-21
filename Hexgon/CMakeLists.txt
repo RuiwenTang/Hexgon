@@ -10,6 +10,7 @@ add_library(Hexgon
     include/hexgon/event/window_event.hpp
     include/hexgon/render/format.hpp
     include/hexgon/render/render_system.hpp
+    include/hexgon/render/render_target.hpp
     include/hexgon/render/renderpass.hpp
     include/hexgon/render/swapchain.hpp
     include/hexgon/render/texture.hpp
