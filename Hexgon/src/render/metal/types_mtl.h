@@ -4,8 +4,8 @@
 #include <MetalKit/MetalKit.h>
 
 #include <hexgon/render/format.hpp>
-
-#include "hexgon/render/renderpass.hpp"
+#include <hexgon/render/renderpass.hpp>
+#include <hexgon/render/texture.hpp>
 
 namespace Hexgon {
 namespace MTL {
@@ -26,6 +26,7 @@ struct Convertor {
 CONVERTOR(Format, MTLPixelFormat);
 CONVERTOR(AttachmentLoadOp, MTLLoadAction);
 CONVERTOR(AttachmentStoreOp, MTLStoreAction);
+CONVERTOR(TextureType, MTLTextureType);
 
 }  // namespace MTL
 }  // namespace Hexgon

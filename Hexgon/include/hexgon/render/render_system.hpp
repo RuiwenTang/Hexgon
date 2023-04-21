@@ -3,6 +3,7 @@
 #include <hexgon/core/base.hpp>
 #include <hexgon/render/renderpass.hpp>
 #include <hexgon/render/swapchain.hpp>
+#include <hexgon/render/texture.hpp>
 
 namespace Hexgon {
 
@@ -30,6 +31,8 @@ class RenderSystem {
 
   virtual Scope<RenderPass> CreateRenderPass(
       const RenderPassDescriptor& desc) = 0;
+
+  virtual Ref<Texture> CreateTexture(const TextureDescriptor& desc) = 0;
 };
 
 }  // namespace Hexgon

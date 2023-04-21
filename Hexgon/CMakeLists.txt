@@ -12,6 +12,8 @@ add_library(Hexgon
     include/hexgon/render/render_system.hpp
     include/hexgon/render/renderpass.hpp
     include/hexgon/render/swapchain.hpp
+    include/hexgon/render/texture.hpp
+    include/hexgon/render/types.hpp
     src/core/application.cc
     src/core/log.cc
     src/core/window.cc
@@ -26,6 +28,8 @@ if(APPLE)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/texture_mtl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/texture_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/types_mtl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/types_mtl.mm
     )

@@ -12,6 +12,7 @@
 
 #include "src/render/metal/renderpass_mtl.h"
 #include "src/render/metal/swapchain_mtl.h"
+#include "src/render/metal/texture_mtl.h"
 
 namespace Hexgon {
 
@@ -41,6 +42,10 @@ class RenderSystemMTL : public RenderSystem {
   Scope<RenderPass> CreateRenderPass(
       const RenderPassDescriptor &desc) override {
     return CreateScope<RenderPassMTL>(desc);
+  }
+
+  Ref<Texture> CreateTexture(const TextureDescriptor &desc) override {
+    return nullptr;
   }
 
  private:
