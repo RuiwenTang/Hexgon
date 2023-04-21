@@ -28,6 +28,8 @@ Application::Application(const ApplicationSpecification& specification)
 
 #ifdef HEX_PLATFORM_MACOS
   m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kMetal);
+#elif defined(HEX_PLATFORM_WINDOWS)
+  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kVulkan);
 #endif
 }
 

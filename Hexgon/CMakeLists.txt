@@ -18,8 +18,7 @@ add_library(Hexgon
     src/core/application.cc
     src/core/log.cc
     src/core/window.cc
-    src/render/render_system.cc
-)
+    src/render/render_system.cc)
 
 if(APPLE)
     target_sources(Hexgon PRIVATE
@@ -37,6 +36,19 @@ if(APPLE)
 
     target_link_libraries(Hexgon PRIVATE "-framework Metal")
     target_link_libraries(Hexgon PRIVATE "-framework MetalKit")
+elseif(WIN32)
+
+    # link vulkan
+    find_package(Vulkan REQUIRED)
+
+    target_sources(Hexgon PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/render_system_vk.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/render_system_vk.hpp
+    )
+
+
+    target_link_libraries(Hexgon PRIVATE Vulkan::Vulkan)
+
 endif()
 
 target_include_directories(
