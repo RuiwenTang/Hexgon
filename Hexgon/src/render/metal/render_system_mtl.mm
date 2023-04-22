@@ -63,7 +63,28 @@ class RenderSystemMTL : public RenderSystem {
 
   Scope<RenderPass> CreateRenderPass(
       const RenderPassDescriptor &desc) override {
-    return CreateScope<RenderPassMTL>(desc);
+    RenderPassDescriptor copy = desc;
+
+    if (copy.depth_attachment || copy.stencil_attachment) {
+      Format ds_format = copy.depth_attachment.has_value()
+                             ? copy.depth_attachment->format
+                             : copy.stencil_attachment->format;
+
+      if (ds_format == Format::D24UNormS8UInt &&
+          !m_device.depth24Stencil8PixelFormatSupported) {
+        ds_format = Format::D32FloatS8X24UInt;
+      }
+
+      if (copy.depth_attachment) {
+        copy.depth_attachment->format = ds_format;
+      }
+
+      if (copy.stencil_attachment) {
+        copy.stencil_attachment->format = ds_format;
+      }
+    }
+
+    return CreateScope<RenderPassMTL>(copy);
   }
 
   Ref<Texture> CreateTexture(const TextureDescriptor &desc) override {

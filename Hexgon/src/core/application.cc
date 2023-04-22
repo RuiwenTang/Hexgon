@@ -103,7 +103,7 @@ bool Application::InitScreenRenderPass() {
 
   // TODO should query swapchain formats
   desc.color_attachments.emplace_back(AttachmentDescriptor{
-      Format::RGBA8UNorm,
+      Format::BGRA8UNorm,
       AttachmentLoadOp::kClear,
       AttachmentStoreOp::kStore,
   });
