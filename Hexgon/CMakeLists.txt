@@ -44,6 +44,8 @@ elseif(WIN32)
     target_sources(Hexgon PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/render_system_vk.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/render_system_vk.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/swapchain_vk.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/swapchain_vk.hpp
     )
 
 
