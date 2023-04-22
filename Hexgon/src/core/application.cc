@@ -48,11 +48,6 @@ void Application::Run() {
     return;
   }
 
-  if (!InitScreenRenderPass()) {
-    HEX_CORE_ERROR("Screen RenderPass init failed!");
-    return;
-  }
-
   m_swapchain = m_renderSystem->CreateSwapchain(m_window.get(), {},
                                                 m_screen_renderpass.get());
 
@@ -63,6 +58,11 @@ void Application::Run() {
 
   if (!m_swapchain->Init()) {
     HEX_CORE_ERROR("Swapchain init failed!");
+    return;
+  }
+
+  if (!InitScreenRenderPass()) {
+    HEX_CORE_ERROR("Screen RenderPass init failed!");
     return;
   }
 

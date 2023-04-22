@@ -7,6 +7,8 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
+#include <vector>
+
 namespace Hexgon {
 
 Scope<RenderSystem> LoadVulkanRender();
@@ -30,12 +32,12 @@ class RenderSystemVK : public RenderSystem {
 
  private:
   bool InitVkInstance();
-  bool PickDevice();
+  bool QueryDevices();
 
  private:
   VkInstance m_vk_ins = VK_NULL_HANDLE;
   VkDebugUtilsMessengerEXT m_vk_debug_msg = VK_NULL_HANDLE;
-  VkPhysicalDevice m_phy_dev = VK_NULL_HANDLE;
+  std::vector<VkPhysicalDevice> m_vk_gpus = {};
 };
 
 }  // namespace Hexgon

@@ -93,7 +93,7 @@ bool RenderSystemVK::Init() {
     return false;
   }
 
-  if (!PickDevice()) {
+  if (!QueryDevices()) {
     return false;
   }
 
@@ -173,7 +173,7 @@ bool RenderSystemVK::InitVkInstance() {
   return true;
 }
 
-bool RenderSystemVK::PickDevice() {
+bool RenderSystemVK::QueryDevices() {
   uint32_t device_count = 0;
   vkEnumeratePhysicalDevices(m_vk_ins, &device_count, nullptr);
 
@@ -182,25 +182,17 @@ bool RenderSystemVK::PickDevice() {
     return false;
   }
 
-  std::vector<VkPhysicalDevice> available_devices(device_count);
+  m_vk_gpus.resize(device_count);
 
-  vkEnumeratePhysicalDevices(m_vk_ins, &device_count, available_devices.data());
+  vkEnumeratePhysicalDevices(m_vk_ins, &device_count, m_vk_gpus.data());
 
-  int32_t graphic_queue_family = -1;
-  int32_t present_queue_family = -1;
+  HEX_CORE_INFO("all gpus:");
+  for (auto gpu : m_vk_gpus) {
+    VkPhysicalDeviceProperties props;
+    vkGetPhysicalDeviceProperties(gpu, &props);
 
-  if (available_devices.size() == 1) {
-    m_phy_dev = available_devices[0];
-  } else {
-    for (size_t i = 0; i < available_devices.size(); i++) {
-      
-    }
+    HEX_CORE_INFO("\t Find GPU : {}", props.deviceName);
   }
-
-  VkPhysicalDeviceProperties props;
-  vkGetPhysicalDeviceProperties(m_phy_dev, &props);
-
-  HEX_CORE_INFO("Pick GPU: {}", props.deviceName);
 
   return true;
 }
