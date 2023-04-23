@@ -11,7 +11,7 @@ class RenderPassMTL;
 
 class SwapchainMTL : public Swapchain {
  public:
-  SwapchainMTL(const SwapchainDescriptor& desc, RenderPassMTL* renderPass,
+  SwapchainMTL(const SwapchainDescriptor& desc, Scope<RenderPassMTL> renderPass,
                MTKView* view);
   ~SwapchainMTL() override;
 
@@ -26,7 +26,7 @@ class SwapchainMTL : public Swapchain {
   void Present() override;
 
  private:
-  RenderPassMTL* m_render_pass;
+  Scope<RenderPassMTL> m_render_pass;
   MTKView* m_view;
   id<CAMetalDrawable> m_curr_drawable = nil;
 };

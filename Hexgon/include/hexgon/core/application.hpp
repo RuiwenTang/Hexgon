@@ -59,7 +59,6 @@ class Application {
   Scope<Window> m_window = {};
   Scope<RenderSystem> m_renderSystem = {};
   Scope<Swapchain> m_swapchain = {};
-  Scope<RenderPass> m_screen_renderpass = {};
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;

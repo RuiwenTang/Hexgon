@@ -6,8 +6,8 @@
 namespace Hexgon {
 
 SwapchainMTL::SwapchainMTL(const SwapchainDescriptor& desc,
-                           RenderPassMTL* renderPass, MTKView* view)
-    : Swapchain(desc), m_render_pass(renderPass), m_view(view) {}
+                           Scope<RenderPassMTL> renderPass, MTKView* view)
+    : Swapchain(desc), m_render_pass(std::move(renderPass)), m_view(view) {}
 
 SwapchainMTL::~SwapchainMTL() {}
 

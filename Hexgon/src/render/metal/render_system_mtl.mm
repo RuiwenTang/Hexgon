@@ -26,15 +26,15 @@ class RenderSystemMTL : public RenderSystem {
   void Shutdown() override;
 
   Scope<Swapchain> CreateSwapchain(Window *window,
-                                   const SwapchainDescriptor &desc,
-                                   RenderPass *renderPass) override {
+                                   const SwapchainDescriptor &desc) override {
     NSWindow *native_window =
         glfwGetCocoaWindow((GLFWwindow *)window->GetNativeWindow());
 
     MTKView *view = [[MTKView alloc] initWithFrame:native_window.frame
                                             device:m_device];
 
-    auto render_pass_mtl = dynamic_cast<RenderPassMTL *>(renderPass);
+    auto render_pass_mtl =
+        RenderPassMTL::CreateScreenRenderPass(m_device, desc);
 
     auto const &color_attachments = render_pass_mtl->GetColorAttachment();
 
@@ -58,7 +58,7 @@ class RenderSystemMTL : public RenderSystem {
     [native_window setContentView:view];
     [native_window.contentViewController setView:view];
 
-    return CreateScope<SwapchainMTL>(desc, render_pass_mtl, view);
+    return CreateScope<SwapchainMTL>(desc, std::move(render_pass_mtl), view);
   }
 
   Scope<RenderPass> CreateRenderPass(

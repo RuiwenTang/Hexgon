@@ -4,6 +4,7 @@
 #include <MetalKit/MetalKit.h>
 
 #include <hexgon/render/renderpass.hpp>
+#include <hexgon/render/swapchain.hpp>
 
 namespace Hexgon {
 
@@ -32,6 +33,9 @@ class RenderPassMTL : public RenderPass {
   const std::optional<MTLAttachmentDesc>& GetStencilAttachment() const {
     return mtl_stencil_attachment;
   }
+
+  static Scope<RenderPassMTL> CreateScreenRenderPass(
+      id<MTLDevice> gpu, const SwapchainDescriptor& desc);
 
  private:
   void InitAttachments();

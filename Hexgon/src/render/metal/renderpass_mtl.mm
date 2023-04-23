@@ -34,4 +34,40 @@ void RenderPassMTL::InitAttachments() {
   }
 }
 
+Scope<RenderPassMTL> RenderPassMTL::CreateScreenRenderPass(
+    id<MTLDevice> gpu, const SwapchainDescriptor& desc) {
+  RenderPassDescriptor rp_desc{};
+
+  // TODO support MSAA resolve
+  rp_desc.color_attachments.emplace_back(AttachmentDescriptor{
+      Format::BGRA8UNorm,
+      AttachmentLoadOp::kClear,
+      AttachmentStoreOp::kStore,
+  });
+
+  Format depth_format = Format::D24UNormS8UInt;
+
+  if (![gpu isDepth24Stencil8PixelFormatSupported]) {
+    depth_format = Format::D32FloatS8X24UInt;
+  }
+
+  if (desc.depth != 0) {
+    rp_desc.depth_attachment = AttachmentDescriptor{
+        depth_format,
+        AttachmentLoadOp::kClear,
+        AttachmentStoreOp::kNotCare,
+    };
+  }
+
+  if (desc.stencil != 0) {
+    rp_desc.stencil_attachment = AttachmentDescriptor{
+        depth_format,
+        AttachmentLoadOp::kClear,
+        AttachmentStoreOp::kNotCare,
+    };
+  }
+
+  return CreateScope<RenderPassMTL>(rp_desc);
+}
+
 }
