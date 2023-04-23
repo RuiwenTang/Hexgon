@@ -91,6 +91,11 @@ class RenderSystemMTL : public RenderSystem {
     return nullptr;
   }
 
+  Ref<CommandBuffer> CreateCommandBuffer(
+      const CommandBufferDescriptor &desc) override {
+    return nullptr;
+  }
+
  private:
   id<MTLDevice> m_device = nil;
 };

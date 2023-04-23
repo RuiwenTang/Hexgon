@@ -8,6 +8,7 @@ add_library(Hexgon
     include/hexgon/event/event.hpp
     include/hexgon/event/key_event.hpp
     include/hexgon/event/window_event.hpp
+    include/hexgon/render/command_buffer.hpp
     include/hexgon/render/format.hpp
     include/hexgon/render/render_system.hpp
     include/hexgon/render/render_target.hpp
@@ -37,7 +38,6 @@ if(APPLE)
     target_link_libraries(Hexgon PRIVATE "-framework Metal")
     target_link_libraries(Hexgon PRIVATE "-framework MetalKit")
 elseif(WIN32)
-
     # link vulkan
     find_package(Vulkan REQUIRED)
 
@@ -48,9 +48,7 @@ elseif(WIN32)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/vulkan/swapchain_vk.hpp
     )
 
-
     target_link_libraries(Hexgon PRIVATE Vulkan::Vulkan)
-
 endif()
 
 target_include_directories(
