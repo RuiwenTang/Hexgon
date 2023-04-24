@@ -24,6 +24,8 @@ struct RenderTargetDescriptor {
 
   std::vector<AttachmentReference> attachments = {};
 
+  AttachmentReference depthStencil = {};
+
   glm::ivec2 resolution = {};
 };
 
@@ -34,6 +36,10 @@ class RenderTarget {
 
   const std::vector<AttachmentReference>& GetAttachments() const {
     return m_desc.attachments;
+  }
+
+  const AttachmentReference& GetDepthStencilAttachment() const {
+    return m_desc.depthStencil;
   }
 
   RenderPass* GetRenderPass() const { return m_desc.renderPass; }

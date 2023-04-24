@@ -48,9 +48,9 @@ Scope<RenderTarget> SwapchainMTL::AcquireNextFrame() {
     depth_desc.size = color_desc.size;
     depth_desc.bindFlags = BindFlags::kDepthStencilAttachment;
 
-    desc.attachments.emplace_back(AttachmentReference{
+    desc.depthStencil = AttachmentReference{
         0, CreateRef<TextureMTL>(depth_desc, depth_stencil_texture),
-        BindFlags::kDepthStencilAttachment});
+        BindFlags::kDepthStencilAttachment};
   }
 
   m_curr_drawable = drawable;

@@ -23,6 +23,8 @@ add_library(Hexgon
 
 if(APPLE)
     target_sources(Hexgon PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/command_buffer_mtl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/command_buffer_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/render_system_mtl.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/render_system_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.h
