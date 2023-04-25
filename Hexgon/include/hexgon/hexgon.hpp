@@ -11,6 +11,9 @@
 #include <hexgon/event/key_event.hpp>
 #include <hexgon/event/window_event.hpp>
 // render
+#include <hexgon/render/command_buffer.hpp>
 #include <hexgon/render/render_system.hpp>
+#include <hexgon/render/render_target.hpp>
 #include <hexgon/render/renderpass.hpp>
 #include <hexgon/render/swapchain.hpp>
+#include <hexgon/render/texture.hpp>

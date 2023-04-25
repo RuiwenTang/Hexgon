@@ -60,10 +60,38 @@ void Application::Run() {
     return;
   }
 
+  m_cmd = m_renderSystem->CreateCommandBuffer({});
+
+  if (!m_cmd) {
+    HEX_CORE_ERROR("Failed create main screen command buffer!");
+    return;
+  }
+
   while (m_running) {
     auto render_target = m_swapchain->AcquireNextFrame();
 
+    m_cmd->Begin();
+
+    // clear value
+    std::vector<AttachmentClear> clear_values{2};
+    clear_values[0].flag = ClearFlags::kColor;
+    clear_values[0].value = ClearValue{1.f, 1.f, 0.f, 1.f};
+    clear_values[1].flag = ClearFlags::kDepthStencil;
+    clear_values[1].value = ClearValue(0.f, 0);
+
+    if (!m_cmd->BeginRenderPass(m_swapchain->GetRenderPass(),
+                                render_target.get(), clear_values)) {
+      HEX_CORE_ERROR("Failed begin screen render pass!");
+      m_running = false;
+    }
+
     m_window->OnUpdate();
+
+    m_cmd->EndRenderPass();
+
+    m_cmd->End();
+
+    m_renderSystem->Submit(m_cmd);
 
     m_swapchain->Present();
   }

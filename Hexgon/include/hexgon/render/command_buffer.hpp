@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <glm/glm.hpp>
 #include <hexgon/render/render_target.hpp>
 #include <hexgon/render/renderpass.hpp>
@@ -8,7 +9,7 @@
 namespace Hexgon {
 
 struct ClearValue {
-  float color[4] = {0.f};
+  std::array<float, 4> color = {0.f};
   float depth = 0.f;
   uint32_t stencil = 0;
 

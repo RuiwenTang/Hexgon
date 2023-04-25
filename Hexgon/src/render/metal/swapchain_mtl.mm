@@ -57,6 +57,8 @@ Scope<RenderTarget> SwapchainMTL::AcquireNextFrame() {
   return CreateScope<RenderTarget>(desc);
 }
 
+RenderPass* SwapchainMTL::GetRenderPass() { return m_render_pass.get(); }
+
 void SwapchainMTL::Present() {
   [m_curr_drawable present];
   m_curr_drawable = nil;

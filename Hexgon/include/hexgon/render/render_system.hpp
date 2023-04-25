@@ -37,6 +37,8 @@ class RenderSystem {
 
   virtual Ref<CommandBuffer> CreateCommandBuffer(
       const CommandBufferDescriptor& desc) = 0;
+
+  virtual void Submit(const Ref<CommandBuffer>& cmd) = 0;
 };
 
 }  // namespace Hexgon

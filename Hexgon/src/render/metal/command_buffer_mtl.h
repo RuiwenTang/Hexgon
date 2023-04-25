@@ -22,6 +22,8 @@ class CommandBufferMTL : public CommandBuffer {
 
   void EndRenderPass() override;
 
+  void CommitMTL();
+
  private:
   id<MTLCommandQueue> m_queue;
   id<MTLCommandBuffer> m_current_cmd = nil;

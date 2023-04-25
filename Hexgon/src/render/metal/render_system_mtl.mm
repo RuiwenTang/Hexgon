@@ -9,6 +9,7 @@
 #include <GLFW/glfw3native.h>
 #include <MetalKit/MetalKit.h>
 
+#include "src/render/metal/command_buffer_mtl.h"
 #include "src/render/metal/renderpass_mtl.h"
 #include "src/render/metal/swapchain_mtl.h"
 #include "src/render/metal/texture_mtl.h"
@@ -93,11 +94,18 @@ class RenderSystemMTL : public RenderSystem {
 
   Ref<CommandBuffer> CreateCommandBuffer(
       const CommandBufferDescriptor &desc) override {
-    return nullptr;
+    return CreateRef<CommandBufferMTL>(desc, m_graphic_queue);
+  }
+
+  void Submit(const Ref<CommandBuffer> &cmd) override {
+    auto mtl_cmd = dynamic_cast<CommandBufferMTL *>(cmd.get());
+
+    mtl_cmd->CommitMTL();
   }
 
  private:
   id<MTLDevice> m_device = nil;
+  id<MTLCommandQueue> m_graphic_queue = nil;
 };
 
 bool RenderSystemMTL::Init() {
@@ -106,6 +114,8 @@ bool RenderSystemMTL::Init() {
   if (m_device == nil) {
     return false;
   }
+
+  m_graphic_queue = [m_device newCommandQueue];
 
   return true;
 }

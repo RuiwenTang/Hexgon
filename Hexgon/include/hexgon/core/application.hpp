@@ -3,6 +3,7 @@
 #include <functional>
 #include <hexgon/core/window.hpp>
 #include <hexgon/event/window_event.hpp>
+#include <hexgon/render/command_buffer.hpp>
 #include <hexgon/render/render_system.hpp>
 #include <hexgon/render/swapchain.hpp>
 #include <mutex>
@@ -59,6 +60,7 @@ class Application {
   Scope<Window> m_window = {};
   Scope<RenderSystem> m_renderSystem = {};
   Scope<Swapchain> m_swapchain = {};
+  Ref<CommandBuffer> m_cmd = {};
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;

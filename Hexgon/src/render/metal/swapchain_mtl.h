@@ -23,6 +23,8 @@ class SwapchainMTL : public Swapchain {
 
   Scope<RenderTarget> AcquireNextFrame() override;
 
+  RenderPass* GetRenderPass() override;
+
   void Present() override;
 
  private:

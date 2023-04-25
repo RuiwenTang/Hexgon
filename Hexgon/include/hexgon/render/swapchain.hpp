@@ -27,6 +27,8 @@ class Swapchain {
 
   virtual Scope<RenderTarget> AcquireNextFrame() = 0;
 
+  virtual RenderPass* GetRenderPass() = 0;
+
   virtual void Present() = 0;
 
   const SwapchainDescriptor& GetDescriptor() const { return m_desc; }

@@ -11,6 +11,8 @@ CommandBufferMTL::CommandBufferMTL(const CommandBufferDescriptor& desc,
 void CommandBufferMTL::Begin() {
   if (m_current_cmd) {
     End();
+
+    [m_current_cmd commit];
   }
 
   m_current_cmd = [m_queue commandBuffer];
@@ -22,8 +24,6 @@ void CommandBufferMTL::End() {
   }
 
   [m_current_cmd enqueue];
-  [m_current_cmd commit];
-  m_current_cmd = nil;
 }
 
 static MTLClearColor to_mtl_clear(const ClearValue& value) {
@@ -133,6 +133,17 @@ void CommandBufferMTL::EndRenderPass() {
   }
 
   [m_curr_encoder endEncoding];
+  m_curr_encoder = nil;
+}
+
+void CommandBufferMTL::CommitMTL() {
+  if (m_current_cmd == nil) {
+    return;
+  }
+
+  [m_current_cmd commit];
+
+  m_current_cmd = nil;
 }
 
 }
