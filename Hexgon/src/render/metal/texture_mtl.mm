@@ -15,7 +15,7 @@ TextureMTL::~TextureMTL() {}
 
 Ref<TextureMTL> TextureMTL::CreateTexture(const TextureDescriptor& desc,
                                           id<MTLDevice> gpu) {
-  MTLTextureDescriptor* mtl_desc = [MTLTextureDescriptor new];
+  MTLTextureDescriptor* mtl_desc = [[MTLTextureDescriptor alloc] init];
 
   FillDesc(mtl_desc, desc);
 

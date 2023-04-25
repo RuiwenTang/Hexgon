@@ -26,6 +26,10 @@ class RenderSystemMTL : public RenderSystem {
 
   void Shutdown() override;
 
+  void BeginFrame() override;
+
+  void EndFrame() override;
+
   Scope<Swapchain> CreateSwapchain(Window *window,
                                    const SwapchainDescriptor &desc) override {
     NSWindow *native_window =
@@ -106,6 +110,7 @@ class RenderSystemMTL : public RenderSystem {
  private:
   id<MTLDevice> m_device = nil;
   id<MTLCommandQueue> m_graphic_queue = nil;
+  NSAutoreleasePool *m_pool = nil;
 };
 
 bool RenderSystemMTL::Init() {
@@ -120,7 +125,20 @@ bool RenderSystemMTL::Init() {
   return true;
 }
 
-void RenderSystemMTL::Shutdown() {}
+void RenderSystemMTL::Shutdown() {
+  if (m_pool) {
+    [m_pool drain];
+  }
+}
+
+void RenderSystemMTL::BeginFrame() {
+  m_pool = [[NSAutoreleasePool alloc] init];
+}
+
+void RenderSystemMTL::EndFrame() {
+  [m_pool drain];
+  m_pool = nil;
+}
 
 Scope<RenderSystem> LoadMetalRender() {
   auto render_system = CreateScope<RenderSystemMTL>();

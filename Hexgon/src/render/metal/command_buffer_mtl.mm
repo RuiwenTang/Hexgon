@@ -48,7 +48,7 @@ bool CommandBufferMTL::BeginRenderPass(
   }
 
   MTLRenderPassDescriptor* mtl_render_pass =
-      [MTLRenderPassDescriptor renderPassDescriptor];
+      [[MTLRenderPassDescriptor alloc] init];
 
   const auto& color_attachments = renderPassMTL->GetColorAttachment();
   const auto& color_ref = renderTarget->GetAttachments();
@@ -57,7 +57,7 @@ bool CommandBufferMTL::BeginRenderPass(
 
   for (size_t i = 0; i < color_attachments.size(); i++) {
     MTLRenderPassColorAttachmentDescriptor* desc =
-        [MTLRenderPassColorAttachmentDescriptor new];
+        [[MTLRenderPassColorAttachmentDescriptor alloc] init];
 
     auto mtl_tex = dynamic_cast<TextureMTL*>(color_ref[i].texture.get());
 
@@ -72,6 +72,7 @@ bool CommandBufferMTL::BeginRenderPass(
     }
 
     [mtl_render_pass.colorAttachments setObject:desc atIndexedSubscript:i];
+    [desc release];
 
     clear_index++;
   }
@@ -87,7 +88,7 @@ bool CommandBufferMTL::BeginRenderPass(
     auto mtl_tex = dynamic_cast<TextureMTL*>(depth_ref.texture.get());
 
     MTLRenderPassDepthAttachmentDescriptor* desc =
-        [MTLRenderPassDepthAttachmentDescriptor new];
+        [[MTLRenderPassDepthAttachmentDescriptor alloc] init];
     desc.loadAction = depth_attachment->load;
     desc.storeAction = depth_attachment->store;
     desc.texture = mtl_tex->GetNativeTexture();
@@ -97,6 +98,7 @@ bool CommandBufferMTL::BeginRenderPass(
     }
 
     mtl_render_pass.depthAttachment = desc;
+    [desc release];
   }
 
   const auto& stencil_attachment = renderPassMTL->GetStencilAttachment();
@@ -108,7 +110,7 @@ bool CommandBufferMTL::BeginRenderPass(
     auto mtl_tex = dynamic_cast<TextureMTL*>(depth_ref.texture.get());
 
     MTLRenderPassStencilAttachmentDescriptor* desc =
-        [MTLRenderPassStencilAttachmentDescriptor new];
+        [[MTLRenderPassStencilAttachmentDescriptor alloc] init];
 
     desc.loadAction = stencil_attachment->load;
     desc.storeAction = stencil_attachment->store;
@@ -119,11 +121,13 @@ bool CommandBufferMTL::BeginRenderPass(
     }
 
     mtl_render_pass.stencilAttachment = desc;
+    [desc release];
   }
 
   m_curr_encoder =
       [m_current_cmd renderCommandEncoderWithDescriptor:mtl_render_pass];
 
+  [mtl_render_pass release];
   return true;
 }
 

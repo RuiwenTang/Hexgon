@@ -68,6 +68,8 @@ void Application::Run() {
   }
 
   while (m_running) {
+    m_renderSystem->BeginFrame();
+
     auto render_target = m_swapchain->AcquireNextFrame();
 
     m_cmd->Begin();
@@ -85,8 +87,6 @@ void Application::Run() {
       m_running = false;
     }
 
-    m_window->OnUpdate();
-
     m_cmd->EndRenderPass();
 
     m_cmd->End();
@@ -94,6 +94,10 @@ void Application::Run() {
     m_renderSystem->Submit(m_cmd);
 
     m_swapchain->Present();
+
+    m_renderSystem->EndFrame();
+
+    m_window->OnUpdate();
   }
 
   m_swapchain->Shutdown();

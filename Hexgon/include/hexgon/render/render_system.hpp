@@ -27,6 +27,10 @@ class RenderSystem {
 
   virtual void Shutdown() = 0;
 
+  virtual void BeginFrame() = 0;
+
+  virtual void EndFrame() = 0;
+
   virtual Scope<Swapchain> CreateSwapchain(Window* window,
                                            const SwapchainDescriptor& desc) = 0;
 
