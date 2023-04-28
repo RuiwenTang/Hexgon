@@ -8,6 +8,7 @@ int main(int argc, const char** argv) {
 
   spec.commandLineArgs.Count = argc;
   spec.commandLineArgs.Args = (char**)argv;
+  spec.workingDirectory = "../../Sandbox/assets";
 
   Application app{spec};
 

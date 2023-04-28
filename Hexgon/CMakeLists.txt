@@ -13,13 +13,16 @@ add_library(Hexgon
     include/hexgon/render/render_system.hpp
     include/hexgon/render/render_target.hpp
     include/hexgon/render/renderpass.hpp
+    include/hexgon/render/shader.hpp
     include/hexgon/render/swapchain.hpp
     include/hexgon/render/texture.hpp
     include/hexgon/render/types.hpp
     src/core/application.cc
     src/core/log.cc
     src/core/window.cc
-    src/render/render_system.cc)
+    src/render/render_system.cc
+    src/render/shader.cc
+)
 
 if(APPLE)
     target_sources(Hexgon PRIVATE
@@ -29,6 +32,8 @@ if(APPLE)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/render_system_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/renderpass_mtl.mm
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/shader_mtl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/shader_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/swapchain_mtl.mm
         ${CMAKE_CURRENT_SOURCE_DIR}/src/render/metal/texture_mtl.h
@@ -74,9 +79,13 @@ find_package(spdlog CONFIG REQUIRED)
 # glm
 find_package(glm CONFIG REQUIRED)
 
+# shaderc
+find_package(glslang CONFIG REQUIRED)
+
 target_link_libraries(Hexgon PRIVATE glfw)
 target_link_libraries(Hexgon PUBLIC spdlog::spdlog)
 target_link_libraries(Hexgon PUBLIC glm::glm)
+target_link_libraries(Hexgon PRIVATE glslang::glslang)
 
 # source group for Xcode and Visual Studio
 get_target_property(HEXGON_SRC Hexgon SOURCES)

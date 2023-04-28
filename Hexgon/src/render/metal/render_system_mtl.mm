@@ -11,6 +11,7 @@
 
 #include "src/render/metal/command_buffer_mtl.h"
 #include "src/render/metal/renderpass_mtl.h"
+#include "src/render/metal/shader_mtl.h"
 #include "src/render/metal/swapchain_mtl.h"
 #include "src/render/metal/texture_mtl.h"
 
@@ -94,6 +95,16 @@ class RenderSystemMTL : public RenderSystem {
 
   Ref<Texture> CreateTexture(const TextureDescriptor &desc) override {
     return nullptr;
+  }
+
+  Ref<Shader> CreateShader(const ShaderDescriptor &desc) override {
+    auto shader = CreateRef<ShaderMTL>(desc, m_device);
+
+    if (!shader->Compile()) {
+      return nullptr;
+    }
+
+    return shader;
   }
 
   Ref<CommandBuffer> CreateCommandBuffer(

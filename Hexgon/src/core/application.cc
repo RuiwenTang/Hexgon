@@ -67,6 +67,14 @@ void Application::Run() {
     return;
   }
 
+  ShaderDescriptor desc{};
+  desc.entry_point = "vMain";
+  desc.type = ShaderType::kVertex;
+  desc.sourceType = ShaderSourceType::kCodeFile;
+  desc.source = "triangle.metal";
+
+  auto shader = m_renderSystem->CreateShader(desc);
+
   while (m_running) {
     m_renderSystem->BeginFrame();
 

@@ -1,7 +1,5 @@
 #include "src/render/metal/renderpass_mtl.h"
 
-#include "hexgon/render/format.hpp"
-#include "hexgon/render/renderpass.hpp"
 #include "src/render/metal/types_mtl.h"
 
 namespace Hexgon {
