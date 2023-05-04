@@ -1,6 +1,8 @@
 
 #include <hexgon/hexgon.hpp>
 
+#include "example_layer.hpp"
+
 using namespace Hexgon;
 
 int main(int argc, const char** argv) {
@@ -8,9 +10,11 @@ int main(int argc, const char** argv) {
 
   spec.commandLineArgs.Count = argc;
   spec.commandLineArgs.Args = (char**)argv;
-  spec.workingDirectory = "../../Sandbox/assets";
+  spec.workingDirectory = "../../Sandbox";
 
   Application app{spec};
+
+  app.PushLayer(CreateRef<ExampleLayer>());
 
   app.Run();
 

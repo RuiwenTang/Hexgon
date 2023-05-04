@@ -2,6 +2,8 @@
 add_library(Hexgon
     include/hexgon/core/application.hpp
     include/hexgon/core/base.hpp
+    include/hexgon/core/layer_stack.hpp
+    include/hexgon/core/layer.hpp
     include/hexgon/core/log.hpp
     include/hexgon/core/platform.hpp
     include/hexgon/core/window.hpp
@@ -18,6 +20,7 @@ add_library(Hexgon
     include/hexgon/render/texture.hpp
     include/hexgon/render/types.hpp
     src/core/application.cc
+    src/core/layer_stack.cc
     src/core/log.cc
     src/core/window.cc
     src/render/render_system.cc

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <hexgon/core/layer_stack.hpp>
 #include <hexgon/core/window.hpp>
 #include <hexgon/event/window_event.hpp>
 #include <hexgon/render/command_buffer.hpp>
@@ -44,6 +45,8 @@ class Application {
 
   void OnEvent(Event& event);
 
+  void PushLayer(Ref<Layer> layer);
+
  private:
   bool InitScreenRenderPass();
 
@@ -64,6 +67,7 @@ class Application {
 
   std::vector<std::function<void()>> m_mainThreadQueue;
   std::mutex m_mainThreadQueueMutex;
+  LayerStack m_stack = {};
 
  private:
   static Application* s_instance;

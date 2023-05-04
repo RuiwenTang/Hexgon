@@ -95,6 +95,8 @@ void Application::Run() {
       m_running = false;
     }
 
+    m_stack.ForEachLayer([](Layer* l) { l->OnUpdate(0.f); });
+
     m_cmd->EndRenderPass();
 
     m_cmd->End();
@@ -107,6 +109,8 @@ void Application::Run() {
 
     m_window->OnUpdate();
   }
+
+  m_stack.ForEachLayer([](Layer* layer) { layer->OnDetach(); });
 
   m_swapchain->Shutdown();
   m_renderSystem->Shutdown();
@@ -122,6 +126,14 @@ void Application::OnEvent(Event& event) {
 
   dispatcher.Dispatch<WindowResizeEvent, EventType::WindowResize>(
       HEX_BIND_EVENT_FN(Application::OnWindowResize));
+}
+
+void Application::PushLayer(Ref<Layer> layer) {
+  m_stack.PushLayer(layer);
+
+  if (m_running) {
+    layer->OnAttach();
+  }
 }
 
 void Application::SubmitToMainThread(const std::function<void()>& function) {

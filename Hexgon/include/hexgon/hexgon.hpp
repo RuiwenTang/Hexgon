@@ -3,6 +3,7 @@
 // core
 #include <hexgon/core/application.hpp>
 #include <hexgon/core/base.hpp>
+#include <hexgon/core/layer.hpp>
 #include <hexgon/core/log.hpp>
 #include <hexgon/core/platform.hpp>
 #include <hexgon/core/window.hpp>
