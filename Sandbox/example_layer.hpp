@@ -13,5 +13,4 @@ class ExampleLayer : public Hexgon::Layer {
   void InitShader();
 
  private:
-  Hexgon::Ref<Hexgon::Shader> m_shader = {};
 };

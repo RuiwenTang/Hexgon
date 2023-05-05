@@ -13,9 +13,12 @@
 #include <hexgon/event/window_event.hpp>
 // render
 #include <hexgon/render/command_buffer.hpp>
+#include <hexgon/render/format.hpp>
 #include <hexgon/render/render_system.hpp>
 #include <hexgon/render/render_target.hpp>
 #include <hexgon/render/renderpass.hpp>
 #include <hexgon/render/shader.hpp>
 #include <hexgon/render/swapchain.hpp>
 #include <hexgon/render/texture.hpp>
+#include <hexgon/render/types.hpp>
+#include <hexgon/render/vertex_attribute.hpp>

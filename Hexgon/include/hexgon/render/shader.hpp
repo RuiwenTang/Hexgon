@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hexgon/core/base.hpp>
+#include <hexgon/render/vertex_attribute.hpp>
 #include <string>
 #include <vector>
 
@@ -29,11 +30,17 @@ enum class ShaderSourceType {
   kBinaryFile,
 };
 
+struct VertexShaderAttributes {
+  std::vector<VertexAttribute> inputAttribs = {};
+};
+
 struct ShaderDescriptor {
   ShaderType type = ShaderType::kUndefined;
   ShaderSourceType sourceType = ShaderSourceType::kCodeString;
   std::string source = "";
   std::string entry_point = "";
+
+  VertexShaderAttributes vertex = {};
 };
 
 class Shader {

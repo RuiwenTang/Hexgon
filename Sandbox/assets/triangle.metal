@@ -24,7 +24,7 @@ vertex VertexOut vMain(VertexIn inp [[stage_in]])
     return outp;
 }
 
-fragment float4 PS(VertexOut inp [[stage_in]])
+fragment float4 fMain(VertexOut inp [[stage_in]])
 {
     return float4(1.0, 0.0, 0.0, 1.0);
 }
