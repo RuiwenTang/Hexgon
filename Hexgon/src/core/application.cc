@@ -11,70 +11,13 @@ namespace Hexgon {
 Application* Application::s_instance = nullptr;
 
 Application::Application(const ApplicationSpecification& specification)
-    : m_specification(specification) {
-  s_instance = this;
-
-  if (!m_specification.workingDirectory.empty()) {
-    std::filesystem::current_path(m_specification.workingDirectory);
-  }
-
-  Log::Init();
-
-  HEX_CORE_INFO("Hexgon engine start.");
-
-  m_window = Window::Create(WindowProps{m_specification.name});
-
-  m_window->SetEventCallback(HEX_BIND_EVENT_FN(Application::OnEvent));
-
-#ifdef HEX_PLATFORM_MACOS
-  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kMetal);
-#elif defined(HEX_PLATFORM_WINDOWS)
-  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kVulkan);
-#endif
-}
+    : m_specification(specification) {}
 
 Application::~Application() { HEX_CORE_INFO("Hexgon engine shutdown"); }
 
 void Application::Close() { m_running = false; }
 
 void Application::Run() {
-  if (!m_renderSystem) {
-    HEX_CORE_ERROR("Render system not pick!");
-    return;
-  }
-
-  if (!m_renderSystem->Init()) {
-    HEX_CORE_ERROR("Render system init failed!");
-    return;
-  }
-
-  m_swapchain = m_renderSystem->CreateSwapchain(m_window.get(), {});
-
-  if (!m_swapchain) {
-    HEX_CORE_ERROR("Swapchain created failed!");
-    return;
-  }
-
-  if (!m_swapchain->Init()) {
-    HEX_CORE_ERROR("Swapchain init failed!");
-    return;
-  }
-
-  m_cmd = m_renderSystem->CreateCommandBuffer({});
-
-  if (!m_cmd) {
-    HEX_CORE_ERROR("Failed create main screen command buffer!");
-    return;
-  }
-
-  ShaderDescriptor desc{};
-  desc.entry_point = "vMain";
-  desc.type = ShaderType::kVertex;
-  desc.sourceType = ShaderSourceType::kCodeFile;
-  desc.source = "triangle.metal";
-
-  auto shader = m_renderSystem->CreateShader(desc);
-
   while (m_running) {
     m_renderSystem->BeginFrame();
 
@@ -135,6 +78,68 @@ void Application::PushLayer(Ref<Layer> layer) {
     layer->OnAttach();
   }
 }
+
+bool Application::Init() {
+  if (s_instance != nullptr) {
+    HEX_CORE_ERROR("Only allow one Application instance!");
+    return false;
+  }
+
+  s_instance = this;
+
+  if (!m_specification.workingDirectory.empty()) {
+    std::filesystem::current_path(m_specification.workingDirectory);
+  }
+
+  Log::Init();
+
+  HEX_CORE_INFO("Hexgon engine start.");
+
+  m_window = Window::Create(WindowProps{m_specification.name});
+
+  m_window->SetEventCallback(HEX_BIND_EVENT_FN(Application::OnEvent));
+
+#ifdef HEX_PLATFORM_MACOS
+  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kMetal);
+#elif defined(HEX_PLATFORM_WINDOWS)
+  m_renderSystem = RenderSystem::LoadRenderSystem(RenderAPI::kVulkan);
+#endif
+
+  if (!m_renderSystem) {
+    HEX_CORE_ERROR("Render system not pick!");
+    return false;
+  }
+
+  if (!m_renderSystem->Init()) {
+    HEX_CORE_ERROR("Render system init failed!");
+    return false;
+  }
+
+  m_swapchain = m_renderSystem->CreateSwapchain(m_window.get(), {});
+
+  if (!m_swapchain) {
+    HEX_CORE_ERROR("Swapchain created failed!");
+    return false;
+  }
+
+  if (!m_swapchain->Init()) {
+    HEX_CORE_ERROR("Swapchain init failed!");
+    return false;
+  }
+
+  m_cmd = m_renderSystem->CreateCommandBuffer({});
+
+  if (!m_cmd) {
+    HEX_CORE_ERROR("Failed create main screen command buffer!");
+    return false;
+  }
+
+  return true;
+}
+
+RenderSystem* Application::GetRenderSystem() { return m_renderSystem.get(); }
+
+Swapchain* Application::GetWindowSwapchain() { return m_swapchain.get(); }
 
 void Application::SubmitToMainThread(const std::function<void()>& function) {
   std::scoped_lock<std::mutex> lock(m_mainThreadQueueMutex);

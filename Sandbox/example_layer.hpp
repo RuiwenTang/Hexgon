@@ -8,4 +8,10 @@ class ExampleLayer : public Hexgon::Layer {
   void OnAttach() override;
 
   void OnDetach() override;
+
+ private:
+  void InitShader();
+
+ private:
+  Hexgon::Ref<Hexgon::Shader> m_shader = {};
 };

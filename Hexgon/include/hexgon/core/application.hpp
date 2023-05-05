@@ -39,6 +39,8 @@ class Application {
     return m_specification;
   }
 
+  bool Init();
+
   void SubmitToMainThread(const std::function<void()>& function);
 
   void Run();
@@ -46,6 +48,10 @@ class Application {
   void OnEvent(Event& event);
 
   void PushLayer(Ref<Layer> layer);
+
+  RenderSystem* GetRenderSystem();
+
+  Swapchain* GetWindowSwapchain();
 
  private:
   bool InitScreenRenderPass();

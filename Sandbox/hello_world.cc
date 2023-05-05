@@ -14,6 +14,11 @@ int main(int argc, const char** argv) {
 
   Application app{spec};
 
+  if (!app.Init()) {
+    HEX_ERROR("Hexgon app init failed!");
+    return -1;
+  }
+
   app.PushLayer(CreateRef<ExampleLayer>());
 
   app.Run();
