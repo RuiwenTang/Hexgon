@@ -102,8 +102,12 @@ bool RenderSystemVK::Init() {
 
 void RenderSystemVK::Shutdown() { vkDestroyInstance(m_vk_ins, nullptr); }
 
+void RenderSystemVK::BeginFrame() {}
+
+void RenderSystemVK::EndFrame() {}
+
 Scope<Swapchain> RenderSystemVK::CreateSwapchain(
-    Window* window, const SwapchainDescriptor& desc, RenderPass* renderPass) {
+    Window* window, const SwapchainDescriptor& desc) {
   return Scope<Swapchain>();
 }
 
@@ -115,6 +119,22 @@ Scope<RenderPass> RenderSystemVK::CreateRenderPass(
 Ref<Texture> RenderSystemVK::CreateTexture(const TextureDescriptor& desc) {
   return Ref<Texture>();
 }
+
+Ref<Shader> RenderSystemVK::CreateShader(const ShaderDescriptor& desc) {
+  return Ref<Shader>();
+}
+
+Ref<CommandBuffer> RenderSystemVK::CreateCommandBuffer(
+    const CommandBufferDescriptor& desc) {
+  return Ref<CommandBuffer>();
+}
+
+Ref<PipelineState> RenderSystemVK::CreateGraphicPipelineState(
+    const GraphicPipelineDescriptor& desc) {
+  return Ref<PipelineState>();
+}
+
+void RenderSystemVK::Submit(const Ref<CommandBuffer>& cmd) {}
 
 bool RenderSystemVK::InitVkInstance() {
   bool has_validation = check_validation_layer_support();

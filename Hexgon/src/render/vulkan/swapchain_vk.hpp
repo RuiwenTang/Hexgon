@@ -11,6 +11,18 @@ class SwapchainVK : public Swapchain {
   SwapchainVK(const SwapchainDescriptor& desc, VkSwapchainKHR vk_sh);
   ~SwapchainVK() override;
 
+  bool Init() override;
+
+  void Shutdown() override;
+
+  glm::ivec2 GetResolution() override;
+
+  Scope<RenderTarget> AcquireNextFrame() override;
+
+  RenderPass* GetRenderPass() override;
+
+  void Present() override;
+
  private:
   VkSwapchainKHR m_vk_swapchain = VK_NULL_HANDLE;
 };

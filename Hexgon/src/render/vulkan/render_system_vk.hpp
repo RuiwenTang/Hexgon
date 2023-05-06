@@ -22,13 +22,26 @@ class RenderSystemVK : public RenderSystem {
 
   void Shutdown() override;
 
+  void BeginFrame() override;
+
+  void EndFrame() override;
+
   Scope<Swapchain> CreateSwapchain(Window* window,
-                                   const SwapchainDescriptor& desc,
-                                   RenderPass* renderPass) override;
+                                   const SwapchainDescriptor& desc) override;
 
   Scope<RenderPass> CreateRenderPass(const RenderPassDescriptor& desc) override;
 
   Ref<Texture> CreateTexture(const TextureDescriptor& desc) override;
+
+  Ref<Shader> CreateShader(const ShaderDescriptor& desc) override;
+
+  Ref<CommandBuffer> CreateCommandBuffer(
+      const CommandBufferDescriptor& desc) override;
+
+  Ref<PipelineState> CreateGraphicPipelineState(
+      const GraphicPipelineDescriptor& desc) override;
+
+  void Submit(const Ref<CommandBuffer>& cmd) override;
 
  private:
   bool InitVkInstance();

@@ -17,7 +17,7 @@ void ExampleLayer::InitShader() {
   vs_desc.entry_point = "vMain";
   vs_desc.type = Hexgon::ShaderType::kVertex;
   vs_desc.sourceType = Hexgon::ShaderSourceType::kCodeFile;
-  vs_desc.source = "assets/triangle.metal";
+  vs_desc.source = "triangle.metal";
 
   vs_desc.vertex.inputAttribs.emplace_back(Hexgon::VertexAttribute{
       "position",

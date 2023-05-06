@@ -3,6 +3,8 @@
 
 #include "example_layer.hpp"
 
+#include "config.hpp"
+
 using namespace Hexgon;
 
 int main(int argc, const char** argv) {
@@ -10,7 +12,7 @@ int main(int argc, const char** argv) {
 
   spec.commandLineArgs.Count = argc;
   spec.commandLineArgs.Args = (char**)argv;
-  spec.workingDirectory = "../../Sandbox";
+  spec.workingDirectory = ASSETS_DIR;
 
   Application app{spec};
 

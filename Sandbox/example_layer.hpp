@@ -1,3 +1,5 @@
+#pragma once
+
 #include <hexgon/hexgon.hpp>
 
 class ExampleLayer : public Hexgon::Layer {

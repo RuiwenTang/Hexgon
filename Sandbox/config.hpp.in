@@ -1,0 +1,4 @@
+#pragma once
+
+// project assets dir
+#cmakedefine ASSETS_DIR "@ASSETS_DIR@"
