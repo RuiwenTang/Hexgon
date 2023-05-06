@@ -2,6 +2,7 @@
 
 #include <hexgon/core/base.hpp>
 #include <hexgon/render/command_buffer.hpp>
+#include <hexgon/render/pipeline_state.hpp>
 #include <hexgon/render/renderpass.hpp>
 #include <hexgon/render/shader.hpp>
 #include <hexgon/render/swapchain.hpp>
@@ -44,6 +45,9 @@ class RenderSystem {
 
   virtual Ref<CommandBuffer> CreateCommandBuffer(
       const CommandBufferDescriptor& desc) = 0;
+
+  virtual Ref<PipelineState> CreateGraphicPipelineState(
+      const GraphicPipelineDescriptor& desc) = 0;
 
   virtual void Submit(const Ref<CommandBuffer>& cmd) = 0;
 };

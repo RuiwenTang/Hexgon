@@ -12,6 +12,8 @@ add_library(Hexgon
     include/hexgon/event/window_event.hpp
     include/hexgon/render/command_buffer.hpp
     include/hexgon/render/format.hpp
+    include/hexgon/render/pipeline_layout.hpp
+    include/hexgon/render/pipeline_state.hpp
     include/hexgon/render/render_system.hpp
     include/hexgon/render/render_target.hpp
     include/hexgon/render/renderpass.hpp

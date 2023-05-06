@@ -112,6 +112,11 @@ class RenderSystemMTL : public RenderSystem {
     return CreateRef<CommandBufferMTL>(desc, m_graphic_queue);
   }
 
+  Ref<PipelineState> CreateGraphicPipelineState(
+      const GraphicPipelineDescriptor &desc) override {
+    return nullptr;
+  }
+
   void Submit(const Ref<CommandBuffer> &cmd) override {
     auto mtl_cmd = dynamic_cast<CommandBufferMTL *>(cmd.get());
 
