@@ -91,7 +91,7 @@ find_package(glslang CONFIG REQUIRED)
 target_link_libraries(Hexgon PRIVATE glfw)
 target_link_libraries(Hexgon PUBLIC spdlog::spdlog)
 target_link_libraries(Hexgon PUBLIC glm::glm)
-target_link_libraries(Hexgon PRIVATE glslang)
+target_link_libraries(Hexgon PRIVATE glslang::SPIRV)
 
 # source group for Xcode and Visual Studio
 get_target_property(HEXGON_SRC Hexgon SOURCES)
