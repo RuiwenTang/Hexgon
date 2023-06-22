@@ -19,8 +19,6 @@ target_include_directories(
 target_include_directories(
     Hexgon PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/src
-    ${PROJECT_SOURCE_DIR}/third_party/VulkanMemoryAllocator/include
-    ${PROJECT_SOURCE_DIR}/third_party/stb
 )
 
 if(WIN32)
