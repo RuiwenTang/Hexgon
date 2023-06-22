@@ -60,7 +60,6 @@ void Application::PopLayer(std::shared_ptr<Layer> const& layer) {
   m_layer_stack.PopLayer(layer);
 
   layer->m_application = nullptr;
-  layer->m_context = nullptr;
 }
 
 void Application::OnWindowResize(int32_t width, int32_t height) {

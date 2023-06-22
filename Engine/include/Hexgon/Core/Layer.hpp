@@ -30,7 +30,6 @@
 
 namespace hexgon {
 
-class GraphicsContext;
 class Application;
 
 class HEX_API Layer {
@@ -48,14 +47,11 @@ class HEX_API Layer {
 
   std::string const& GetLayerName() const { return m_name; }
 
-  GraphicsContext* GetGraphicsContext() const { return m_context; }
-
  protected:
   Application* GetApplication() const { return m_application; }
 
  private:
   std::string m_name;
-  GraphicsContext* m_context = nullptr;
   Application* m_application = nullptr;
 };
 
