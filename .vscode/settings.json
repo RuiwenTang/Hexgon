@@ -16,5 +16,8 @@
   "copyrighter.license": "MIT",
   "copyrighter.newFilesOnly": true,
   "cmake.generator": "Ninja",
-  "glsllint.glslangValidatorArgs": "-V"
+  "glsllint.glslangValidatorArgs": "-V",
+  "cmake.configureArgs": [
+    "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+  ]
 }

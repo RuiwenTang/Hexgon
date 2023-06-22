@@ -31,7 +31,7 @@
 
 namespace hexgon {
 
-class HEX_API Application final : public WindowClient {
+class HEX_API Application final : public WindowDelegate {
  public:
   ~Application() = default;
 

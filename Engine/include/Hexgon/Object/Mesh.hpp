@@ -30,18 +30,8 @@
 
 namespace hexgon {
 
-namespace gpu {
-
-class CommandBuffer;
-class Pipeline;
-
-struct DescriptorBinding;
-
-}  // namespace gpu
-
 class Geometry;
 class Material;
-class GraphicsContext;
 
 class HEX_API Mesh : public Object3D {
  public:
@@ -65,10 +55,6 @@ class HEX_API Mesh : public Object3D {
   void OnSetRotation(const glm::vec3& rotation) override {}
 
   void OnSetScale(const glm::vec3& scale) override {}
-
-  virtual void OnInit(GraphicsContext* ctx) = 0;
-
-  virtual void OnPrepareDraw() = 0;
 
  private:
   Geometry* m_geometry;

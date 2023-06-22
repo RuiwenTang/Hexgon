@@ -23,7 +23,4 @@
 
 #include <Hexgon/Core/Material.hpp>
 
-namespace hexgon {
-
-
-}  // namespace hexgon
+namespace hexgon {}  // namespace hexgon

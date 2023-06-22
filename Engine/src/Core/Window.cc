@@ -59,17 +59,12 @@ class GLFWWindowImpl : public Window {
     while (m_running && !glfwWindowShouldClose(m_glfw_window)) {
       glfwPollEvents();
 
-
-      for (auto client : m_clients) {
-        client->OnWindowUpdate();
-      }
-
+      m_delegate->OnWindowUpdate();
     }
 
-    for (auto client : m_clients) {
-      client->OnWindowClose();
+    if (m_delegate) {
+      m_delegate->OnWindowClose();
     }
-
   }
 
   void Shutdown() override { m_running = false; }
@@ -124,8 +119,8 @@ class GLFWWindowImpl : public Window {
       return;
     }
 
-    for (auto client : platform_window->m_clients) {
-      client->OnKeyEvent(event.get());
+    if (platform_window->m_delegate) {
+      platform_window->m_delegate->OnKeyEvent(event.get());
     }
   }
 
@@ -136,8 +131,8 @@ class GLFWWindowImpl : public Window {
 
     MouseMovedEvent event(static_cast<float>(offset_x), static_cast<float>(offset_y));
 
-    for (auto client : platform_window->m_clients) {
-      client->OnMouseEvent(&event);
+    if (platform_window->m_delegate) {
+      platform_window->m_delegate->OnMouseEvent(&event);
     }
   }
 
@@ -155,8 +150,8 @@ class GLFWWindowImpl : public Window {
       event = std::make_unique<MouseReleasedEvent>(x, y, static_cast<MouseCode>(button));
     }
 
-    for (auto client : platform_window->m_clients) {
-      client->OnMouseEvent(event.get());
+    if (platform_window->m_delegate) {
+      platform_window->m_delegate->OnMouseEvent(event.get());
     }
   }
 
@@ -165,8 +160,8 @@ class GLFWWindowImpl : public Window {
 
     auto event = std::make_unique<CharEvent>(c);
 
-    for (auto client : platform_window->m_clients) {
-      client->OnCharEvent(event.get());
+    if (platform_window->m_delegate) {
+      platform_window->m_delegate->OnCharEvent(event.get());
     }
   }
 

@@ -42,7 +42,7 @@ Application* Application::Create(std::string title, uint32_t width, uint32_t hei
   // init window
   g_instance->m_window = Window::Create(std::move(title), width, height);
 
-  g_instance->m_window->AddClient(g_instance);
+  g_instance->m_window->SetDelegate(g_instance);
 
   return g_instance;
 }

@@ -28,13 +28,11 @@
 
 namespace hexgon {
 
-
 class HEX_API Material {
  public:
   Material() {}
 
-  virtual ~Material() = default;
-
+  ~Material() = default;
 };
 
 }  // namespace hexgon

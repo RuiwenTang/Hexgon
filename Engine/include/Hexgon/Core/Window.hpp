@@ -36,9 +36,9 @@ class KeyEvent;
 class MouseEvent;
 class CharEvent;
 
-class HEX_API WindowClient {
+class HEX_API WindowDelegate {
  public:
-  virtual ~WindowClient() = default;
+  virtual ~WindowDelegate() = default;
 
   virtual void OnWindowResize(int32_t width, int32_t height) = 0;
   virtual void OnWindowClose() = 0;
@@ -71,7 +71,7 @@ class HEX_API Window {
 
   virtual void Shutdown() = 0;
 
-  void AddClient(WindowClient* client) { m_clients.emplace_back(client); }
+  void SetDelegate(WindowDelegate* delegate) { m_delegate = delegate; }
 
   void SetClearColor(glm::vec4 const& color) { m_clear_color = color; }
 
@@ -88,7 +88,7 @@ class HEX_API Window {
   glm::vec4 m_clear_color = {0.f, 0.f, 0.f, 0.f};
 
  protected:
-  std::vector<WindowClient*> m_clients = {};
+  WindowDelegate* m_delegate = nullptr;
 };
 
 }  // namespace hexgon
