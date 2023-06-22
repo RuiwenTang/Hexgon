@@ -24,7 +24,6 @@
 #ifndef ENGINE_INCLUDE_HEXGON_CORE_WINDOW_HPP_
 #define ENGINE_INCLUDE_HEXGON_CORE_WINDOW_HPP_
 
-#include <Hexgon/Core/GraphicsContext.hpp>
 #include <Hexgon/Macro.hpp>
 #include <glm/glm.hpp>
 #include <memory>
@@ -74,8 +73,6 @@ class HEX_API Window {
 
   void AddClient(WindowClient* client) { m_clients.emplace_back(client); }
 
-  GraphicsContext* GetContext() const { return m_context.get(); }
-
   void SetClearColor(glm::vec4 const& color) { m_clear_color = color; }
 
   glm::vec4 const& GetClearColor() const { return m_clear_color; }
@@ -92,7 +89,6 @@ class HEX_API Window {
 
  protected:
   std::vector<WindowClient*> m_clients = {};
-  std::unique_ptr<GraphicsContext> m_context = {};
 };
 
 }  // namespace hexgon

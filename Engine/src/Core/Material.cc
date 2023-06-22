@@ -21,14 +21,9 @@
  *   SOFTWARE.
  */
 
-#include <Hexgon/Core/GraphicsContext.hpp>
 #include <Hexgon/Core/Material.hpp>
-#include <Hexgon/GPU/CommandBuffer.hpp>
 
 namespace hexgon {
 
-void Material::BindCMD(gpu::CommandBuffer *cmd) { cmd->BindPipeline(m_pipeline); }
-
-void Material::PrepareForDraw(std::vector<gpu::DescriptorBinding> &bindings) { OnPrepareForDraw(bindings); }
 
 }  // namespace hexgon

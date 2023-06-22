@@ -13,32 +13,12 @@ elseif(UNIX AND NOT APPLE)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
-# spdlog
-add_subdirectory(third_party/spdlog)
-
-# glfw
-add_subdirectory(third_party/glfw)
-
-# glm
-add_subdirectory(third_party/glm)
-
-# SPRIV-Reflect
-set(SPIRV_REFLECT_EXECUTABLE OFF CACHE INTERNAL "" FORCE)
-set(SPIRV_REFLECT_EXAMPLES OFF CACHE INTERNAL "" FORCE)
-set(SPIRV_REFLECT_STATIC_LIB ON CACHE INTERNAL "" FORCE)
-add_subdirectory(third_party/SPIRV-Reflect)
-
-# imgui
-add_subdirectory(third_party/imgui)
-
 # engine
 add_subdirectory(Engine)
 
 # sand-box
 add_subdirectory(SandBox)
 
-# ray tracer
-add_subdirectory(RayTracer)
 
 # source group for Xcode and Visual Studio
 get_target_property(HEXGON_SRC Hexgon SOURCES)

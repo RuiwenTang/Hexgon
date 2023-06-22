@@ -31,8 +31,6 @@
 #include <Hexgon/Core/Geometry.hpp>
 // Window
 #include <Hexgon/Core/Window.hpp>
-// GraphicsContext
-#include <Hexgon/Core/GraphicsContext.hpp>
 // Layer
 #include <Hexgon/Core/Layer.hpp>
 #include <Hexgon/Core/LayerStack.hpp>
@@ -40,24 +38,8 @@
 #include <Hexgon/Core/Material.hpp>
 // Logger
 #include <Hexgon/Core/Log.hpp>
-// GPU Formats
-#include <Hexgon/GPU/Formats.hpp>
-// GPU Buffer
-#include <Hexgon/GPU/Buffer.hpp>
-// GPU Shader
-#include <Hexgon/GPU/Shader.hpp>
-// GPU Pipeline
-#include <Hexgon/GPU/Pipeline.hpp>
-// GPU RenderPass
-#include <Hexgon/GPU/RenderPass.hpp>
-// GUI
-#include <Hexgon/GUI/ImguiLayer.hpp>
-// imgui
-#include <imgui.h>
 // glm transform
 #include <glm/gtc/matrix_transform.hpp>
-// IO image
-#include <Hexgon/IO/Image.hpp>
 // object
 #include <Hexgon/Object/Mesh.hpp>
 #include <Hexgon/Object/Object3D.hpp>

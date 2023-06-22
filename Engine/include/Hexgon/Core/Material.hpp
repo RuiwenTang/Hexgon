@@ -24,37 +24,17 @@
 #ifndef ENGINE_INCLUDE_HEXGON_CORE_MATERIAL_HPP_
 #define ENGINE_INCLUDE_HEXGON_CORE_MATERIAL_HPP_
 
-#include <Hexgon/GPU/Pipeline.hpp>
 #include <Hexgon/Macro.hpp>
 
 namespace hexgon {
 
-namespace gpu {
-class CommandBuffer;
-class Pipeline;
-}  // namespace gpu
-
-class GraphicsContext;
 
 class HEX_API Material {
  public:
-  Material(gpu::Pipeline* pipeline) : m_pipeline(pipeline) {}
+  Material() {}
 
   virtual ~Material() = default;
 
-  virtual void Init(GraphicsContext* ctx) = 0;
-
-  void BindCMD(gpu::CommandBuffer* cmd);
-
-  void PrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings);
-
-  gpu::Pipeline* GetPipeline() const { return m_pipeline; }
-
- protected:
-  virtual void OnPrepareForDraw(std::vector<gpu::DescriptorBinding>& bindings) = 0;
-
- private:
-  gpu::Pipeline* m_pipeline;
 };
 
 }  // namespace hexgon

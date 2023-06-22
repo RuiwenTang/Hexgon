@@ -102,12 +102,7 @@ Box::Box(float width, float height, float depth, uint32_t width_segments, uint32
       m_depth(depth),
       m_width_segments(width_segments),
       m_height_segments(height_segments),
-      m_depth_segments(depth_segment),
-      m_layout({
-          gpu::BufferElement{"pos", gpu::DataType::Float3, 0},
-          gpu::BufferElement{"normal", gpu::DataType::Float3, sizeof(float) * 3},
-          gpu::BufferElement{"uv", gpu::DataType::Float2, sizeof(float) * 6},
-      }) {}
+      m_depth_segments(depth_segment) {}
 
 void Box::OnBuild() {
   build_plane(glm::u32vec3{Z, Y, X}, glm::vec2{-1.f, -1.f}, glm::vec3{m_depth, m_height, m_width},

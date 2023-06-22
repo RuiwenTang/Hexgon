@@ -59,20 +59,17 @@ class GLFWWindowImpl : public Window {
     while (m_running && !glfwWindowShouldClose(m_glfw_window)) {
       glfwPollEvents();
 
-      m_context->BeginFrame(GetClearColor());
 
       for (auto client : m_clients) {
         client->OnWindowUpdate();
       }
 
-      m_context->SwapBuffers();
     }
 
     for (auto client : m_clients) {
       client->OnWindowClose();
     }
 
-    m_context->Destroy();
   }
 
   void Shutdown() override { m_running = false; }
@@ -184,9 +181,6 @@ std::unique_ptr<Window> Window::Create(std::string title, uint32_t width, uint32
   auto window = std::make_unique<GLFWWindowImpl>(std::move(title), width, height);
 
   window->Init();
-
-  window->m_context = GraphicsContext::Create(window->GetNativeWindow(), GraphicsContext::API::Vulkan);
-  window->m_context->Init();
 
   return window;
 }

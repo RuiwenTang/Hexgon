@@ -53,16 +53,6 @@ class HEX_API Mesh : public Object3D {
 
   void RemoveChild(Mesh* child);
 
-  void Init(GraphicsContext* ctx);
-
-  void Bind(gpu::CommandBuffer* cmd);
-
-  void UpdateDescriptorSet(uint32_t slot, std::vector<gpu::DescriptorBinding> const& bindings);
-
-  void UpdatePushConstant(uint32_t offset, uint32_t size, void* data);
-
-  void Draw(gpu::CommandBuffer* cmd, glm::mat4 const& transform = glm::identity<glm::mat4>());
-
   Mesh* GetParent() const { return m_parent; }
 
   Geometry* GetGeometry() const { return m_geometry; }
@@ -75,8 +65,6 @@ class HEX_API Mesh : public Object3D {
   void OnSetRotation(const glm::vec3& rotation) override {}
 
   void OnSetScale(const glm::vec3& scale) override {}
-
-  gpu::Pipeline* GetPipeline() const;
 
   virtual void OnInit(GraphicsContext* ctx) = 0;
 

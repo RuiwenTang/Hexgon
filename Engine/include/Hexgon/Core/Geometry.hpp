@@ -24,18 +24,11 @@
 #ifndef ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
 #define ENGINE_INCLUDE_HEXGON_CORE_GEOMETRY_HPP_
 
-#include <Hexgon/GPU/Buffer.hpp>
 #include <Hexgon/Macro.hpp>
 #include <memory>
 #include <vector>
 
 namespace hexgon {
-
-namespace gpu {
-
-class CommandBuffer;
-
-}
 
 class GraphicsContext;
 
@@ -45,12 +38,6 @@ class HEX_API Geometry {
   virtual ~Geometry() = default;
 
   void Build();
-
-  void InitBuffer(GraphicsContext* ctx);
-
-  void BindCMD(gpu::CommandBuffer* cmd);
-
-  virtual gpu::BufferLayout const& GetBufferLayout() = 0;
 
   size_t GetIndexCount() const { return m_index.size(); }
 
@@ -73,9 +60,6 @@ class HEX_API Geometry {
  private:
   std::vector<float> m_vertex;
   std::vector<uint32_t> m_index;
-
-  std::unique_ptr<gpu::VertexBuffer> m_gpu_vertex = {};
-  std::unique_ptr<gpu::IndexBuffer> m_gpu_index = {};
 };
 
 }  // namespace hexgon

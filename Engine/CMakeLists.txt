@@ -5,6 +5,11 @@ include(${PROJECT_SOURCE_DIR}/CMake/ShaderUtil.cmake)
 
 find_package(Vulkan REQUIRED)
 
+# deps from vckpg
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+
 target_include_directories(
     Hexgon PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -48,21 +53,12 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Application.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Event.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Geometry.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/GraphicsContext.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Layer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/LayerStack.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Log.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Material.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Core/Window.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Buffer.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Formats.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Pipeline.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/RenderPass.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Shader.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GPU/Texture.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/GUI/ImguiLayer.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Hexgon.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/IO/Image.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Macro.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Camera.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Mesh.hpp
@@ -72,33 +68,10 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/Core/GraphicsContext.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Material.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Window.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Buffer.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/Texture.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Buffer.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/CommandBuffer.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Formats.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/FrameData.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/FrameData.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/GraphicsContext.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Pipeline.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Pipeline.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/PipelineBuilder.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/RenderPass.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/GPU/VK/Texture.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/ImguiLayer.cc
-    ${CMAKE_CURRENT_LIST_DIR}/src/IO/Image.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/LogPrivate.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Camera.cc
@@ -106,16 +79,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
 )
 
-add_target_shader(Hexgon
-    gui_shaders
-    SHADERS
-    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/imgui.vert
-    ${CMAKE_CURRENT_LIST_DIR}/src/GUI/imgui.frag
-)
-
-target_link_libraries(Hexgon Vulkan::Vulkan)
-target_link_libraries(Hexgon glfw)
-target_link_libraries(Hexgon glm::glm)
-target_link_libraries(Hexgon spdlog::spdlog)
-target_link_libraries(Hexgon spirv-reflect-static)
-target_link_libraries(Hexgon imgui)
+target_link_libraries(Hexgon PRIVATE Vulkan::Vulkan)
+target_link_libraries(Hexgon PRIVATE glfw)
+target_link_libraries(Hexgon PUBLIC glm::glm)
+target_link_libraries(Hexgon PUBLIC spdlog::spdlog)

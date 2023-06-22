@@ -52,7 +52,6 @@ Application* Application::Get() { return g_instance; }
 void Application::Run() { m_window->Show(); }
 
 void Application::PushLayer(std::shared_ptr<Layer> const& layer) {
-  layer->m_context = m_window->GetContext();
   layer->m_application = this;
   m_layer_stack.PushLayer(layer);
 }

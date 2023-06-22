@@ -1,0 +1,9 @@
+{
+  "name": "hexgon",
+  "version": "0.1",
+  "dependencies": [
+    "glfw3",
+    "glm",
+    "spdlog"
+  ]
+}

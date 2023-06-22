@@ -35,8 +35,6 @@ class Box : public Geometry {
 
   ~Box() override = default;
 
-  gpu::BufferLayout const& GetBufferLayout() override { return m_layout; }
-
  protected:
   void OnBuild() override;
 
@@ -47,7 +45,6 @@ class Box : public Geometry {
   uint32_t m_width_segments;
   uint32_t m_height_segments;
   uint32_t m_depth_segments;
-  gpu::BufferLayout m_layout;
 };
 
 }  // namespace hexgon
