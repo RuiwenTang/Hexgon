@@ -21,32 +21,6 @@
  *   SOFTWARE.
  */
 
-#pragma once
+#include <Hexgon/Render/SwapChain.hpp>
 
-#include <Hexgon/Macro.hpp>
-#include <memory>
-
-namespace hexgon {
-
-class Window;
-class SwapChain;
-
-enum class RenderAPI {
-  kVulkan,
-  kMetal,
-};
-
-class HEX_API RenderSystem {
- public:
-  RenderSystem() = default;
-
-  virtual ~RenderSystem() = default;
-
-  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
-
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() = 0;
-
-  virtual void ShutDown() = 0;
-};
-
-}  // namespace hexgon
+namespace hexgon {}

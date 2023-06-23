@@ -21,32 +21,25 @@
  *   SOFTWARE.
  */
 
-#pragma once
-
-#include <Hexgon/Macro.hpp>
-#include <memory>
+#include "Render/Vulkan/SwapChainVk.hpp"
 
 namespace hexgon {
 
-class Window;
-class SwapChain;
+SwapChainVk::SwapChainVk(VkDevice device, VkSwapchainKHR swap_chain, VkSurfaceCapabilitiesKHR caps, VkFormat format)
+    : m_device(device), m_vk_swap_chain(swap_chain), m_caps(caps), m_format(format) {
+  InitInternal();
+}
 
-enum class RenderAPI {
-  kVulkan,
-  kMetal,
-};
+SwapChainVk::~SwapChainVk() { DestroyInternal(); }
 
-class HEX_API RenderSystem {
- public:
-  RenderSystem() = default;
+uint32_t SwapChainVk::GetWidth() const { return m_caps.currentExtent.width; }
 
-  virtual ~RenderSystem() = default;
+uint32_t SwapChainVk::GetHeight() const { return m_caps.currentExtent.height; }
 
-  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
+uint32_t SwapChainVk::GetMaxBufferCount() const { return m_caps.maxImageCount; }
 
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() = 0;
+void SwapChainVk::InitInternal() {}
 
-  virtual void ShutDown() = 0;
-};
+void SwapChainVk::DestroyInternal() {}
 
 }  // namespace hexgon

@@ -24,29 +24,21 @@
 #pragma once
 
 #include <Hexgon/Macro.hpp>
-#include <memory>
+#include <cstdint>
 
 namespace hexgon {
 
-class Window;
-class SwapChain;
-
-enum class RenderAPI {
-  kVulkan,
-  kMetal,
-};
-
-class HEX_API RenderSystem {
+class SwapChain {
  public:
-  RenderSystem() = default;
+  SwapChain() = default;
 
-  virtual ~RenderSystem() = default;
+  virtual ~SwapChain() = default;
 
-  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
+  virtual uint32_t GetWidth() const = 0;
 
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() = 0;
+  virtual uint32_t GetHeight() const = 0;
 
-  virtual void ShutDown() = 0;
+  virtual uint32_t GetMaxBufferCount() const = 0;
 };
 
 }  // namespace hexgon

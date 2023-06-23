@@ -28,6 +28,7 @@
 #include <Hexgon/Core/Window.hpp>
 #include <Hexgon/Macro.hpp>
 #include <Hexgon/Render/RenderSystem.hpp>
+#include <Hexgon/Render/SwapChain.hpp>
 #include <memory>
 
 namespace hexgon {
@@ -61,6 +62,7 @@ class HEX_API Application final : public WindowDelegate {
  private:
   std::unique_ptr<Window> m_window = {};
   std::unique_ptr<RenderSystem> m_render_system = {};
+  std::unique_ptr<SwapChain> m_swap_chain = {};
   LayerStack m_layer_stack = {};
 };
 

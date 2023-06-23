@@ -62,6 +62,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Mesh.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Object3D.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/RenderSystem.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/SwapChain.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
@@ -77,6 +78,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Mesh.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Render/RenderSystem.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Render/SwapChain.cc
 )
 
 # vulkan backend
@@ -86,6 +88,8 @@ if (WIN32)
     target_sources(Hexgon PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.cc
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/SwapChainVk.cc
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/SwapChainVk.hpp
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.cc
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.hpp
     )

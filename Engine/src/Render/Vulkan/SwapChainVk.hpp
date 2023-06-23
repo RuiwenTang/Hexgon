@@ -23,30 +23,34 @@
 
 #pragma once
 
-#include <Hexgon/Macro.hpp>
-#include <memory>
+#include <vulkan/vulkan.h>
+
+#include <Hexgon/Render/SwapChain.hpp>
 
 namespace hexgon {
 
-class Window;
-class SwapChain;
-
-enum class RenderAPI {
-  kVulkan,
-  kMetal,
-};
-
-class HEX_API RenderSystem {
+class SwapChainVk : public SwapChain {
  public:
-  RenderSystem() = default;
+  SwapChainVk(VkDevice device, VkSwapchainKHR swap_chain, VkSurfaceCapabilitiesKHR caps, VkFormat format);
 
-  virtual ~RenderSystem() = default;
+  ~SwapChainVk() override;
 
-  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
+  virtual uint32_t GetWidth() const override;
 
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() = 0;
+  virtual uint32_t GetHeight() const override;
 
-  virtual void ShutDown() = 0;
+  virtual uint32_t GetMaxBufferCount() const override;
+
+ private:
+  void InitInternal();
+
+  void DestroyInternal();
+
+ private:
+  VkDevice m_device = {};
+  VkSwapchainKHR m_vk_swap_chain = {};
+  VkSurfaceCapabilitiesKHR m_caps = {};
+  VkFormat m_format = {};
 };
 
 }  // namespace hexgon

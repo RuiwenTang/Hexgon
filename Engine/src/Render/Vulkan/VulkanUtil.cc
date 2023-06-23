@@ -122,4 +122,25 @@ PhysicalDeviceInfo VulkanUtil::QueryDevice(VkInstance vk_instance, VkSurfaceKHR 
   return result;
 }
 
+VkFormat VulkanUtil::PickSurfaceFormat(VkPhysicalDevice device, VkSurfaceKHR surface) {
+  uint32_t surface_format_count;
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &surface_format_count, nullptr);
+
+  std::vector<VkSurfaceFormatKHR> all_formats(surface_format_count);
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &surface_format_count, all_formats.data());
+
+  if (all_formats.size() == 1 && all_formats[0].format == VK_FORMAT_UNDEFINED) {
+    return VK_FORMAT_R8G8B8A8_UNORM;
+  }
+
+  for (auto format : all_formats) {
+    if ((format.format == VK_FORMAT_R8G8B8A8_UNORM || format.format == VK_FORMAT_B8G8R8A8_UNORM) &&
+        format.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
+      return format.format;
+    }
+  }
+
+  return all_formats[0].format;
+}
+
 }  // namespace hexgon

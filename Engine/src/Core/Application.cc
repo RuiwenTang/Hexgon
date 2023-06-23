@@ -60,6 +60,8 @@ void Application::Run() {
     return;
   }
 
+  m_swap_chain = m_render_system->CreateSwapChain();
+
   m_window->Show();
 }
 
@@ -82,6 +84,9 @@ void Application::OnWindowClose() {
   for (auto const& it : m_layer_stack) {
     it->OnDetach();
   }
+
+  // destroy swap chain
+  m_swap_chain.reset();
 
   m_render_system->ShutDown();
 }

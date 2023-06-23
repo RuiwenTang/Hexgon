@@ -43,6 +43,8 @@ class VulkanUtil {
   static VkInstance CreateInstance();
 
   static PhysicalDeviceInfo QueryDevice(VkInstance vk_instance, VkSurfaceKHR vk_surface);
+
+  static VkFormat PickSurfaceFormat(VkPhysicalDevice device, VkSurfaceKHR surface);
 };
 
 }  // namespace hexgon

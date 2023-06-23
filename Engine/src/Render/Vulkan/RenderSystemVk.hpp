@@ -39,6 +39,8 @@ class RenderSystemVk : public RenderSystem {
 
   static std::unique_ptr<RenderSystem> Init(Window* window);
 
+  virtual std::unique_ptr<SwapChain> CreateSwapChain() override;
+
   virtual void ShutDown() override;
 
   // platform functions
@@ -48,6 +50,8 @@ class RenderSystemVk : public RenderSystem {
   VkInstance m_vk_instance = {};
   VkSurfaceKHR m_vk_surface = {};
   VkPhysicalDevice m_phy_device = {};
+  uint32_t m_graphic_queue_index = {};
+  uint32_t m_present_queue_index = {};
   VkDevice m_device = {};
   VkQueue m_graphic_queue = {};
   VkQueue m_present_queue = {};

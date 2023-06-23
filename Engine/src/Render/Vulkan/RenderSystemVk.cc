@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "LogPrivate.hpp"
+#include "Render/Vulkan/SwapChainVk.hpp"
 #include "Render/Vulkan/VulkanUtil.hpp"
 
 namespace hexgon {
@@ -71,6 +72,70 @@ std::unique_ptr<RenderSystem> RenderSystemVk::Init(Window* window) {
   return ret;
 }
 
+std::unique_ptr<SwapChain> RenderSystemVk::CreateSwapChain() {
+  std::unique_ptr<SwapChain> result{};
+  // surface capabilities
+  VkSurfaceCapabilitiesKHR surface_capabilities{};
+  if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_phy_device, m_vk_surface, &surface_capabilities) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed Get surface capabilities.");
+    return result;
+  }
+
+  auto format = VulkanUtil::PickSurfaceFormat(m_phy_device, m_vk_surface);
+
+  VkCompositeAlphaFlagBitsKHR surface_composite = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  if (surface_capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  } else if (surface_capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+  } else if (surface_capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) {
+    surface_composite = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+  } else {
+    surface_composite = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+  }
+
+  // create vulkan swapchain
+  std::vector<uint32_t> queue_families{};
+
+  queue_families.emplace_back(m_graphic_queue_index);
+
+  if (m_present_queue_index != m_graphic_queue_index) {
+    queue_families.emplace_back(m_present_queue_index);
+  }
+
+  VkSwapchainKHR vk_swap_chain{};
+
+  VkSwapchainCreateInfoKHR create_info{};
+  create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  create_info.surface = m_vk_surface;
+  create_info.minImageCount = surface_capabilities.maxImageCount;
+  create_info.imageFormat = format;
+  create_info.imageExtent = surface_capabilities.currentExtent;
+  create_info.imageArrayLayers = 1;
+  create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  create_info.queueFamilyIndexCount = queue_families.size();
+  create_info.pQueueFamilyIndices = queue_families.data();
+
+  if (queue_families.size() == 1) {
+    create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  } else {
+    create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+  }
+
+  create_info.preTransform = surface_capabilities.currentTransform;
+  create_info.compositeAlpha = surface_composite;
+  create_info.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  if (vkCreateSwapchainKHR(m_device, &create_info, nullptr, &vk_swap_chain) != VK_SUCCESS) {
+    HEX_CORE_ERROR("Failed to create vulkan swap chain");
+    return result;
+  }
+
+  result.reset(new SwapChainVk(m_device, vk_swap_chain, surface_capabilities, format));
+
+  return result;
+}
+
 void RenderSystemVk::ShutDown() {
   if (m_device) {
     vkDestroyDevice(m_device, nullptr);
@@ -92,6 +157,8 @@ bool RenderSystemVk::InitVulkan(VkInstance instance, VkSurfaceKHR surface, const
   m_vk_instance = instance;
   m_vk_surface = surface;
   m_phy_device = device_info.device;
+  m_graphic_queue_index = device_info.graphic_queue_index;
+  m_present_queue_index = device_info.present_queue_index;
 
   // create logical device and queue
   std::vector<VkDeviceQueueCreateInfo> queue_create_info{};
