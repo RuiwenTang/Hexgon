@@ -25,8 +25,69 @@
 
 namespace hexgon {
 
+PerFrameData::~PerFrameData() {
+  // reset pool first
+  if (cmd_pool) {
+    vkResetCommandPool(device, cmd_pool, 0);
+  }
+  // release cmd first
+  if (cmd) {
+    vkFreeCommandBuffers(device, cmd_pool, 1, &cmd);
+    cmd = nullptr;
+  }
+  // destroy pool
+  if (cmd_pool) {
+    vkDestroyCommandPool(device, cmd_pool, nullptr);
+    cmd_pool = nullptr;
+  }
+  // destroy fence
+  if (submit_fence) {
+    vkDestroyFence(device, submit_fence, nullptr);
+    submit_fence = nullptr;
+  }
+
+  // semaphore
+  if (acquire_semaphore) {
+    vkDestroySemaphore(device, acquire_semaphore, nullptr);
+    acquire_semaphore = nullptr;
+  }
+  if (release_semaphore) {
+    vkDestroySemaphore(device, release_semaphore, nullptr);
+    release_semaphore = nullptr;
+  }
+}
+
+void PerFrameData::Init(VkDevice device, uint32_t queue_index) {
+  this->device = device;
+  // fence
+  {
+    VkFenceCreateInfo info{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+    info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+    vkCreateFence(this->device, &info, nullptr, &this->submit_fence);
+  }
+  // command pool
+  {
+    VkCommandPoolCreateInfo info{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
+    info.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+    info.queueFamilyIndex = queue_index;
+
+    vkCreateCommandPool(this->device, &info, nullptr, &this->cmd_pool);
+  }
+
+  // command buffer
+  {
+    VkCommandBufferAllocateInfo info{VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
+    info.commandPool = cmd_pool;
+    info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    info.commandBufferCount = 1;
+
+    vkAllocateCommandBuffers(this->device, &info, &this->cmd);
+  }
+}
+
 SwapChainVk::SwapChainVk(VkDevice device, VkSwapchainKHR swap_chain, VkSurfaceCapabilitiesKHR caps, VkFormat format)
-    : m_device(device), m_vk_swap_chain(swap_chain), m_caps(caps), m_format(format) {
+    : m_device(device), m_vk_swap_chain(swap_chain), m_caps(caps), m_format(format), frame_data() {
   InitInternal();
 }
 
@@ -38,8 +99,15 @@ uint32_t SwapChainVk::GetHeight() const { return m_caps.currentExtent.height; }
 
 uint32_t SwapChainVk::GetMaxBufferCount() const { return m_caps.maxImageCount; }
 
-void SwapChainVk::InitInternal() {}
+void SwapChainVk::InitInternal() {
+  // init per frame datas
+  frame_data.resize(GetMaxBufferCount());
 
-void SwapChainVk::DestroyInternal() {}
+  for (auto& data : frame_data) {
+    data.Init(m_device, 0);
+  }
+}
+
+void SwapChainVk::DestroyInternal() { frame_data.clear(); }
 
 }  // namespace hexgon

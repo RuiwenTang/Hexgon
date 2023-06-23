@@ -26,8 +26,24 @@
 #include <vulkan/vulkan.h>
 
 #include <Hexgon/Render/SwapChain.hpp>
+#include <vector>
 
 namespace hexgon {
+
+struct PerFrameData {
+  VkDevice device = {};
+  VkFence submit_fence = {};
+  VkCommandPool cmd_pool = {};
+  VkCommandBuffer cmd = {};
+  VkSemaphore acquire_semaphore = {};
+  VkSemaphore release_semaphore = {};
+
+  PerFrameData() = default;
+
+  ~PerFrameData();
+
+  void Init(VkDevice device, uint32_t queue_index);
+};
 
 class SwapChainVk : public SwapChain {
  public:
@@ -51,6 +67,8 @@ class SwapChainVk : public SwapChain {
   VkSwapchainKHR m_vk_swap_chain = {};
   VkSurfaceCapabilitiesKHR m_caps = {};
   VkFormat m_format = {};
+
+  std::vector<PerFrameData> frame_data = {};
 };
 
 }  // namespace hexgon
