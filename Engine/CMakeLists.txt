@@ -61,6 +61,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Camera.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Mesh.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Object3D.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/RenderSystem.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
@@ -75,9 +76,23 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Camera.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Mesh.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Render/RenderSystem.cc
 )
 
-target_link_libraries(Hexgon PRIVATE Vulkan::Vulkan)
+# vulkan backend
+if (WIN32)
+    find_package(Vulkan REQUIRED)
+
+    target_sources(Hexgon PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.cc
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.cc
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.hpp
+    )
+    target_link_libraries(Hexgon PRIVATE Vulkan::Vulkan)
+
+endif()
+
 target_link_libraries(Hexgon PRIVATE glfw)
 target_link_libraries(Hexgon PUBLIC glm::glm)
 target_link_libraries(Hexgon PUBLIC spdlog::spdlog)

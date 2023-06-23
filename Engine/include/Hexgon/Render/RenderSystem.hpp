@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2022 RuiwenTang
+ *   Copyright (c) 2023 RuiwenTang
  *   All rights reserved.
 
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,49 +21,29 @@
  *   SOFTWARE.
  */
 
-#ifndef INCLUDE_HEXGON_CORE_APPLICATION_HPP_
-#define INCLUDE_HEXGON_CORE_APPLICATION_HPP_
+#pragma once
 
-#include <Hexgon/Core/LayerStack.hpp>
-#include <Hexgon/Core/Window.hpp>
 #include <Hexgon/Macro.hpp>
-#include <Hexgon/Render/RenderSystem.hpp>
 #include <memory>
 
 namespace hexgon {
 
-class HEX_API Application final : public WindowDelegate {
+class Window;
+
+enum class RenderAPI {
+  kVulkan,
+  kMetal,
+};
+
+class HEX_API RenderSystem {
  public:
-  ~Application() = default;
+  RenderSystem() = default;
 
-  static Application* Create(std::string title, uint32_t width = 800, uint32_t height = 600);
+  virtual ~RenderSystem() = default;
 
-  static Application* Get();
+  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
 
-  Window* GetWindow() const { return m_window.get(); }
-
-  void Run();
-
-  void PushLayer(std::shared_ptr<Layer> const& layer);
-  void PopLayer(std::shared_ptr<Layer> const& layer);
-
-  void OnWindowResize(int32_t width, int32_t height) override;
-  void OnWindowClose() override;
-  void OnWindowUpdate() override;
-  void OnKeyEvent(KeyEvent* event) override;
-  void OnMouseEvent(MouseEvent* event) override;
-  void OnCharEvent(CharEvent* event) override;
-
- private:
-  Application() = default;
-  static Application* g_instance;
-
- private:
-  std::unique_ptr<Window> m_window = {};
-  std::unique_ptr<RenderSystem> m_render_system = {};
-  LayerStack m_layer_stack = {};
+  virtual void ShutDown() = 0;
 };
 
 }  // namespace hexgon
-
-#endif  // INCLUDE_HEXGON_CORE_APPLICATION_HPP_

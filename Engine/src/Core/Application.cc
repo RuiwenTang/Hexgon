@@ -44,12 +44,24 @@ Application* Application::Create(std::string title, uint32_t width, uint32_t hei
 
   g_instance->m_window->SetDelegate(g_instance);
 
+  // init render system
+#if defined(HEX_PLATFORM_WINDOWS)
+  g_instance->m_render_system = RenderSystem::Init(RenderAPI::kVulkan, g_instance->m_window.get());
+#endif
+
   return g_instance;
 }
 
 Application* Application::Get() { return g_instance; }
 
-void Application::Run() { m_window->Show(); }
+void Application::Run() {
+  if (!m_render_system) {
+    HEX_CORE_ERROR("Failed init RenderSystem");
+    return;
+  }
+
+  m_window->Show();
+}
 
 void Application::PushLayer(std::shared_ptr<Layer> const& layer) {
   layer->m_application = this;
@@ -70,6 +82,8 @@ void Application::OnWindowClose() {
   for (auto const& it : m_layer_stack) {
     it->OnDetach();
   }
+
+  m_render_system->ShutDown();
 }
 
 void Application::OnWindowUpdate() {
