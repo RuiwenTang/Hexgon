@@ -63,6 +63,8 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Object/Object3D.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/RenderSystem.hpp
     ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/SwapChain.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/Texture.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/include/Hexgon/Render/Type.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Application.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Event.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
@@ -79,6 +81,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Object/Object3D.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Render/RenderSystem.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Render/SwapChain.cc
+    ${CMAKE_CURRENT_LIST_DIR}/src/Render/Texture.cc
 )
 
 # vulkan backend
