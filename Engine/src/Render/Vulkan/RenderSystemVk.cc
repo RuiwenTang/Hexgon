@@ -35,10 +35,13 @@
 
 namespace hexgon {
 
-std::unique_ptr<RenderSystem> RenderSystemVk::Init(Window* window) {
+std::unique_ptr<RenderSystem> RenderSystemVk::Init(Window* window, bool debug) {
   std::unique_ptr<RenderSystemVk> ret;
   // step 1 create vulkan instance
-  auto instance = VulkanUtil::CreateInstance();
+  VkInstance instance = {};
+  VkDebugReportCallbackEXT debug_ins = {};
+
+  std::tie(instance, debug_ins) = VulkanUtil::CreateInstance(debug);
 
   if (!instance) {
     return ret;
@@ -68,6 +71,8 @@ std::unique_ptr<RenderSystem> RenderSystemVk::Init(Window* window) {
 
     return ret;
   }
+
+  ret->m_vk_debug_reporter = debug_ins;
 
   return ret;
 }

@@ -31,14 +31,14 @@
 
 namespace hexgon {
 
-std::unique_ptr<RenderSystem> RenderSystem::Init(RenderAPI api, Window* window) {
+std::unique_ptr<RenderSystem> RenderSystem::Init(RenderAPI api, Window* window, bool debug) {
 #if defined(HEX_PLATFORM_WINDOWS) || defined(HEX_PLATFORM_LINUX)
   if (api == RenderAPI::kMetal) {
     HEX_CORE_ERROR("Not support Metal API!");
     return std::unique_ptr<RenderSystem>();
   }
 
-  return RenderSystemVk::Init(window);
+  return RenderSystemVk::Init(window, debug);
 #else
 #error "Not Support Platform"
 #endif

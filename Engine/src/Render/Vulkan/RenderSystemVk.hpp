@@ -37,7 +37,7 @@ class RenderSystemVk : public RenderSystem {
   RenderSystemVk() = default;
   ~RenderSystemVk() override = default;
 
-  static std::unique_ptr<RenderSystem> Init(Window* window);
+  static std::unique_ptr<RenderSystem> Init(Window* window, bool debug);
 
   virtual std::unique_ptr<SwapChain> CreateSwapChain() override;
 
@@ -47,7 +47,9 @@ class RenderSystemVk : public RenderSystem {
   bool InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info);
 
  private:
+  bool m_is_debug = {};
   VkInstance m_vk_instance = {};
+  VkDebugReportCallbackEXT m_vk_debug_reporter = {};
   VkSurfaceKHR m_vk_surface = {};
   VkPhysicalDevice m_phy_device = {};
   uint32_t m_graphic_queue_index = {};

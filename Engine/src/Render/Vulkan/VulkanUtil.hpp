@@ -25,6 +25,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include <tuple>
 #include <vector>
 
 namespace hexgon {
@@ -40,11 +41,16 @@ class VulkanUtil {
   VulkanUtil() = delete;
   ~VulkanUtil() = delete;
 
-  static VkInstance CreateInstance();
+  static std::tuple<VkInstance, VkDebugReportCallbackEXT> CreateInstance(bool debug);
 
   static PhysicalDeviceInfo QueryDevice(VkInstance vk_instance, VkSurfaceKHR vk_surface);
 
   static VkFormat PickSurfaceFormat(VkPhysicalDevice device, VkSurfaceKHR surface);
+
+  static VKAPI_ATTR VkBool32 VKAPI_CALL ValidationCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT type,
+                                                           uint64_t object, size_t location, int32_t message_code,
+                                                           const char* layer_prefix, const char* message,
+                                                           void* user_data);
 };
 
 }  // namespace hexgon

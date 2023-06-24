@@ -29,7 +29,9 @@
 
 namespace hexgon {
 
-VkInstance VulkanUtil::CreateInstance() {
+PFN_vkCreateDebugReportCallbackEXT g_vkCreateDebugReportCallbackEXT = nullptr;
+
+std::tuple<VkInstance, VkDebugReportCallbackEXT> VulkanUtil::CreateInstance(bool debug) {
   VkApplicationInfo app_info{};
   app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   app_info.pEngineName = "Hexgon Engine";
@@ -43,28 +45,58 @@ VkInstance VulkanUtil::CreateInstance() {
 
   // TODO support vulkan validation layer
   uint32_t glfw_extension_count = 0;
-  const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
+  const char **glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
-  std::vector<const char*> required_extensions{};
+  std::vector<const char *> required_extensions{};
 
   for (uint32_t i = 0; i < glfw_extension_count; i++) {
     HEX_CORE_INFO("vk load extension: {}", glfw_extensions[i]);
     required_extensions.emplace_back(glfw_extensions[i]);
   }
 
+  if (debug) {
+    required_extensions.emplace_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+  }
+
   desc.enabledExtensionCount = required_extensions.size();
   desc.ppEnabledExtensionNames = required_extensions.data();
 
+  VkDebugReportCallbackCreateInfoEXT debug_info{VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT};
+
+  if (debug) {
+    debug_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT |
+                       VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+
+    debug_info.pfnCallback = &ValidationCallback;
+
+    desc.pNext = &debug_info;
+  }
+
   VkInstance result = {};
+  VkDebugReportCallbackEXT debug_result = {};
 
   VkResult ret = vkCreateInstance(&desc, nullptr, &result);
 
   if (ret != VK_SUCCESS) {
     HEX_CORE_ERROR("Failed create Vulkan instance");
-    return nullptr;
+    return {nullptr, nullptr};
   }
 
-  return result;
+  if (debug) {
+    if (g_vkCreateDebugReportCallbackEXT == nullptr) {
+      g_vkCreateDebugReportCallbackEXT =
+          (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(result, "vkCreateDebugReportCallbackEXT");
+    }
+
+    ret = g_vkCreateDebugReportCallbackEXT(result, &debug_info, nullptr, &debug_result);
+
+    if (ret != VK_SUCCESS) {
+      HEX_CORE_ERROR("Debug is enabled, but validation debug callback register failed.");
+      return {nullptr, nullptr};
+    }
+  }
+
+  return {result, debug_result};
 }
 
 PhysicalDeviceInfo VulkanUtil::QueryDevice(VkInstance vk_instance, VkSurfaceKHR vk_surface) {
@@ -141,6 +173,24 @@ VkFormat VulkanUtil::PickSurfaceFormat(VkPhysicalDevice device, VkSurfaceKHR sur
   }
 
   return all_formats[0].format;
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL VulkanUtil::ValidationCallback(VkDebugReportFlagsEXT flags,
+                                                              VkDebugReportObjectTypeEXT type, uint64_t object,
+                                                              size_t location, int32_t message_code,
+                                                              const char *layer_prefix, const char *message,
+                                                              void *user_data) {
+  if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
+    HEX_CORE_ERROR("Validation Layer [ {} ], Error: [ {} ]", layer_prefix, message);
+  } else if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT) {
+    HEX_CORE_WARN("Validation Layer [ {} ], Warning: [ {} ]", layer_prefix, message);
+  } else if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) {
+    HEX_CORE_TRACE("Validation Layer [ {} ], Performance Warning: [ {} ]", layer_prefix, message);
+  } else {
+    HEX_CORE_INFO("Validation Layer [ {} ], Infor: [ {} ]", layer_prefix, message);
+  }
+
+  return VK_FALSE;
 }
 
 }  // namespace hexgon

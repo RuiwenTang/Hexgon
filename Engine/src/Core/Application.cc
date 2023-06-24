@@ -46,7 +46,7 @@ Application* Application::Create(std::string title, uint32_t width, uint32_t hei
 
   // init render system
 #if defined(HEX_PLATFORM_WINDOWS)
-  g_instance->m_render_system = RenderSystem::Init(RenderAPI::kVulkan, g_instance->m_window.get());
+  g_instance->m_render_system = RenderSystem::Init(RenderAPI::kVulkan, g_instance->m_window.get(), true);
 #endif
 
   return g_instance;

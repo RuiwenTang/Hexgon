@@ -42,7 +42,7 @@ class HEX_API RenderSystem {
 
   virtual ~RenderSystem() = default;
 
-  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window);
+  static std::unique_ptr<RenderSystem> Init(RenderAPI api, Window* window, bool debug = false);
 
   virtual std::unique_ptr<SwapChain> CreateSwapChain() = 0;
 
