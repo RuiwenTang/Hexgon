@@ -85,7 +85,7 @@ target_sources(Hexgon
 )
 
 # vulkan backend
-if (WIN32)
+if (WIN32 OR (UNIX AND NOT APPLE))
     find_package(Vulkan REQUIRED)
 
     target_sources(Hexgon PRIVATE

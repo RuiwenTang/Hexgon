@@ -24,6 +24,7 @@
 #pragma once
 
 #include <Hexgon/Render/Type.hpp>
+#include <cstddef>
 #include <cstdint>
 
 namespace hexgon {
