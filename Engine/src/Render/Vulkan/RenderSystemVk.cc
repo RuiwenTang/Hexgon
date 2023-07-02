@@ -208,6 +208,9 @@ bool RenderSystemVk::InitVulkan(VkInstance instance, VkSurfaceKHR surface, const
     }
   }
 
+  // we need the VK_KHR_imageless_framebuffer extension
+  device_extension.emplace_back(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME);
+
   VkDeviceCreateInfo create_info{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
   create_info.pQueueCreateInfos = queue_create_info.data();
   create_info.queueCreateInfoCount = static_cast<uint32_t>(queue_create_info.size());

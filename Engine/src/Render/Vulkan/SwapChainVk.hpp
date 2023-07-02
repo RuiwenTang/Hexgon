@@ -68,7 +68,9 @@ class SwapChainVk : public SwapChain {
   VkSurfaceCapabilitiesKHR m_caps = {};
   VkFormat m_format = {};
 
-  std::vector<PerFrameData> frame_data = {};
+  std::vector<VkImage> m_swap_chain_images = {};
+  std::vector<VkImageView> m_swap_chain_image_views = {};
+  std::vector<PerFrameData> m_frame_data = {};
 };
 
 }  // namespace hexgon

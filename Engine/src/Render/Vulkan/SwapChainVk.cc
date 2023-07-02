@@ -87,7 +87,13 @@ void PerFrameData::Init(VkDevice device, uint32_t queue_index) {
 }
 
 SwapChainVk::SwapChainVk(VkDevice device, VkSwapchainKHR swap_chain, VkSurfaceCapabilitiesKHR caps, VkFormat format)
-    : m_device(device), m_vk_swap_chain(swap_chain), m_caps(caps), m_format(format), frame_data() {
+    : m_device(device),
+      m_vk_swap_chain(swap_chain),
+      m_caps(caps),
+      m_format(format),
+      m_swap_chain_images(),
+      m_swap_chain_image_views(),
+      m_frame_data() {
   InitInternal();
 }
 
@@ -101,13 +107,46 @@ uint32_t SwapChainVk::GetMaxBufferCount() const { return m_caps.maxImageCount; }
 
 void SwapChainVk::InitInternal() {
   // init per frame datas
-  frame_data.resize(GetMaxBufferCount());
+  m_frame_data.resize(GetMaxBufferCount());
 
-  for (auto& data : frame_data) {
+  for (auto& data : m_frame_data) {
     data.Init(m_device, 0);
+  }
+
+  // all image buffers in swapchain
+  m_swap_chain_images.resize(GetMaxBufferCount());
+
+  uint32_t image_count = 0;
+  vkGetSwapchainImagesKHR(m_device, m_vk_swap_chain, &image_count, m_swap_chain_images.data());
+
+  m_swap_chain_image_views.resize(image_count);
+
+  for (size_t i = 0; i < m_swap_chain_image_views.size(); i++) {
+    // Create image view for swapchain images
+    VkImageViewCreateInfo info{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+    info.image = m_swap_chain_images[i];
+    info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    info.format = m_format;
+    info.components = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};
+    info.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
+
+    vkCreateImageView(m_device, &info, nullptr, &m_swap_chain_image_views[i]);
   }
 }
 
-void SwapChainVk::DestroyInternal() { frame_data.clear(); }
+void SwapChainVk::DestroyInternal() {
+  m_frame_data.clear();
+
+  // relse image views
+  for (auto& image_view : m_swap_chain_image_views) {
+    vkDestroyImageView(m_device, image_view, nullptr);
+  }
+
+  m_swap_chain_image_views.clear();
+
+  m_swap_chain_images.clear();
+
+  vkDestroySwapchainKHR(m_device, m_vk_swap_chain, nullptr);
+}
 
 }  // namespace hexgon
