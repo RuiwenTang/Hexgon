@@ -158,6 +158,8 @@ void RenderSystemVk::ShutDown() {
   }
 }
 
+void RenderSystemVk::OnResourceDispose(GpuResourceVk* resource) {}
+
 bool RenderSystemVk::InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info) {
   m_vk_instance = instance;
   m_vk_surface = surface;

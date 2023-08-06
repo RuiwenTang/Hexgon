@@ -23,42 +23,36 @@
 
 #pragma once
 
-#include <vulkan/vulkan.h>
-
-#include <Hexgon/Render/RenderSystem.hpp>
-#include <vector>
-
-#include "Render/Vulkan/GpuResourceVk.hpp"
-#include "Render/Vulkan/VulkanUtil.hpp"
+#include <string>
 
 namespace hexgon {
 
-class RenderSystemVk : public RenderSystem, public GpuResourceDelegateVk {
+class GpuResourceVk;
+
+class GpuResourceDelegateVk {
  public:
-  RenderSystemVk() = default;
-  ~RenderSystemVk() override = default;
+  virtual ~GpuResourceDelegateVk() = default;
 
-  static std::unique_ptr<RenderSystem> Init(Window* window, bool debug);
+  virtual void OnResourceDispose(GpuResourceVk*) = 0;
+};
 
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() override;
+class GpuResourceVk {
+ public:
+  virtual ~GpuResourceVk() {
+    if (m_delegate) {
+      m_delegate->OnResourceDispose(this);
+    }
+  }
 
-  virtual void ShutDown() override;
+  const std::string& GetLabel() const { return m_label; }
 
-  void OnResourceDispose(GpuResourceVk* resource) override;
-  // platform functions
-  bool InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info);
+  void SetLabel(std::string label) { m_label = label; }
+
+  void SetDelegate(GpuResourceDelegateVk* delegate) { m_delegate = delegate; }
 
  private:
-  bool m_is_debug = {};
-  VkInstance m_vk_instance = {};
-  VkDebugReportCallbackEXT m_vk_debug_reporter = {};
-  VkSurfaceKHR m_vk_surface = {};
-  VkPhysicalDevice m_phy_device = {};
-  uint32_t m_graphic_queue_index = {};
-  uint32_t m_present_queue_index = {};
-  VkDevice m_device = {};
-  VkQueue m_graphic_queue = {};
-  VkQueue m_present_queue = {};
+  std::string m_label;
+  GpuResourceDelegateVk* m_delegate = nullptr;
 };
 
 }  // namespace hexgon

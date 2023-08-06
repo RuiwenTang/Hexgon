@@ -25,40 +25,23 @@
 
 #include <vulkan/vulkan.h>
 
-#include <Hexgon/Render/RenderSystem.hpp>
-#include <vector>
-
-#include "Render/Vulkan/GpuResourceVk.hpp"
-#include "Render/Vulkan/VulkanUtil.hpp"
+#include <Hexgon/Render/Texture.hpp>
 
 namespace hexgon {
 
-class RenderSystemVk : public RenderSystem, public GpuResourceDelegateVk {
+class TextureVk : public Texture {
  public:
-  RenderSystemVk() = default;
-  ~RenderSystemVk() override = default;
+  struct Info {
+    VkImage image = {};
+    VkImageView view = {};
+    VkImageLayout layout = {};
+  };
 
-  static std::unique_ptr<RenderSystem> Init(Window* window, bool debug);
-
-  virtual std::unique_ptr<SwapChain> CreateSwapChain() override;
-
-  virtual void ShutDown() override;
-
-  void OnResourceDispose(GpuResourceVk* resource) override;
-  // platform functions
-  bool InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info);
+  TextureVk(const TextureDescriptor& desc, const Info& info);
+  ~TextureVk();
 
  private:
-  bool m_is_debug = {};
-  VkInstance m_vk_instance = {};
-  VkDebugReportCallbackEXT m_vk_debug_reporter = {};
-  VkSurfaceKHR m_vk_surface = {};
-  VkPhysicalDevice m_phy_device = {};
-  uint32_t m_graphic_queue_index = {};
-  uint32_t m_present_queue_index = {};
-  VkDevice m_device = {};
-  VkQueue m_graphic_queue = {};
-  VkQueue m_present_queue = {};
+  Info mInfo;
 };
 
 }  // namespace hexgon

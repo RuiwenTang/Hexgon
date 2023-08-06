@@ -89,10 +89,13 @@ if (WIN32 OR (UNIX AND NOT APPLE))
     find_package(Vulkan REQUIRED)
 
     target_sources(Hexgon PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/GpuResourceVk.hpp
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.cc
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/RenderSystemVk.hpp
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/SwapChainVk.cc
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/SwapChainVk.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/TextureVk.cc
+        ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/TextureVk.hpp
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.cc
         ${CMAKE_CURRENT_LIST_DIR}/src/Render/Vulkan/VulkanUtil.hpp
     )

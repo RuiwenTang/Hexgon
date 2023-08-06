@@ -26,6 +26,7 @@
 #include <Hexgon/Render/Type.hpp>
 #include <cstddef>
 #include <cstdint>
+#include <string>
 
 namespace hexgon {
 
@@ -54,6 +55,7 @@ enum TextureUsage : TextureUsageMask {
 };
 
 struct TextureDescriptor {
+  std::string label = "Texture";
   PixelFormat format = PixelFormat::kR8G8B8A8Unorm;
   TextureType type = TextureType::k2D;
   TextureUsageMask usage = TextureUsage::kShaderRead | TextureUsage::kCopyDst;
