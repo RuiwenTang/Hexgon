@@ -23,41 +23,50 @@
 
 #pragma once
 
-#include <string>
-
 namespace hexgon {
 
-class GpuResourceVk;
+template <typename T>
+struct LinkedList {
+  T* head = nullptr;
+  T* tail = nullptr;
 
-class GpuResourceDelegateVk {
- public:
-  virtual ~GpuResourceDelegateVk() = default;
+  LinkedList() = default;
+  LinkedList(T* head, T* tail) : head(head), tail(tail) {}
 
-  virtual void OnResourceDispose(GpuResourceVk*) = 0;
-};
+  template <T* T::*Prev, T* T::*Next>
+  static void Insert(T* t, T* prev, T* next, T** head, T** tail) {
+    t->*Prev = prev;
+    t->*Next = next;
 
-class GpuResourceVk {
- public:
-  GpuResourceVk* mem_prev = nullptr;
-  GpuResourceVk* mem_next = nullptr;
+    if (prev) {
+      prev->*Next = t;
+    } else if (head) {
+      *head = t;
+    }
 
-  GpuResourceVk() = default;
-
-  virtual ~GpuResourceVk() {
-    if (m_delegate) {
-      m_delegate->OnResourceDispose(this);
+    if (next) {
+      next->*Prev = t;
+    } else if (tail) {
+      *tail = t;
     }
   }
 
-  const std::string& GetLabel() const { return m_label; }
+  template <T* T::*Prev, T* T::*Next>
+  static void Remove(T* t, T** head, T** tail) {
+    if (t->*Prev) {
+      t->*Prev->*Next = t->*Next;
+    } else if (head) {
+      *head = t->*Next;
+    }
 
-  void SetLabel(std::string label) { m_label = label; }
+    if (t->*Next) {
+      t->*Next->*Prev = t->*Prev;
+    } else if (tail) {
+      *tail = t->*Prev;
+    }
 
-  void SetDelegate(GpuResourceDelegateVk* delegate) { m_delegate = delegate; }
-
- private:
-  std::string m_label;
-  GpuResourceDelegateVk* m_delegate = nullptr;
+    t->*Prev = t->*Next = nullptr;
+  }
 };
 
 }  // namespace hexgon

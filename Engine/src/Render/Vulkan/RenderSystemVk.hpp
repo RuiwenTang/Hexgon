@@ -28,6 +28,7 @@
 #include <Hexgon/Render/RenderSystem.hpp>
 #include <vector>
 
+#include "Core/Util/LinkedList.hpp"
 #include "Render/Vulkan/GpuResourceVk.hpp"
 #include "Render/Vulkan/VulkanUtil.hpp"
 
@@ -49,6 +50,11 @@ class RenderSystemVk : public RenderSystem, public GpuResourceDelegateVk {
   bool InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info);
 
  private:
+  void SaveResource(GpuResourceVk* res);
+
+  void RemoveResource(GpuResourceVk* res);
+
+ private:
   bool m_is_debug = {};
   VkInstance m_vk_instance = {};
   VkDebugReportCallbackEXT m_vk_debug_reporter = {};
@@ -59,6 +65,8 @@ class RenderSystemVk : public RenderSystem, public GpuResourceDelegateVk {
   VkDevice m_device = {};
   VkQueue m_graphic_queue = {};
   VkQueue m_present_queue = {};
+
+  LinkedList<GpuResourceVk> m_res_list = {};
 };
 
 }  // namespace hexgon

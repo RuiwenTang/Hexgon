@@ -70,6 +70,7 @@ target_sources(Hexgon
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Geometry/Box.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Core/Util/LinkedList.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/LayerStack.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Log.cc
     ${CMAKE_CURRENT_LIST_DIR}/src/Core/Material.cc

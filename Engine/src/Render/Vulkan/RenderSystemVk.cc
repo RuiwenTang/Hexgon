@@ -158,7 +158,7 @@ void RenderSystemVk::ShutDown() {
   }
 }
 
-void RenderSystemVk::OnResourceDispose(GpuResourceVk* resource) {}
+void RenderSystemVk::OnResourceDispose(GpuResourceVk* resource) { RemoveResource(resource); }
 
 bool RenderSystemVk::InitVulkan(VkInstance instance, VkSurfaceKHR surface, const PhysicalDeviceInfo& device_info) {
   m_vk_instance = instance;
@@ -229,6 +229,17 @@ bool RenderSystemVk::InitVulkan(VkInstance instance, VkSurfaceKHR surface, const
   vkGetDeviceQueue(m_device, device_info.present_queue_index, 0, &m_present_queue);
 
   return true;
+}
+
+void RenderSystemVk::SaveResource(GpuResourceVk* res) {
+  LinkedList<GpuResourceVk>::Insert<&GpuResourceVk::mem_prev, &GpuResourceVk::mem_next>(
+      res, m_res_list.tail, nullptr, &m_res_list.head, &m_res_list.tail);
+  ;
+}
+
+void RenderSystemVk::RemoveResource(GpuResourceVk* res) {
+  LinkedList<GpuResourceVk>::Remove<&GpuResourceVk::mem_prev, &GpuResourceVk::mem_next>(res, &m_res_list.head,
+                                                                                        &m_res_list.tail);
 }
 
 }  // namespace hexgon
